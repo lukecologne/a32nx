@@ -485,16 +485,10 @@ class A320_Neo_FCU_Heading extends A320_Neo_FCU_Component {
     }
 
     onEvent(_event) {
-        if (_event === "HDG_INC_HEADING") {
+        if (_event === "HDG_INC") {
             this.selectedValue = (((this.selectedValue + this.getRotationSpeed()) % 360) + 360) % 360;
             this.onRotate();
-        } else if (_event === "HDG_DEC_HEADING") {
-            this.selectedValue = (((this.selectedValue - this.getRotationSpeed()) % 360) + 360) % 360;
-            this.onRotate();
-        } else if (_event === "HDG_INC_TRACK") {
-            this.selectedValue = (((this.selectedValue + this.getRotationSpeed()) % 360) + 360) % 360;
-            this.onRotate();
-        } else if (_event === "HDG_DEC_TRACK") {
+        } else if (_event === "HDG_DEC") {
             this.selectedValue = (((this.selectedValue - this.getRotationSpeed()) % 360) + 360) % 360;
             this.onRotate();
         } else if (_event === "HDG_PUSH") {

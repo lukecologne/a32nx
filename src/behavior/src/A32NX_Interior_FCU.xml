@@ -17,6 +17,161 @@
   -->
 
 <ModelBehaviors>
+    <!--
+    Template for the AP1/AP2 master button on the FCU.
+
+    Should probably be replaced by a generic template at some point.
+    -->
+    <Template Name="FBW_Airbus_Autopilot_Master">
+        <DefaultTemplateParameters>
+            <DEFAULT_NAME>Autopilot</DEFAULT_NAME>
+            <HELPID>HELPID_AUTOPILOT_MASTER</HELPID>
+            <TOOLTIPID>%((L:A32NX_AUTOPILOT_#ID#_ACTIVE, bool))%{if}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_AP_ON%{else}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_AP_OFF%{end}</TOOLTIPID>
+            <AP_COUNT>1</AP_COUNT>
+            <ID>1</ID>
+            <ON_AP_MASTER_SWITCH></ON_AP_MASTER_SWITCH>
+        </DefaultTemplateParameters>
+        <OverrideTemplateParameters>
+            <TEST_CODE>1</TEST_CODE>
+            <Condition Check="ID" Match="1">
+                <True>
+                    <INIT>(L:A32NX_AUTOPILOT_#ID#_ACTIVE, Bool)</INIT>
+                </True>
+            </Condition>
+        </OverrideTemplateParameters>
+        <Condition Check="ID" Match="1">
+            <True>
+                <UseTemplate Name="ASOBO_GT_Update">
+                    <FREQUENCY>3</FREQUENCY>
+                    <UPDATE_CODE>
+                        (L:A32NX_AUTOPILOT_#ID#_ACTIVE, Bool)
+                    </UPDATE_CODE>
+                </UseTemplate>
+            </True>
+        </Condition>
+        <UseTemplate Name="ASOBO_AUTOPILOT_Push_Template">
+            <LEFT_SINGLE_CODE>(&gt;H:A320_Neo_FCU_AP_#ID#_PUSH)</LEFT_SINGLE_CODE>
+            <EMISSIVE_CODE_ACTIVE>(L:A32NX_AUTOPILOT_#ID#_ACTIVE, Bool)</EMISSIVE_CODE_ACTIVE>
+        </UseTemplate>
+    </Template>
+
+    <!--
+    Template for the ATHR button on the FCU.
+
+    Should probably be replaced by a generic template at some point.
+    -->
+    <Template Name="FBW_Airbus_Autopilot_Push_Autothrust">
+        <DefaultTemplateParameters>
+            <DEFAULT_NAME>Autothrust</DEFAULT_NAME>
+            <TOOLTIPID>%((L:A32NX_AUTOTHRUST_STATUS, enum) 0 &gt;)%{if}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_AUTOTHROTTLE_ARMED%{else}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_AUTOTHROTTLE_OFF%{end}</TOOLTIPID>
+        </DefaultTemplateParameters>
+        <UseTemplate Name="ASOBO_AUTOPILOT_Push_Template">
+            <LEFT_SINGLE_CODE>1 (&gt;K:AUTO_THROTTLE_ARM)</LEFT_SINGLE_CODE>
+            <EMISSIVE_CODE_ACTIVE>(L:A32NX_AUTOTHRUST_STATUS, enum) 0 &gt;</EMISSIVE_CODE_ACTIVE>
+        </UseTemplate>
+    </Template>
+
+    <Template Name="FBW_AutoThrottle_Instinctive_Disconnect_Template">
+        <UseTemplate Name="FBW_Push_Held">
+            <HOLD_SIMVAR>K:A32NX.ATHR_INSTINCTIVE_DISCONNECT</HOLD_SIMVAR>
+        </UseTemplate>
+    </Template>
+
+    <!--
+    Template for the LOC button on the FCU.
+
+    Should probably be replaced by a generic template at some point.
+    -->
+    <Template Name="FBW_Airbus_Autopilot_Push_Localiser">
+        <DefaultTemplateParameters>
+            <DEFAULT_NAME>Localizer</DEFAULT_NAME>
+            <HELPID>HELPID_AUTOPILOT_NAV_HOLD</HELPID>
+            <TOOLTIPID>%((L:#PLANE_NAME#_AUTOPILOT_LOC_MODE, bool))%{if}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_LOC_ON%{else}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_LOC_OFF%{end}</TOOLTIPID>
+        </DefaultTemplateParameters>
+
+        <UseTemplate Name="ASOBO_AUTOPILOT_Push_Template">
+            <LEFT_SINGLE_CODE>(&gt;H:A320_Neo_FCU_LOC_PUSH)</LEFT_SINGLE_CODE>
+            <EMISSIVE_CODE_ACTIVE>(L:A32NX_FCU_LOC_MODE_ACTIVE, bool)</EMISSIVE_CODE_ACTIVE>
+        </UseTemplate>
+    </Template>
+
+    <!--
+    Template for the APPR button on the FCU.
+
+    Should probably be replaced by a generic template at some point.
+    -->
+    <Template Name="FBW_Airbus_Autopilot_Push_Approach">
+        <DefaultTemplateParameters>
+            <DEFAULT_NAME>Approach</DEFAULT_NAME>
+            <HELPID>HELPID_AUTOPILOT_APP_HOLD</HELPID>
+            <TOOLTIPID>%((L:#PLANE_NAME#_AUTOPILOT_APPR_MODE, bool))%{if}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_APR_ON%{else}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_APR_OFF%{end}</TOOLTIPID>
+        </DefaultTemplateParameters>
+
+        <UseTemplate Name="ASOBO_AUTOPILOT_Push_Template">
+            <LEFT_SINGLE_CODE>(&gt;H:A320_Neo_FCU_APPR_PUSH)</LEFT_SINGLE_CODE>
+            <EMISSIVE_CODE_ACTIVE>(L:A32NX_FCU_APPR_MODE_ACTIVE, bool)</EMISSIVE_CODE_ACTIVE>
+        </UseTemplate>
+    </Template>
+
+    <Template Name="FBW_AUTOPILOT_Knob_SpeedMach_Template">
+        <DefaultTemplateParameters>
+            <ANIM_NAME>AUTOPILOT_Knob_SpeedMach</ANIM_NAME>
+            <ANIM_NAME_PUSH>AUTOPILOT_Knob_SpeedMach_Push</ANIM_NAME_PUSH>
+            <ANIM_NAME_PUSHPULL>AUTOPILOT_Knob_SpeedMach_Push</ANIM_NAME_PUSHPULL>
+            <PART_ID>AUTOPILOT_Knob_SpeedMach</PART_ID>
+            <NODE_ID>AUTOPILOT_Knob_SpeedMach</NODE_ID>
+            <WWISE_EVENT>QNHknob</WWISE_EVENT>
+            <COUNT>36</COUNT>
+            <ANIMTIP_0_ON_CURSOR>TurnLeft</ANIMTIP_0_ON_CURSOR>
+            <ANIMTIP_1_ON_CURSOR>TurnRight</ANIMTIP_1_ON_CURSOR>
+            <ANIMTIP_0>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_SPEED_DECREASE</ANIMTIP_0>
+            <ANIMTIP_1>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_SPEED_INCREASE</ANIMTIP_1>
+        </DefaultTemplateParameters>
+        <EditableTemplateParameters>
+            <AddParams>
+                <ANIM_NAME></ANIM_NAME>
+                <ANIM_NAME_PUSHPULL></ANIM_NAME_PUSHPULL>
+            </AddParams>
+        </EditableTemplateParameters>
+        <Component ID="#NODE_ID#" Node="#NODE_ID#">
+            <UseTemplate Name="ASOBO_GT_Knob_Infinite_PushPull">
+                <ANIM_NAME_KNOB>#ANIM_NAME#</ANIM_NAME_KNOB>
+                <ANTICLOCKWISE_CODE>
+                    (L:XMLVAR_AirSpeedIsInMach) if{
+                    1 (&gt;K:AP_MACH_VAR_DEC)
+                    } els{
+                    1 (&gt;K:AP_SPD_VAR_DEC)
+                    }
+                    (&gt;H:A320_Neo_CDU_AP_DEC_SPEED)
+                </ANTICLOCKWISE_CODE>
+                <CLOCKWISE_CODE>
+                    (L:XMLVAR_AirSpeedIsInMach) if{
+                    1 (&gt;K:AP_MACH_VAR_INC)
+                    } els{
+                    1 (&gt;K:AP_SPD_VAR_INC)
+                    }
+                    (&gt;H:A320_Neo_CDU_AP_INC_SPEED)
+                </CLOCKWISE_CODE>
+                <PULL_CODE>
+                    (&gt;H:A320_Neo_CDU_MODE_SELECTED_SPEED)
+                </PULL_CODE>
+                <PUSH_CODE>
+                    (&gt;H:A320_Neo_CDU_MODE_MANAGED_SPEED)
+                </PUSH_CODE>
+                <WWISE_EVENT_1>QNHknob</WWISE_EVENT_1>
+                <WWISE_EVENT_2>QNHknob</WWISE_EVENT_2>
+                <!--<ANIMTIP_0_ON_CURSOR>TurnLeft</ANIMTIP_0_ON_CURSOR>
+                <ANIMTIP_1_ON_CURSOR>TurnRight</ANIMTIP_1_ON_CURSOR> -->
+                <ANIMTIP_2_ON_CURSOR>UpArrow</ANIMTIP_2_ON_CURSOR>
+                <ANIMTIP_3_ON_CURSOR>DownArrow</ANIMTIP_3_ON_CURSOR>
+                <ANIMTIP_0>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_SPEED_DECREASE</ANIMTIP_0>
+                <ANIMTIP_1>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_SPEED_INCREASE</ANIMTIP_1>
+                <ANIMTIP_2>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_SPEED_ENGAGE_MANAGE_MODE</ANIMTIP_2>
+                <ANIMTIP_3>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_SPEED_ENGAGE_SELECTED_AIRSPEED_MODE</ANIMTIP_3>
+            </UseTemplate>
+        </Component>
+    </Template>
+
     <Template Name="FBW_Airbus_FCU_Baro_Knob">
         <DefaultTemplateParameters>
             <ID>1</ID>
@@ -234,18 +389,10 @@
         <Component ID="#NODE_ID#" Node="#NODE_ID#">
             <UseTemplate Name="ASOBO_GT_Knob_Infinite_PushPull">
                 <CLOCKWISE_CODE>
-                    (L:A32NX_TRK_FPA_MODE_ACTIVE, bool) 1 == if{
-                        (&gt;H:A320_Neo_FCU_HDG_INC_TRACK)
-                    } els{
-                        (&gt;H:A320_Neo_FCU_HDG_INC_HEADING)
-                    }
+                    (&gt;H:A320_Neo_FCU_HDG_INC)
                 </CLOCKWISE_CODE>
                 <ANTICLOCKWISE_CODE>
-                    (L:A32NX_TRK_FPA_MODE_ACTIVE, bool) 1 == if{
-                        (&gt;H:A320_Neo_FCU_HDG_DEC_TRACK)
-                    } els{
-                        (&gt;H:A320_Neo_FCU_HDG_DEC_HEADING)
-                    }
+                    (&gt;H:A320_Neo_FCU_HDG_DEC)
                 </ANTICLOCKWISE_CODE>
                 <PULL_CODE>
                     (&gt;H:A320_Neo_FCU_HDG_PULL)

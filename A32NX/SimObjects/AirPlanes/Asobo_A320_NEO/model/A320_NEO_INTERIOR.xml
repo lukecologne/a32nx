@@ -3189,7 +3189,6 @@
                 <PART_ID>Speed_knob</PART_ID>
                 <ANIM_NAME>KNOB_AUTOPILOT_L2</ANIM_NAME>
                 <ANIM_NAME_PUSHPULL>PUSH_AUTOPILOT_L2</ANIM_NAME_PUSHPULL>
-                <TYPE>AIRBUS</TYPE>
             </UseTemplate>
 
             <UseTemplate Name="FBW_Airbus_Autopilot_Knob_Heading_Template">
