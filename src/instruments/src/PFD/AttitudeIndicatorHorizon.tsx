@@ -32,7 +32,7 @@ interface HorizonProps {
     isOnGround: boolean;
     radioAlt: number;
     decisionHeight: number;
-    selectedHeading: number;
+    selectedHeading: Arinc429Word;
     FDActive: boolean;
     isAttExcessive: boolean;
 }
@@ -45,8 +45,8 @@ export const Horizon = ({ pitch, roll, heading, isOnGround, radioAlt, decisionHe
     const yOffset = Math.max(Math.min(calculateHorizonOffsetFromPitch(-pitch.value), 31.563), -31.563);
 
     const bugs: [(offset: number) => JSX.Element, number][] = [];
-    if (!Number.isNaN(selectedHeading) && !FDActive) {
-        bugs.push([HeadingBug, selectedHeading]);
+    if (!selectedHeading.isNormalOperation() && !FDActive) {
+        bugs.push([HeadingBug, selectedHeading.value]);
     }
 
     return (

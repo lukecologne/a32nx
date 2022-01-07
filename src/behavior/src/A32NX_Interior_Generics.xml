@@ -510,6 +510,61 @@
         </Condition>
     </Template>
 
+    <!--
+        Template for all (rectangular) FCU buttons.
+
+        Main Parameters:
+                - NODE_ID           <no default>    The button node ID
+                - SEQ1_CODE         <no default>    The button light illumination condition
+                - LEFT_SINGLE_CODE  <no default>    The code that is executed when the button is pressed
+    -->
+    <Template Name="FBW_Airbus_FCU_Button">
+        <DefaultTemplateParameters>
+            <NORMALIZED_TIME_1>0.1</NORMALIZED_TIME_1>
+            <NORMALIZED_TIME_2>0.5</NORMALIZED_TIME_2>
+            <ANIM_NAME>#NODE_ID#</ANIM_NAME>
+            <SEQ1_CODE>0</SEQ1_CODE>
+            <INDICATOR_NODE_ID>#NODE_ID#_SEQ1</INDICATOR_NODE_ID>
+            <BACKLIGHT_NODE_ID>#NODE_ID#_SEQ2</BACKLIGHT_NODE_ID>
+            <INDICATOR_POWERED>(L:A32NX_ELEC_AC_ESS_SHED_BUS_IS_POWERED, Bool)</INDICATOR_POWERED>
+            <BACKLIGHT_POWERED>(L:A32NX_ELEC_AC_1_BUS_IS_POWERED, Bool)</BACKLIGHT_POWERED>
+            <BACKLIGHT_POTENTIOMETER>84</BACKLIGHT_POTENTIOMETER>
+            <WWISE_EVENT_1>fcubutton</WWISE_EVENT_1>
+            <WWISE_EVENT_2>fcubutton</WWISE_EVENT_2>
+        </DefaultTemplateParameters>
+
+        <Component ID="#NODE_ID#" Node="#NODE_ID#">
+            <Component ID="#NODE_ID#_BUTTON" Node="#NODE_ID#">
+                <UseTemplate Name="ASOBO_GT_Push_Button">
+                </UseTemplate>
+            </Component>
+
+            <Component ID="#INDICATOR_NODE_ID#" Node="#INDICATOR_NODE_ID#">
+                <UseTemplate Name="ASOBO_GT_Emissive_Gauge">
+                    <EMISSIVE_CODE type="rnp" return="number">
+                        let indicatorActive = #SEQ1_CODE, bool#;
+                        let indicatorsPowered = #INDICATOR_POWERED, bool#;
+                        alias annunciatorLight = (L:A32NX_OVHD_INTLT_ANN, number);
+                        let emissiveDim = if annunciatorLight == 2 { 0.1 } else { 1 };
+                        (if (indicatorActive or annunciatorLight == 0) and indicatorsPowered {
+                            1 * emissiveDim
+                        } else {
+                            0
+                        })
+                    </EMISSIVE_CODE>
+                </UseTemplate>
+            </Component>
+
+            <Component ID="#BACKLIGHT_NODE_ID#" Node="#BACKLIGHT_NODE_ID#">
+                <UseTemplate Name="ASOBO_GT_Emissive_Gauge">
+                    <EMISSIVE_CODE>
+                        (A:LIGHT POTENTIOMETER:#BACKLIGHT_POTENTIOMETER#, Percent over 100) #BACKLIGHT_POWERED# *
+                    </EMISSIVE_CODE>
+                </UseTemplate>
+            </Component>
+        </Component>
+    </Template>
+
 
     <!--
     Template for defining panel lighting knobs tied to potentiometers

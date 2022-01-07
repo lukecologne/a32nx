@@ -1,5 +1,6 @@
 import React from 'react';
 import { Arinc429Word } from '@shared/arinc429';
+import { useArinc429Var } from '@instruments/common/arinc429';
 import { VerticalTape } from './PFDUtils';
 import { DigitalAltitudeReadout } from './DigitalAltitudeReadout';
 import { getSimVar } from '../util.js';
@@ -92,15 +93,18 @@ export const AltitudeIndicator = ({ altitude, FWCFlightPhase }: AltitudeIndicato
 };
 
 interface AltitudeIndicatorOfftapeProps {
+    altimeterValue: Arinc429Word
     altitude: Arinc429Word;
     MDA: number;
     targetAlt: number;
     altIsManaged: boolean;
-    mode: '' | 'STD' | 'QFE' | 'QNH';
+    altIsStd: boolean;
+    altIsQnh: boolean;
+    altIsInHg: boolean
     radioAlt: number;
 }
 
-export const AltitudeIndicatorOfftape = ({ altitude, MDA, targetAlt, altIsManaged, mode, radioAlt }: AltitudeIndicatorOfftapeProps) => {
+export const AltitudeIndicatorOfftape = ({ altimeterValue, altitude, MDA, targetAlt, altIsManaged, altIsStd, altIsQnh, altIsInHg, radioAlt }: AltitudeIndicatorOfftapeProps) => {
     if (!altitude.isNormalOperation()) {
         return (
             <>
@@ -115,8 +119,8 @@ export const AltitudeIndicatorOfftape = ({ altitude, MDA, targetAlt, altIsManage
         <g>
             <path id="AltTapeOutline" className="NormalStroke White" d="m117.75 123.56h17.83m-4.7345-85.473v85.473m-13.096-85.473h17.83" />
             <LinearDeviationIndicator altitude={altitude} linearDeviation={NaN} />
-            <SelectedAltIndicator currentAlt={altitude} targetAlt={targetAlt} altIsManaged={altIsManaged} mode={mode} />
-            <AltimeterIndicator mode={mode} altitude={altitude} />
+            <SelectedAltIndicator currentAlt={altitude} targetAlt={targetAlt} altIsManaged={altIsManaged} altIsStd={altIsStd} />
+            <AltimeterIndicator altimeterValue={altimeterValue} altIsStd={altIsStd} altIsQnh={altIsQnh} altIsInHg={altIsInHg} altitude={altitude} />
             <MetricAltIndicator altitude={altitude} MDA={MDA} targetAlt={targetAlt} altIsManaged={altIsManaged} />
             <path id="AltReadoutBackground" className="BlackFill" d="m130.85 85.308h-13.13v-8.9706h13.13v-2.671h8.8647v14.313h-8.8647z" />
             <RadioAltIndicator radioAlt={radioAlt} />
@@ -133,16 +137,15 @@ interface SelectedAltIndicatorProps {
     currentAlt: Arinc429Word,
     targetAlt: number,
     altIsManaged: boolean,
-    mode: '' | 'STD' | 'QFE' | 'QNH';
+    altIsStd: boolean;
 }
 
-const SelectedAltIndicator = ({ currentAlt, targetAlt, altIsManaged, mode }: SelectedAltIndicatorProps) => {
+const SelectedAltIndicator = ({ currentAlt, targetAlt, altIsManaged, altIsStd }: SelectedAltIndicatorProps) => {
     const color = altIsManaged ? 'Magenta' : 'Cyan';
 
-    const isSTD = mode === 'STD';
     let boxLength = 19.14;
     let text = '';
-    if (isSTD) {
+    if (altIsStd) {
         text = Math.round(targetAlt / 100).toString().padStart(3, '0');
         boxLength = 12.5;
     } else {
@@ -153,7 +156,7 @@ const SelectedAltIndicator = ({ currentAlt, targetAlt, altIsManaged, mode }: Sel
         return (
             <g id="SelectedAltLowerGroup">
                 <text id="SelectedAltLowerText" className={`FontMedium EndAlign ${color}`} x="135.7511" y="128.70299" xmlSpace="preserve">{text}</text>
-                {isSTD
+                {altIsStd
                 && <text id="SelectedAltLowerFLText" className={`FontSmall MiddleAlign ${color}`} x="120.87094" y="128.71681">FL</text>}
             </g>
         );
@@ -161,7 +164,7 @@ const SelectedAltIndicator = ({ currentAlt, targetAlt, altIsManaged, mode }: Sel
         return (
             <g id="SelectedAltUpperGroup">
                 <text id="SelectedAltUpperText" className={`FontMedium EndAlign ${color}`} x="136.22987" y="37.250134" xmlSpace="preserve">{text}</text>
-                {isSTD
+                {altIsStd
                 && <text id="SelectedAltUpperFLText" className={`FontSmall MiddleAlign ${color}`} x="120.85925" y="37.125755">FL</text>}
             </g>
         );
@@ -204,15 +207,18 @@ const LinearDeviationIndicator = ({ linearDeviation, altitude }: LinearDeviation
 };
 
 interface AltimeterIndicatorProps {
-    mode: '' | 'STD' | 'QFE' | 'QNH';
+    altimeterValue: Arinc429Word;
+    altIsStd: boolean;
+    altIsQnh: boolean;
+    altIsInHg: boolean
     altitude: Arinc429Word,
 }
 
-const AltimeterIndicator = ({ mode, altitude }: AltimeterIndicatorProps) => {
+const AltimeterIndicator = ({ altimeterValue, altIsStd, altIsQnh, altIsInHg, altitude }: AltimeterIndicatorProps) => {
     const phase = getSimVar('L:A32NX_FMGC_FLIGHT_PHASE', 'enum');
     const transAlt = getSimVar(phase <= 3 ? 'L:AIRLINER_TRANS_ALT' : 'L:AIRLINER_APPR_TRANS_ALT', 'number');
 
-    if (mode === 'STD') {
+    if (altIsStd) {
         return (
             <g id="STDAltimeterModeGroup" className={(phase > 3 && transAlt > altitude.value && transAlt !== 0) ? 'BlinkInfinite' : ''}>
                 <path className="NormalStroke Yellow" d="m124.79 131.74h13.096v7.0556h-13.096z" />
@@ -221,24 +227,31 @@ const AltimeterIndicator = ({ mode, altitude }: AltimeterIndicatorProps) => {
         );
     }
 
-    const units = Simplane.getPressureSelectedUnits();
-    const pressure = Simplane.getPressureValue(units);
     let text: string;
-    if (pressure !== null) {
-        if (units === 'millibar') {
-            text = Math.round(pressure).toString();
+    if (altimeterValue.isNormalOperation()) {
+        if (!altIsInHg) {
+            text = Math.round(altimeterValue.value).toString();
         } else {
-            text = pressure.toFixed(2);
+            text = altimeterValue.value.toFixed(2);
         }
     } else {
         text = '';
     }
 
+    let modeText: string;
+    if (altIsStd) {
+        modeText = 'STD';
+    } else if (altIsQnh) {
+        modeText = 'QNH';
+    } else {
+        modeText = 'QFE';
+    }
+
     return (
         <g id="AltimeterGroup" className={(phase <= 3 && transAlt < altitude.value && transAlt !== 0) ? 'BlinkInfinite' : ''}>
-            {mode === 'QFE'
+            {!altIsQnh
             && <path className="NormalStroke White" d="m 116.83686,133.0668 h 13.93811 v 5.8933 h -13.93811 z" />}
-            <text id="AltimeterModeText" className="FontMedium White" x="118.23066" y="138.11342">{mode}</text>
+            <text id="AltimeterModeText" className="FontMedium White" x="118.23066" y="138.11342">{modeText}</text>
             <text id="AltimeterSettingText" className="FontMedium MiddleAlign Cyan" x="141.25583" y="138.09006">{text}</text>
         </g>
     );

@@ -35,8 +35,8 @@
             </True>
         </Condition>
         <UseTemplate Name="FBW_AUTOPILOT_Push_Template">
-            <LEFT_SINGLE_CODE>(&gt;H:A320_Neo_FCU_AP_#ID#_PUSH)</LEFT_SINGLE_CODE>
-            <EMISSIVE_CODE_ACTIVE>(L:A32NX_AUTOPILOT_#ID#_ACTIVE, Bool)</EMISSIVE_CODE_ACTIVE>
+            <LEFT_SINGLE_CODE>(&gt;H:A32NX_FCU_AP_#ID#_PUSH)</LEFT_SINGLE_CODE>
+            <EMISSIVE_CODE_ACTIVE>(L:A32NX_FCU_AP_#ID#_LIGHT_ON, Bool)</EMISSIVE_CODE_ACTIVE>
         </UseTemplate>
     </Template>
 
@@ -51,8 +51,8 @@
             <TOOLTIPID>%((L:A32NX_AUTOTHRUST_STATUS, enum) 0 &gt;)%{if}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_AUTOTHROTTLE_ARMED%{else}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_AUTOTHROTTLE_OFF%{end}</TOOLTIPID>
         </DefaultTemplateParameters>
         <UseTemplate Name="FBW_AUTOPILOT_Push_Template">
-            <LEFT_SINGLE_CODE>1 (&gt;K:AUTO_THROTTLE_ARM)</LEFT_SINGLE_CODE>
-            <EMISSIVE_CODE_ACTIVE>(L:A32NX_AUTOTHRUST_STATUS, enum) 0 &gt;</EMISSIVE_CODE_ACTIVE>
+            <LEFT_SINGLE_CODE>1 (&gt;H:A32NX_FCU_ATHR_PUSH)</LEFT_SINGLE_CODE>
+            <EMISSIVE_CODE_ACTIVE>(L:A32NX_FCU_ATHR_LIGHT_ON, Bool)</EMISSIVE_CODE_ACTIVE>
         </UseTemplate>
     </Template>
 
@@ -62,52 +62,45 @@
     Should probably be replaced by a generic template at some point.
     -->
     <Template Name="FBW_Airbus_Autopilot_Push_Localiser">
-        <DefaultTemplateParameters>
-            <DEFAULT_NAME>Localizer</DEFAULT_NAME>
-            <HELPID>HELPID_AUTOPILOT_NAV_HOLD</HELPID>
-            <TOOLTIPID>%((L:#PLANE_NAME#_AUTOPILOT_LOC_MODE, bool))%{if}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_LOC_ON%{else}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_LOC_OFF%{end}</TOOLTIPID>
-            <SEQ1_POWERED>1</SEQ1_POWERED>
-            <SEQ2_POWERED>1</SEQ2_POWERED>
-        </DefaultTemplateParameters>
-
-        <UseTemplate Name="FBW_AUTOPILOT_Push_Template">
-            <LEFT_SINGLE_CODE>(&gt;H:A320_Neo_FCU_LOC_PUSH)</LEFT_SINGLE_CODE>
-            <EMISSIVE_CODE_ACTIVE>(L:A32NX_FCU_LOC_MODE_ACTIVE, bool)</EMISSIVE_CODE_ACTIVE>
+        <UseTemplate Name="FBW_Airbus_FCU_Button">
+            <LEFT_SINGLE_CODE>(&gt;H:A32NX_FCU_LOC_PUSH)</LEFT_SINGLE_CODE>
+            <SEQ1_CODE>(L:A32NX_FCU_LOC_LIGHT_ON, bool)</SEQ1_CODE>
         </UseTemplate>
     </Template>
 
     <!--
     Template for the APPR button on the FCU.
-
-    Should probably be replaced by a generic template at some point.
     -->
     <Template Name="FBW_Airbus_Autopilot_Push_Approach">
-        <DefaultTemplateParameters>
-            <DEFAULT_NAME>Approach</DEFAULT_NAME>
-            <HELPID>HELPID_AUTOPILOT_APP_HOLD</HELPID>
-            <TOOLTIPID>%((L:#PLANE_NAME#_AUTOPILOT_APPR_MODE, bool))%{if}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_APR_ON%{else}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_APR_OFF%{end}</TOOLTIPID>
-            <SEQ1_POWERED>1</SEQ1_POWERED>
-            <SEQ2_POWERED>1</SEQ2_POWERED>
-        </DefaultTemplateParameters>
-
-        <UseTemplate Name="FBW_AUTOPILOT_Push_Template">
-            <LEFT_SINGLE_CODE>(&gt;H:A320_Neo_FCU_APPR_PUSH)</LEFT_SINGLE_CODE>
-            <EMISSIVE_CODE_ACTIVE>(L:A32NX_FCU_APPR_MODE_ACTIVE, bool)</EMISSIVE_CODE_ACTIVE>
+        <UseTemplate Name="FBW_Airbus_FCU_Button">
+            <LEFT_SINGLE_CODE>(&gt;H:A32NX_FCU_APPR_PUSH)</LEFT_SINGLE_CODE>
+            <SEQ1_CODE>(L:A32NX_FCU_APPR_LIGHT_ON, bool)</SEQ1_CODE>
         </UseTemplate>
     </Template>
 
     <Template Name="FBW_AIRBUS_Push_Expedite_Template">
-        <DefaultTemplateParameters>
-            <DEFAULT_NAME>Expedite</DEFAULT_NAME>
-            <PLANE_PREFIX></PLANE_PREFIX>
-            <TOOLTIPID>Expedite</TOOLTIPID>
-            <SEQ1_POWERED>1</SEQ1_POWERED>
-            <SEQ2_POWERED>1</SEQ2_POWERED>
-        </DefaultTemplateParameters>
-        <UseTemplate Name="FBW_AUTOPILOT_Push_Template">
-            <LEFT_SINGLE_CODE>(&gt;H:A320_Neo_FCU_EXPED_PUSH)</LEFT_SINGLE_CODE>
-            <EMISSIVE_CODE_ACTIVE>(L:A32NX_FMA_EXPEDITE_MODE, bool)</EMISSIVE_CODE_ACTIVE>
+        <UseTemplate Name="FBW_Airbus_FCU_Button">
+            <LEFT_SINGLE_CODE>(&gt;H:A32NX_FCU_EXPED_PUSH)</LEFT_SINGLE_CODE>
+            <SEQ1_CODE>(L:A32NX_FCU_EXPED_LIGHT_ON, bool)</SEQ1_CODE>
         </UseTemplate>
+    </Template>
+
+    <Template Name="FBW_AIRBUS_Push_Metric_Alt_Template">
+        <DefaultTemplateParameters>
+            <NODE_ID>AIRBUS_Push_Metric_Alt</NODE_ID>
+            <ANIM_NAME>AIRBUS_Push_Metric_Alt</ANIM_NAME>
+            <PART_ID>AIRBUS_Push_Metric_Alt</PART_ID>
+            <WWISE_EVENT_1>fcubutton</WWISE_EVENT_1>
+            <WWISE_EVENT_2>fcubutton</WWISE_EVENT_2>
+            <NORMALIZED_TIME_1>0.1</NORMALIZED_TIME_1>
+            <NORMALIZED_TIME_2>0.5</NORMALIZED_TIME_2>
+        </DefaultTemplateParameters>
+
+        <Component ID="#NODE_ID#" Node="#NODE_ID#">
+            <UseTemplate Name="ASOBO_GT_Push_Button">
+                <LEFT_SINGLE_CODE>(&gt;H:A32NX_FCU_METRIC_ALT_TOGGLE_PUSH)</LEFT_SINGLE_CODE>
+            </UseTemplate>
+        </Component>
     </Template>
 
     <Template Name="FBW_AUTOPILOT_Knob_SpeedMach_Template">
@@ -136,16 +129,16 @@
                     <UseTemplate Name="ASOBO_GT_Knob_Infinite_PushPull">
                         <ANIM_NAME_KNOB>#ANIM_NAME#</ANIM_NAME_KNOB>
                         <ANTICLOCKWISE_CODE>
-                            (&gt;H:A320_Neo_FCU_SPEED_DEC)
+                            (&gt;H:A32NX_FCU_SPD_DEC)
                         </ANTICLOCKWISE_CODE>
                         <CLOCKWISE_CODE>
-                            (&gt;H:A320_Neo_FCU_SPEED_INC)
+                            (&gt;H:A32NX_FCU_SPD_INC)
                         </CLOCKWISE_CODE>
                         <PULL_CODE>
-                            (&gt;H:A320_Neo_FCU_SPEED_PULL)
+                            (&gt;H:A32NX_FCU_SPD_PULL)
                         </PULL_CODE>
                         <PUSH_CODE>
-                            (&gt;H:A320_Neo_FCU_SPEED_PUSH)
+                            (&gt;H:A32NX_FCU_SPD_PUSH)
                         </PUSH_CODE>
                         <WWISE_EVENT_1>QNHknob</WWISE_EVENT_1>
                         <WWISE_EVENT_2>QNHknob</WWISE_EVENT_2>
@@ -189,7 +182,7 @@
             <Switch Param="TYPE">
                 <Case Value="AIRBUS">
                     <LEFT_SINGLE_CODE>
-                        (&gt;H:A320_Neo_FCU_SPEED_TOGGLE_SPEED_MACH)
+                        (&gt;H:A32NX_FCU_SPD_MACH_TOGGLE_PUSH)
                     </LEFT_SINGLE_CODE>
                     <EMISSIVE_CODE_ACTIVE>(A:AUTOPILOT MANAGED SPEED IN MACH, Bool)</EMISSIVE_CODE_ACTIVE>
                     <TOOLTIPID>%((A:AUTOPILOT MANAGED SPEED IN MACH, Bool))%{if}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_SPD_MACH%{else}TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_SPD_KNOT%{end}</TOOLTIPID>
@@ -213,54 +206,31 @@
         </UseTemplate>
     </Template>
 
-<Template Name="FBW_AUTOPILOT_Switch_Altitude_Increment_Template">
-    <Parameters Type="Default">
-        <DEFAULT_NAME>Altitude_Increment</DEFAULT_NAME>
-        <NODE_ID>AUTOPILOT_Switch_Altitude_Increment</NODE_ID>
-        <ANIM_NAME>AUTOPILOT_Switch_Altitude_Increment</ANIM_NAME>
-        <PART_ID>AUTOPILOT_Switch_Altitude_Increment</PART_ID>
-        <CURSOR>Animtip</CURSOR>
-        <INIT_ALTITUDE>1000</INIT_ALTITUDE>
-        <INPUT_EVENT_ID_SOURCE>AUTOPILOT</INPUT_EVENT_ID_SOURCE>
-    </Parameters>
-    <Parameters Type="Override">
-        <BTN_ID>Altitude_Increment</BTN_ID>
-    </Parameters>
-    <UseTemplate Name="ASOBO_GT_Update">
-        <UPDATE_ONCE>True</UPDATE_ONCE>
-        <UPDATE_CODE>#INIT_ALTITUDE# (&gt;L:XMLVAR_Autopilot_Altitude_Increment)</UPDATE_CODE>
-    </UseTemplate>
-    <Component ID="#NODE_ID#" Node="#NODE_ID#">
-        <UseTemplate Name="ASOBO_AUTOPILOT_Push_Template">
-            <ANIM_CODE>(B:#INPUT_EVENT_ID_SOURCE#_#BTN_ID#, Bool) 100 *</ANIM_CODE>
-            <NO_INDICATOR>True</NO_INDICATOR>
-            <NO_TEXT_EMISSIVE>True</NO_TEXT_EMISSIVE>
-            <TT_DESCRIPTION_ID>@TT_Package.AUTOPILOT_KNOB_ALTITUDE_INCREMENT_ACTION</TT_DESCRIPTION_ID>
-            <TOOLTIP_TITLE>@TT_Package.AUTOPILOT_KNOB_ALTITUDE_INCREMENT_TITLE</TOOLTIP_TITLE>
-            <GET_STATE_EXTERNAL>(L:XMLVAR_Autopilot_Altitude_Increment) sp0</GET_STATE_EXTERNAL>
-            <SIM_STATE_IS_ON_EXTERNAL>l0 1000 ==</SIM_STATE_IS_ON_EXTERNAL>
-            <SET_STATE_OFF>100 (&gt;L:XMLVAR_Autopilot_Altitude_Increment)</SET_STATE_OFF>
-            <SET_STATE_ON>1000 (&gt;L:XMLVAR_Autopilot_Altitude_Increment)</SET_STATE_ON>
-            <STR_STATE_OFF>Hundred</STR_STATE_OFF>
-            <STR_STATE_ON>Thousand</STR_STATE_ON>
-            <TT_VALUE_OFF>'100'</TT_VALUE_OFF>
-            <TT_VALUE_ON>'1000'</TT_VALUE_ON>
-            <CHECK_STATE_HAS_CHANGED>False</CHECK_STATE_HAS_CHANGED>
-            <LOCAL_VAR_TO_WATCH_0>XMLVAR_Autopilot_Altitude_Increment</LOCAL_VAR_TO_WATCH_0>
+    <Template Name="FBW_AUTOPILOT_Switch_Altitude_Increment_Template">
+        <DefaultTemplateParameters>
+            <NODE_ID>AUTOPILOT_Switch_Altitude_Increment</NODE_ID>
+            <ANIM_NAME>AUTOPILOT_Switch_Altitude_Increment</ANIM_NAME>
+            <PART_ID>AUTOPILOT_Switch_Altitude_Increment</PART_ID>
             <WWISE_EVENT_1>lswitch</WWISE_EVENT_1>
             <WWISE_EVENT_2>lswitch</WWISE_EVENT_2>
-        </UseTemplate>
-        <UseTemplate Name="ASOBO_GT_Switch_Code">
-            <ANIM_CODE>(B:#INPUT_EVENT_ID_SOURCE#_#BTN_ID#, Bool) 100 *</ANIM_CODE>
-            <WWISE_EVENT_1>lswitch</WWISE_EVENT_1>
-            <WWISE_EVENT_2>lswitch</WWISE_EVENT_2>
-        </UseTemplate>
-        <UseTemplate Name="ASOBO_LIGHTING_Potentiometer_Emissive_Template">
-            <POTENTIOMETER>84</POTENTIOMETER>
-            <DONT_OVERRIDE_BASE_EMISSIVE>True</DONT_OVERRIDE_BASE_EMISSIVE>
-            <EMISSIVE_CODE>(L:A32NX_ELEC_AC_1_BUS_IS_POWERED, Bool)</EMISSIVE_CODE>
-        </UseTemplate>
-    </Component>
-</Template>
+            <ANIMTIP_0>TT:COCKPIT.TOOLTIPS.BARO_SET_UNIT_TO_HPA</ANIMTIP_0>
+            <ANIMTIP_1>TT:COCKPIT.TOOLTIPS.BARO_SET_UNIT_TO_HG</ANIMTIP_1>
+        </DefaultTemplateParameters>
 
+        <Component ID="#NODE_ID#" Node="#NODE_ID#">
+            <UseTemplate Name="ASOBO_GT_Switch_Code">
+                <LEFT_SINGLE_CODE>(L:A32NX_FCU_ALT_INCREMENT_SIZE_1000) ! (&gt;L:A32NX_FCU_ALT_INCREMENT_SIZE_1000)</LEFT_SINGLE_CODE>
+                <ANIM_CODE>(L:A32NX_FCU_ALT_INCREMENT_SIZE_1000) 100 *</ANIM_CODE>
+            </UseTemplate>
+            <UseTemplate Name="ASOBO_GT_Update">
+                <UPDATE_ONCE>True</UPDATE_ONCE>
+                <UPDATE_CODE>1 (&gt;L:A32NX_FCU_ALT_INCREMENT_SIZE_1000)</UPDATE_CODE>
+            </UseTemplate>
+            <UseTemplate Name="ASOBO_LIGHTING_Potentiometer_Emissive_Template">
+                <POTENTIOMETER>84</POTENTIOMETER>
+                <DONT_OVERRIDE_BASE_EMISSIVE>True</DONT_OVERRIDE_BASE_EMISSIVE>
+                <EMISSIVE_CODE>(L:A32NX_ELEC_AC_1_BUS_IS_POWERED, Bool)</EMISSIVE_CODE>
+            </UseTemplate>
+        </Component>
+    </Template>
 </ModelBehaviors>

@@ -116,10 +116,8 @@ typedef enum {
 struct ap_raw_sm_input
 {
   boolean_T FD_active;
-  boolean_T AP_ENGAGE_push;
   boolean_T AP_1_push;
   boolean_T AP_2_push;
-  boolean_T AP_DISCONNECT_push;
   boolean_T HDG_push;
   boolean_T HDG_pull;
   boolean_T ALT_push;

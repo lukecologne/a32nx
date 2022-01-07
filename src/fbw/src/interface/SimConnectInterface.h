@@ -45,7 +45,6 @@ class SimConnectInterface {
     AUTOPILOT_ON,
     AUTOPILOT_DISENGAGE_SET,
     AUTOPILOT_DISENGAGE_TOGGLE,
-    TOGGLE_FLIGHT_DIRECTOR,
     A32NX_FCU_AP_1_PUSH,
     A32NX_FCU_AP_2_PUSH,
     A32NX_FCU_AP_DISCONNECT_PUSH,
@@ -63,13 +62,12 @@ class SimConnectInterface {
     A32NX_FCU_HDG_PUSH,
     A32NX_FCU_HDG_PULL,
     A32NX_FCU_TRK_FPA_TOGGLE_PUSH,
-    A32NX_FCU_TO_AP_HDG_PUSH,
-    A32NX_FCU_TO_AP_HDG_PULL,
     A32NX_FCU_ALT_INC,
     A32NX_FCU_ALT_DEC,
     A32NX_FCU_ALT_SET,
     A32NX_FCU_ALT_PUSH,
     A32NX_FCU_ALT_PULL,
+    A32NX_FCU_METRIC_ALT_TOGGLE_PUSH,
     A32NX_FCU_ALT_INCREMENT_TOGGLE,
     A32NX_FCU_ALT_INCREMENT_SET,
     A32NX_FCU_VS_INC,
@@ -77,40 +75,17 @@ class SimConnectInterface {
     A32NX_FCU_VS_SET,
     A32NX_FCU_VS_PUSH,
     A32NX_FCU_VS_PULL,
-    A32NX_FCU_TO_AP_VS_PUSH,
-    A32NX_FCU_TO_AP_VS_PULL,
     A32NX_FCU_LOC_PUSH,
     A32NX_FCU_APPR_PUSH,
     A32NX_FCU_EXPED_PUSH,
+    A32NX_FCU_FILTER_PUSH,
+    A32NX_FCU_BARO_PUSH,
+    A32NX_FCU_BARO_PULL,
+    A32NX_FCU_BARO_INC,
+    A32NX_FCU_BARO_DEC,
+    A32NX_FCU_FD_PUSH,
+    A32NX_FCU_LS_PUSH,
     A32NX_FMGC_DIR_TO_TRIGGER,
-    AP_AIRSPEED_ON,
-    AP_AIRSPEED_OFF,
-    AP_HDG_HOLD_ON,
-    AP_HDG_HOLD_OFF,
-    AP_ALT_HOLD_ON,
-    AP_ALT_HOLD_OFF,
-    AP_VS_ON,
-    AP_VS_OFF,
-    AP_SPEED_SLOT_INDEX_SET,
-    AP_SPD_VAR_INC,
-    AP_SPD_VAR_DEC,
-    AP_MACH_VAR_INC,
-    AP_MACH_VAR_DEC,
-    AP_HEADING_SLOT_INDEX_SET,
-    HEADING_BUG_INC,
-    HEADING_BUG_DEC,
-    AP_ALTITUDE_SLOT_INDEX_SET,
-    AP_ALT_VAR_INC,
-    AP_ALT_VAR_DEC,
-    AP_VS_SLOT_INDEX_SET,
-    AP_VS_VAR_INC,
-    AP_VS_VAR_DEC,
-    AP_APR_HOLD,
-    AP_LOC_HOLD,
-    AP_ALT_HOLD,
-    AP_VS_HOLD,
-    AP_ATT_HOLD,
-    AP_MACH_HOLD,
     AUTO_THROTTLE_ARM,
     AUTO_THROTTLE_DISCONNECT,
     AUTO_THROTTLE_TO_GA,
@@ -231,7 +206,7 @@ class SimConnectInterface {
 
   bool setClientDataLocalVariablesAutothrust(ClientDataLocalVariablesAutothrust output);
 
-  void resetSimInputAutopilot();
+  void resetSimInputFcu();
 
   void resetSimInputThrottles();
 
@@ -239,7 +214,7 @@ class SimConnectInterface {
 
   SimInput getSimInput();
 
-  SimInputAutopilot getSimInputAutopilot();
+  SimInputFcu getSimInputFcu();
 
   SimInputThrottles getSimInputThrottles();
 
@@ -295,7 +270,7 @@ class SimConnectInterface {
   SimData simData = {};
   // change to non-static when aileron events can be processed via SimConnect
   static SimInput simInput;
-  SimInputAutopilot simInputAutopilot = {};
+  SimInputFcu simInputFcu = {};
 
   SimInputThrottles simInputThrottles = {};
   std::vector<std::shared_ptr<ThrottleAxisMapping>> throttleAxis;
@@ -314,10 +289,6 @@ class SimConnectInterface {
   double flightControlsKeyChangeElevator = 0.0;
   double flightControlsKeyChangeRudder = 0.0;
   bool disableXboxCompatibilityRudderPlusMinus = false;
-
-  std::unique_ptr<LocalVariable> idFcuEventSetSPEED;
-  std::unique_ptr<LocalVariable> idFcuEventSetHDG;
-  std::unique_ptr<LocalVariable> idFcuEventSetVS;
 
   bool prepareSimDataSimConnectDataDefinitions();
 

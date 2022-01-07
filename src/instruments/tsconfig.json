@@ -3,6 +3,7 @@
   "compilerOptions": {
     "downlevelIteration": true,
     "module": "esnext",
+    "target": "ES6",
     "esModuleInterop": true,
     "jsx": "react",
     "moduleResolution": "node",

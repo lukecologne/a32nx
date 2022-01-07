@@ -24,6 +24,10 @@ bool FlyByWireInterface::connect() {
   animationAileronHandler = make_shared<AnimationAileronHandler>();
 
   // initialize model
+  fcu.init();
+  fmgcs[0].init();
+  fmgcs[1].init();
+
   autopilotStateMachine.initialize();
   autopilotLaws.initialize();
   autoThrust.initialize();
@@ -78,6 +82,17 @@ bool FlyByWireInterface::update(double sampleTime) {
   } else if (pauseDetected || simConnectInterface.getSimData().cameraState >= 10.0) {
     return result;
   }
+
+  result &= updateAdirsData();
+
+  result &= updateRaData();
+
+  result &= updateIlsData();
+
+  result &= updateFcu(calculatedSampleTime);
+
+  result &= updateFmgc(calculatedSampleTime, 0);
+  result &= updateFmgc(calculatedSampleTime, 1);
 
   // update altimeter setting
   result &= updateAltimeterSetting(calculatedSampleTime);
@@ -267,23 +282,98 @@ void FlyByWireInterface::setupLocalVariables() {
   idAutopilotTcasMessageRaInhibited = make_unique<LocalVariable>("A32NX_AUTOPILOT_TCAS_MESSAGE_RA_INHIBITED");
   idAutopilotTcasMessageTrkFpaDeselection = make_unique<LocalVariable>("A32NX_AUTOPILOT_TCAS_MESSAGE_TRK_FPA_DESELECTION");
 
-  // register L variable for flight director
-  idFlightDirectorBank = make_unique<LocalVariable>("A32NX_FLIGHT_DIRECTOR_BANK");
-  idFlightDirectorPitch = make_unique<LocalVariable>("A32NX_FLIGHT_DIRECTOR_PITCH");
-  idFlightDirectorYaw = make_unique<LocalVariable>("A32NX_FLIGHT_DIRECTOR_YAW");
-
   idBetaTarget = make_unique<LocalVariable>("A32NX_BETA_TARGET");
   idBetaTargetActive = make_unique<LocalVariable>("A32NX_BETA_TARGET_ACTIVE");
 
   // register L variables for autoland warning
   idAutopilotAutolandWarning = make_unique<LocalVariable>("A32NX_AUTOPILOT_AUTOLAND_WARNING");
 
-  // register L variables for autopilot
-  idAutopilotActiveAny = make_unique<LocalVariable>("A32NX_AUTOPILOT_ACTIVE");
-  idAutopilotActive_1 = make_unique<LocalVariable>("A32NX_AUTOPILOT_1_ACTIVE");
-  idAutopilotActive_2 = make_unique<LocalVariable>("A32NX_AUTOPILOT_2_ACTIVE");
-
   idAutopilotAutothrustMode = make_unique<LocalVariable>("A32NX_AUTOPILOT_AUTOTHRUST_MODE");
+
+  // Register ADIRS LVars
+  for (int i = 0; i < 3; i++) {
+    string idString = std::to_string(i + 1);
+    idAdrAltitudeCorrected[i] = make_unique<LocalVariable>("A32NX_ADIRS_ADR_" + idString + "_ALTITUDE");
+    idAdrMach[i] = make_unique<LocalVariable>("A32NX_ADIRS_ADR_" + idString + "_MACH");
+    idAdrAirspeedComputed[i] = make_unique<LocalVariable>("A32NX_ADIRS_ADR_" + idString + "_COMPUTED_AIRSPEED");
+    idAdrAirspeedTrue[i] = make_unique<LocalVariable>("A32NX_ADIRS_ADR_" + idString + "_TRUE_AIRSPEED");
+    idAdrVerticalSpeed[i] = make_unique<LocalVariable>("A32NX_ADIRS_ADR_" + idString + "_BAROMETRIC_VERTICAL_SPEED");
+
+    idIrLatitude[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_LATITUDE");
+    idIrLongitude[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_LONGITUDE");
+    idIrGroundSpeed[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_GROUND_SPEED");
+    idIrWindSpeed[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_WIND_VELOCITY");
+    idIrWindDirection[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_TRACK");
+    idIrTrackMagnetic[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_WIND_DIRECTION");
+    idIrHeadingMagnetic[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_HEADING");
+    idIrPitchAngle[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_PITCH");
+    idIrRollAngle[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_ROLL");
+    idIrTrackMagnetic[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_TRACK");
+    idIrInertialVerticalSpeed[i] = make_unique<LocalVariable>("A32NX_ADIRS_IR_" + idString + "_VERTICAL_SPEED");
+  }
+
+  // Register FMGC output LVARS
+  for (int i = 0; i < 2; i++) {
+    string idString = std::to_string(i + 1);
+    idFmgcDiscreteWord1[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_1");
+    idFmgcDiscreteWord2[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_2");
+    idFmgcDiscreteWord3[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_3");
+    idFmgcDiscreteWord4[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_4");
+    idFmgcDiscreteWord5[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_5");
+    idFmgcDiscreteWord6[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_6");
+    idFmgcDiscreteWordAthr[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_ATHR");
+    idFmgcDiscreteWordAthrFma[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_ATHR_FMA");
+
+    // register L variable for flight director
+    idFmgcRollFd[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_ROLL_FD");
+    idFmgcPitchFd[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_PITCH_FD");
+    idFmgcYawFd[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_YAW_FD");
+  }
+
+  // register FCU out/in-put Lvars
+  idFcuSelectedHeading = make_unique<LocalVariable>("A32NX_FCU_SELECTED_HEADING");
+  idFcuSelectedAlt = make_unique<LocalVariable>("A32NX_FCU_SELECTED_ALT");
+  idFcuSelectedSpeed = make_unique<LocalVariable>("A32NX_FCU_SELECTED_SPEED");
+  idFcuSelectedVs = make_unique<LocalVariable>("A32NX_FCU_SELECTED_VS");
+  idFcuSelectedMach = make_unique<LocalVariable>("A32NX_FCU_SELECTED_MACH");
+  idFcuSelectedTrack = make_unique<LocalVariable>("A32NX_FCU_SELECTED_TRACK");
+  idFcuSelectedFpa = make_unique<LocalVariable>("A32NX_FCU_SELECTED_FPA");
+  idFcuBaroCorrHpaLeft = make_unique<LocalVariable>("A32NX_FCU_L_BARO_CORR_HPA");
+  idFcuBaroCorrInhgLeft = make_unique<LocalVariable>("A32NX_FCU_L_BARO_CORR_INHG");
+  idFcuBaroCorrHpaRight = make_unique<LocalVariable>("A32NX_FCU_R_BARO_CORR_HPA");
+  idFcuBaroCorrInhgRight = make_unique<LocalVariable>("A32NX_FCU_R_BARO_CORR_INHG");
+  idFcuAtsWord = make_unique<LocalVariable>("A32NX_FCU_ATS_WORD");
+  idFcuAtsFmaWord = make_unique<LocalVariable>("A32NX_FCU_ATS_FMA_WORD");
+  idFcuEis1RightWord = make_unique<LocalVariable>("A32NX_FCU_R_EIS_WORD_1");
+  idFcuEis2RightWord = make_unique<LocalVariable>("A32NX_FCU_R_EIS_WORD_2");
+  idFcuEis1LeftWord = make_unique<LocalVariable>("A32NX_FCU_L_EIS_WORD_1");
+  idFcuEis2LeftWord = make_unique<LocalVariable>("A32NX_FCU_L_EIS_WORD_2");
+  idFcuDiscreteWord1 = make_unique<LocalVariable>("A32NX_FCU_DISCRETE_WORD_1");
+  idFcuDiscreteWord2 = make_unique<LocalVariable>("A32NX_FCU_DISCRETE_WORD_2");
+
+  idFcuAltIncrementSize1000 = make_unique<LocalVariable>("A32NX_FCU_ALT_INCREMENT_SIZE_1000");
+  idFcuLocLightOn = make_unique<LocalVariable>("A32NX_FCU_LOC_LIGHT_ON");
+  idFcuExpedLightOn = make_unique<LocalVariable>("A32NX_FCU_EXPED_LIGHT_ON");
+  idFcuApprLightOn = make_unique<LocalVariable>("A32NX_FCU_APPR_LIGHT_ON");
+  idFcuAp1LightOn = make_unique<LocalVariable>("A32NX_FCU_AP_1_LIGHT_ON");
+  idFcuAp2LightOn = make_unique<LocalVariable>("A32NX_FCU_AP_2_LIGHT_ON");
+  idFcuAthrLightOn = make_unique<LocalVariable>("A32NX_FCU_ATHR_LIGHT_ON");
+
+  for (int i = 0; i < 2; i++) {
+    string idString = i == 0 ? "L" : "R";
+    idFcuFdLightOn[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_FD_LIGHT_ON");
+    idFcuLsLightOn[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_LS_LIGHT_ON");
+    idFcuCstrLightOn[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_CSTR_LIGHT_ON");
+    idFcuWptLightOn[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_WPT_LIGHT_ON");
+    idFcuVordLightOn[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_VORD_LIGHT_ON");
+    idFcuNdbLightOn[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_NDB_LIGHT_ON");
+    idFcuArptLightOn[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_ARPT_LIGHT_ON");
+    idFcuRangeKnobPos[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_RANGE_KNOB_POS");
+    idFcuModeKnobPos[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_MODE_KNOB_POS");
+    idFcuNavaid1SwitchPos[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_NAVAID_1_SWITCH_POS");
+    idFcuNavaid2SwitchPos[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_NAVAID_2_SWITCH_POS");
+    idFcuBaroUnitKnobPos[i] = make_unique<LocalVariable>("A32NX_FCU_" + idString + "_BARO_UNIT_KNOB_POS");
+  }
 
   // speeds
   idSpeedAlphaProtection = make_unique<LocalVariable>("A32NX_SPEEDS_ALPHA_PROTECTION");
@@ -330,13 +420,6 @@ void FlyByWireInterface::setupLocalVariables() {
   idTcasTargetRedMin = make_unique<LocalVariable>("A32NX_TCAS_VSPEED_RED:1");
   idTcasTargetRedMax = make_unique<LocalVariable>("A32NX_TCAS_VSPEED_RED:2");
 
-  idFcuTrkFpaModeActive = make_unique<LocalVariable>("A32NX_TRK_FPA_MODE_ACTIVE");
-  idFcuSelectedFpa = make_unique<LocalVariable>("A32NX_AUTOPILOT_FPA_SELECTED");
-  idFcuSelectedVs = make_unique<LocalVariable>("A32NX_AUTOPILOT_VS_SELECTED");
-  idFcuSelectedHeading = make_unique<LocalVariable>("A32NX_AUTOPILOT_HEADING_SELECTED");
-
-  idFcuLocModeActive = make_unique<LocalVariable>("A32NX_FCU_LOC_MODE_ACTIVE");
-  idFcuApprModeActive = make_unique<LocalVariable>("A32NX_FCU_APPR_MODE_ACTIVE");
   idFcuHeadingSync = make_unique<LocalVariable>("A32NX_FCU_HEADING_SYNC");
   idFcuModeReversionActive = make_unique<LocalVariable>("A32NX_FCU_MODE_REVERSION_ACTIVE");
   idFcuModeReversionTrkFpaActive = make_unique<LocalVariable>("A32NX_FCU_MODE_REVERSION_TRK_FPA_ACTIVE");
@@ -440,7 +523,7 @@ bool FlyByWireInterface::readDataAndLocalVariables(double sampleTime) {
   simConnectInterface.setSampleTime(sampleTime);
 
   // reset input
-  simConnectInterface.resetSimInputAutopilot();
+  simConnectInterface.resetSimInputFcu();
 
   // set logging options
   simConnectInterface.setLoggingFlightControlsEnabled(idLoggingFlightControlsEnabled->get() == 1);
@@ -501,7 +584,7 @@ bool FlyByWireInterface::readDataAndLocalVariables(double sampleTime) {
                                                          idFmgcAccelerationAltitudeGoAround->get(),
                                                          idFmgcAccelerationAltitudeGoAroundEngineOut->get(),
                                                          idFmgcCruiseAltitude->get(),
-                                                         simConnectInterface.getSimInputAutopilot().DIR_TO_trigger,
+                                                         /*simConnectInterface.getSimInputFcu().DIR_TO_trigger*/ false,
                                                          idFcuTrkFpaModeActive->get(),
                                                          idFcuSelectedVs->get(),
                                                          idFcuSelectedFpa->get(),
@@ -712,11 +795,209 @@ bool FlyByWireInterface::updateEngineData(double sampleTime) {
   return true;
 }
 
+bool FlyByWireInterface::updateAdirsData() {
+  for (int i = 0; i < 3; i++) {
+    adrBusses[i].altitudeCorrected.setFromSimVar(idAdrAltitudeCorrected[i]->get());
+    adrBusses[i].altitudeStandard.setSsm(adrBusses[i].altitudeCorrected.ssm());
+    adrBusses[i].mach.setFromSimVar(idAdrMach[i]->get());
+    adrBusses[i].airspeedComputed.setFromSimVar(idAdrAirspeedComputed[i]->get());
+    adrBusses[i].airspeedTrue.setFromSimVar(idAdrAirspeedTrue[i]->get());
+    adrBusses[i].verticalSpeed.setFromSimVar(idAdrVerticalSpeed[i]->get());
+    adrBusses[i].aoaCorrected.setSsm(adrBusses[i].airspeedComputed.ssm());
+
+    irBusses[i].latitude.setFromSimVar(idIrLatitude[i]->get());
+    irBusses[i].longitude.setFromSimVar(idIrLongitude[i]->get());
+    irBusses[i].groundspeed.setFromSimVar(idIrGroundSpeed[i]->get());
+    irBusses[i].windspeed.setFromSimVar(idIrLatitude[i]->get());
+    irBusses[i].windDirection.setFromSimVar(idIrLatitude[i]->get());
+    irBusses[i].trackAngleMagnetic.setFromSimVar(idIrTrackMagnetic[i]->get());
+    irBusses[i].trackAngleTrue.setSsm(irBusses[i].trackAngleMagnetic.ssm());
+    irBusses[i].headingMagnetic.setFromSimVar(idIrHeadingMagnetic[i]->get());
+    irBusses[i].headingTrue.setSsm(irBusses[i].headingMagnetic.ssm());
+    irBusses[i].driftAngle.setSsm(irBusses[i].headingTrue.ssm());
+    irBusses[i].flightPathAngle.setSsm(irBusses[i].headingTrue.ssm());
+    irBusses[i].pitchAngle.setFromSimVar(idIrPitchAngle[i]->get());
+    irBusses[i].rollAngle.setFromSimVar(idIrRollAngle[i]->get());
+    irBusses[i].bodyPitchRate.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].bodyRollRate.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].bodyYawRate.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].bodyLongAccel.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].bodyLatAccel.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].bodyNormalAccel.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].pitchAttRate.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].rollAttRate.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].inertialAlt.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].verticalAccel.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].inertialVerticalSpeed.setSsm(irBusses[i].rollAngle.ssm());
+    irBusses[i].discreteWord1.setSsm(irBusses[i].rollAngle.ssm());
+  }
+
+  return true;
+}
+
+bool FlyByWireInterface::updateRaData() {
+  SimData simData = simConnectInterface.getSimData();
+  for (int i = 0; i < 2; i++) {
+    raBusses[i].radioHeight.setFromData(simData.H_radio_ft, NormalOperation);
+  }
+
+  return true;
+}
+
+bool FlyByWireInterface::updateIlsData() {
+  SimData simData = simConnectInterface.getSimData();
+  for (int i = 0; i < 2; i++) {
+    ilsBusses[i].ilsFreq.setFromData(0, NormalOperation);
+    ilsBusses[i].runwayHeading.setFromData(simData.nav_loc_deg, NormalOperation);
+    ilsBusses[i].locDeviation.setFromData(simData.nav_loc_error_deg, NormalOperation);
+    ilsBusses[i].glideDeviation.setFromData(simData.nav_gs_error_deg, NormalOperation);
+  }
+
+  return true;
+}
+
+bool FlyByWireInterface::updateFcu(double sampleTime) {
+  fcuDiscreteInputs.afsDiscretes.ap1Engaged = fmgcsDiscreteOutputs[0].apOwnEngaged;
+  fcuDiscreteInputs.afsDiscretes.ap2Engaged = fmgcsDiscreteOutputs[1].apOwnEngaged;
+  fcuDiscreteInputs.afsDiscretes.fd1Engaged = fmgcsDiscreteOutputs[0].fdOwnEngaged;
+  fcuDiscreteInputs.afsDiscretes.fd2Engaged = fmgcsDiscreteOutputs[1].fdOwnEngaged;
+  fcuDiscreteInputs.afsDiscretes.athr1Engaged = fmgcsDiscreteOutputs[0].athrOwnEngaged;
+  fcuDiscreteInputs.afsDiscretes.athr2Engaged = fmgcsDiscreteOutputs[1].athrOwnEngaged;
+  fcuDiscreteInputs.afsDiscretes.altIncrement1000 = static_cast<bool>(idFcuAltIncrementSize1000->get());
+  fcuDiscreteInputs.efisLeftDiscretes.efisRange = static_cast<EfisRangeSelection>(idFcuRangeKnobPos[0]->get());
+  fcuDiscreteInputs.efisLeftDiscretes.efisMode = static_cast<EfisModeSelection>(idFcuModeKnobPos[0]->get());
+  fcuDiscreteInputs.efisLeftDiscretes.navaid1Mode = static_cast<NavaidSelection>(idFcuNavaid1SwitchPos[0]->get());
+  fcuDiscreteInputs.efisLeftDiscretes.navaid2Mode = static_cast<NavaidSelection>(idFcuNavaid2SwitchPos[0]->get());
+  fcuDiscreteInputs.efisLeftDiscretes.baroIsInhg = !idFcuBaroUnitKnobPos[0]->get();
+  fcuDiscreteInputs.efisRightDiscretes.efisRange = static_cast<EfisRangeSelection>(idFcuRangeKnobPos[1]->get());
+  fcuDiscreteInputs.efisRightDiscretes.efisMode = static_cast<EfisModeSelection>(idFcuModeKnobPos[1]->get());
+  fcuDiscreteInputs.efisRightDiscretes.navaid1Mode = static_cast<NavaidSelection>(idFcuNavaid1SwitchPos[1]->get());
+  fcuDiscreteInputs.efisRightDiscretes.navaid2Mode = static_cast<NavaidSelection>(idFcuNavaid2SwitchPos[1]->get());
+  fcuDiscreteInputs.efisRightDiscretes.baroIsInhg = !idFcuBaroUnitKnobPos[1]->get();
+
+  fcu.discreteInputs = fcuDiscreteInputs;
+  fcu.fmgc1BusInput = fmgcsOutBus[0];
+  fcu.fmgc2BusInput = fmgcsOutBus[1];
+  fcu.inputEvents = simConnectInterface.getSimInputFcu();
+  fcu.step(sampleTime, true, true);
+  fcuOutBus = fcu.getBusOutput();
+  fcuDiscreteOutputs = fcu.getDiscreteOutputs();
+
+  idFcuSelectedHeading->set(fcuOutBus.selectedHeading.toSimVar());
+  idFcuSelectedAlt->set(fcuOutBus.selectedAltitude.toSimVar());
+  idFcuSelectedSpeed->set(fcuOutBus.selectedAirspeed.toSimVar());
+  idFcuSelectedVs->set(fcuOutBus.selectedVerticalSpeed.toSimVar());
+  idFcuSelectedMach->set(fcuOutBus.selectedMach.toSimVar());
+  idFcuSelectedTrack->set(fcuOutBus.selectedTrack.toSimVar());
+  idFcuSelectedFpa->set(fcuOutBus.selectedFpa.toSimVar());
+  idFcuBaroCorrHpaLeft->set(fcuOutBus.baroCorrectionHpaLeft.toSimVar());
+  idFcuBaroCorrInhgLeft->set(fcuOutBus.baroCorrectionInhgLeft.toSimVar());
+  idFcuBaroCorrHpaRight->set(fcuOutBus.baroCorrectionHpaRight.toSimVar());
+  idFcuBaroCorrInhgRight->set(fcuOutBus.baroCorrectionInhgRight.toSimVar());
+  idFcuAtsWord->set(fcuOutBus.fcuAtsWord.toSimVar());
+  idFcuAtsFmaWord->set(fcuOutBus.fcuAtsFmaWord.toSimVar());
+  idFcuEis1RightWord->set(fcuOutBus.fcuEisWord1Right.toSimVar());
+  idFcuEis2RightWord->set(fcuOutBus.fcuEisWord2Right.toSimVar());
+  idFcuEis1LeftWord->set(fcuOutBus.fcuEisWord1Left.toSimVar());
+  idFcuEis2LeftWord->set(fcuOutBus.fcuEisWord2Left.toSimVar());
+  idFcuDiscreteWord1->set(fcuOutBus.fcuDiscreteWord1.toSimVar());
+  idFcuDiscreteWord2->set(fcuOutBus.fcuDiscreteWord2.toSimVar());
+
+  idFcuLocLightOn->set(fcuDiscreteOutputs.locLightOn);
+  idFcuExpedLightOn->set(fcuDiscreteOutputs.expedLightOn);
+  idFcuApprLightOn->set(fcuDiscreteOutputs.apprLightOn);
+  idFcuAp1LightOn->set(fcuDiscreteOutputs.ap1LightOn);
+  idFcuAp2LightOn->set(fcuDiscreteOutputs.ap2LightOn);
+  idFcuAthrLightOn->set(fcuDiscreteOutputs.athrLightOn);
+
+  for (int i = 0; i < 2; i++) {
+    idFcuFdLightOn[i]->set(fcuDiscreteOutputs.eisDiscreteOut[i].fdLightActive);
+    idFcuLsLightOn[i]->set(fcuDiscreteOutputs.eisDiscreteOut[i].lsLightActive);
+    idFcuCstrLightOn[i]->set(fcuDiscreteOutputs.eisDiscreteOut[i].cstrLightActive);
+    idFcuWptLightOn[i]->set(fcuDiscreteOutputs.eisDiscreteOut[i].wptLightOn);
+    idFcuVordLightOn[i]->set(fcuDiscreteOutputs.eisDiscreteOut[i].vorDLightOn);
+    idFcuNdbLightOn[i]->set(fcuDiscreteOutputs.eisDiscreteOut[i].ndbLightOn);
+    idFcuArptLightOn[i]->set(fcuDiscreteOutputs.eisDiscreteOut[i].arptLightOn);
+  }
+
+  return true;
+}
+
+bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
+  SimData simData = simConnectInterface.getSimData();
+  SimInputFcu simInputFcu = simConnectInterface.getSimInputFcu();
+
+  const int oppFmgcIndex = fmgcIndex == 0 ? 1 : 0;
+  fmgcsDiscreteInputs[fmgcIndex].apFcuCommand = fmgcIndex == 0 ? simInputFcu.AP_1_push : simInputFcu.AP_2_push;
+  fmgcsDiscreteInputs[fmgcIndex].apInstDisc = false;
+  fmgcsDiscreteInputs[fmgcIndex].apOppEngaged = fmgcsDiscreteOutputs[oppFmgcIndex].apOwnEngaged;
+  fmgcsDiscreteInputs[fmgcIndex].athrFcuCommand = simInputFcu.ATHR_push;
+  fmgcsDiscreteInputs[fmgcIndex].athrInstDisc = false;
+  fmgcsDiscreteInputs[fmgcIndex].fdOppEngaged = fmgcsDiscreteOutputs[oppFmgcIndex].fdOwnEngaged;
+  fmgcsDiscreteInputs[fmgcIndex].powerSupplySplit = true;
+  fmgcsDiscreteInputs[fmgcIndex].fcuOppHealthy = fmgcIndex == 1 ? fcuDiscreteOutputs.fcu1Healthy : fcuDiscreteOutputs.fcu2Healthy;
+  fmgcsDiscreteInputs[fmgcIndex].fcuOwnHealthy = fmgcIndex == 0 ? fcuDiscreteOutputs.fcu1Healthy : fcuDiscreteOutputs.fcu2Healthy;
+  fmgcsDiscreteInputs[fmgcIndex].facOppHealthy = true;
+  fmgcsDiscreteInputs[fmgcIndex].facOwnHealthy = true;
+  fmgcsDiscreteInputs[fmgcIndex].fmgcOppHealthy = fmgcsDiscreteOutputs[oppFmgcIndex].fmgcHealthy;
+  fmgcsDiscreteInputs[fmgcIndex].fwcOppValid = true;
+  fmgcsDiscreteInputs[fmgcIndex].fwcOwnValid = true;
+  fmgcsDiscreteInputs[fmgcIndex].pfdOppValid = true;
+  fmgcsDiscreteInputs[fmgcIndex].pfdOwnValid = true;
+  fmgcsDiscreteInputs[fmgcIndex].adc3Switch = false;
+  fmgcsDiscreteInputs[fmgcIndex].ir3Switch = false;
+  fmgcsDiscreteInputs[fmgcIndex].leftWheelSpdGr70kts = false;
+  fmgcsDiscreteInputs[fmgcIndex].rightWheelSpdGr70kts = false;
+  fmgcsDiscreteInputs[fmgcIndex].bscuOppValid = true;
+  fmgcsDiscreteInputs[fmgcIndex].bscuOwnValid = true;
+  fmgcsDiscreteInputs[fmgcIndex].noseGearOppPressed = false;
+  fmgcsDiscreteInputs[fmgcIndex].noseGearOwnPressed = false;
+  fmgcsDiscreteInputs[fmgcIndex].elacOppApDisc = false;
+  fmgcsDiscreteInputs[fmgcIndex].elacOwnApDisc = false;
+  fmgcsDiscreteInputs[fmgcIndex].engineOppStopped = false;
+  fmgcsDiscreteInputs[fmgcIndex].engineOwnStopped = false;
+
+  fmgcs[fmgcIndex].busInputs.fmgcOpp = fmgcsOutBus[oppFmgcIndex];
+  fmgcs[fmgcIndex].busInputs.fcuOwn = fcuOutBus;
+  fmgcs[fmgcIndex].busInputs.adirsOwn = {adrBusses[fmgcIndex], irBusses[fmgcIndex]};
+  fmgcs[fmgcIndex].busInputs.adirsOpp = {adrBusses[oppFmgcIndex], irBusses[oppFmgcIndex]};
+  fmgcs[fmgcIndex].busInputs.adirs3 = {adrBusses[2], irBusses[2]};
+  fmgcs[fmgcIndex].busInputs.raOwn = raBusses[fmgcIndex];
+  fmgcs[fmgcIndex].busInputs.raOpp = raBusses[oppFmgcIndex];
+  fmgcs[fmgcIndex].busInputs.ilsOwn = ilsBusses[fmgcIndex];
+  fmgcs[fmgcIndex].busInputs.ilsOpp = ilsBusses[oppFmgcIndex];
+
+  fmgcs[fmgcIndex].autopilotStateMachineOutput = autopilotStateMachineOutput;
+  fmgcs[fmgcIndex].autopilotLawsOutput = autopilotLawsOutput;
+  fmgcs[fmgcIndex].autoThrustOutput = autoThrustOutput;
+
+  fmgcs[fmgcIndex].discreteInputs = fmgcsDiscreteInputs[fmgcIndex];
+  fmgcs[fmgcIndex].step(sampleTime, simData.simulationTime, true);
+
+  fmgcsDiscreteOutputs[fmgcIndex] = fmgcs[fmgcIndex].getDiscreteOutputs();
+  fmgcsOutBus[fmgcIndex] = fmgcs[fmgcIndex].getBusOutputs();
+
+  idFmgcDiscreteWord1[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].discreteWord1.toSimVar());
+  idFmgcDiscreteWord2[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].discreteWord2.toSimVar());
+  idFmgcDiscreteWord3[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].discreteWord3.toSimVar());
+  idFmgcDiscreteWord4[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].discreteWord4.toSimVar());
+  idFmgcDiscreteWord5[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].discreteWord5.toSimVar());
+  idFmgcDiscreteWord6[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].discreteWord6.toSimVar());
+  idFmgcDiscreteWordAthr[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].discreteWordAthr.toSimVar());
+  idFmgcDiscreteWordAthrFma[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].discreteWordAthrFma.toSimVar());
+
+  idFmgcRollFd[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].rollFdCommand.toSimVar());
+  idFmgcPitchFd[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].pitchFdCommand.toSimVar());
+  idFmgcYawFd[fmgcIndex]->set(fmgcsOutBus[fmgcIndex].yawFdCommand.toSimVar());
+
+  return true;
+}
+
 bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
   // get data from interface ------------------------------------------------------------------------------------------
   SimData simData = simConnectInterface.getSimData();
   SimInput simInput = simConnectInterface.getSimInput();
-  SimInputAutopilot simInputAutopilot = simConnectInterface.getSimInputAutopilot();
+  SimInputFcu simInputAutopilot = simConnectInterface.getSimInputFcu();
 
   // determine disconnection conditions -------------------------------------------------------------------------------
 
@@ -804,32 +1085,31 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     autopilotStateMachineInput.in.data.altimeter_setting_right_mbar = simData.kohlsmanSetting_1;
 
     // input ----------------------------------------------------------------------------------------------------------
-    autopilotStateMachineInput.in.input.FD_active = simData.ap_fd_1_active || simData.ap_fd_2_active;
-    autopilotStateMachineInput.in.input.AP_ENGAGE_push = simInputAutopilot.AP_engage;
-    autopilotStateMachineInput.in.input.AP_1_push = simInputAutopilot.AP_1_push;
-    autopilotStateMachineInput.in.input.AP_2_push = simInputAutopilot.AP_2_push;
-    autopilotStateMachineInput.in.input.AP_DISCONNECT_push = simInputAutopilot.AP_disconnect || wasInSlew || doDisconnect;
-    autopilotStateMachineInput.in.input.HDG_push = simInputAutopilot.HDG_push;
-    autopilotStateMachineInput.in.input.HDG_pull = simInputAutopilot.HDG_pull;
-    autopilotStateMachineInput.in.input.ALT_push = simInputAutopilot.ALT_push;
-    autopilotStateMachineInput.in.input.ALT_pull = simInputAutopilot.ALT_pull;
-    autopilotStateMachineInput.in.input.VS_push = simInputAutopilot.VS_push;
-    autopilotStateMachineInput.in.input.VS_pull = simInputAutopilot.VS_pull;
-    autopilotStateMachineInput.in.input.LOC_push = simInputAutopilot.LOC_push;
-    autopilotStateMachineInput.in.input.APPR_push = simInputAutopilot.APPR_push;
-    autopilotStateMachineInput.in.input.EXPED_push = simInputAutopilot.EXPED_push;
-    autopilotStateMachineInput.in.input.V_fcu_kn = simData.ap_V_c_kn;
-    autopilotStateMachineInput.in.input.H_fcu_ft = simData.ap_H_c_ft;
+    autopilotStateMachineInput.in.input.FD_active = fmgcsDiscreteOutputs[0].fdOwnEngaged || fmgcsDiscreteOutputs[1].fdOwnEngaged;
+    autopilotStateMachineInput.in.input.AP_1_push = fmgcsDiscreteOutputs[0].apOwnEngaged;  // simInputAutopilot.AP_1_push;
+    autopilotStateMachineInput.in.input.AP_2_push = fmgcsDiscreteOutputs[1].apOwnEngaged;  // simInputAutopilot.AP_2_push;
+    // autopilotStateMachineInput.in.input.AP_DISCONNECT_push = false;  // simInputAutopilot.AP_disconnect || wasInSlew || doDisconnect;
+    autopilotStateMachineInput.in.input.HDG_push = simInputAutopilot.AFS.HDG_TRK_push;
+    autopilotStateMachineInput.in.input.HDG_pull = simInputAutopilot.AFS.HDG_TRK_pull;
+    autopilotStateMachineInput.in.input.ALT_push = simInputAutopilot.AFS.ALT_push;
+    autopilotStateMachineInput.in.input.ALT_pull = simInputAutopilot.AFS.ALT_pull;
+    autopilotStateMachineInput.in.input.VS_push = simInputAutopilot.AFS.VS_FPA_push;
+    autopilotStateMachineInput.in.input.VS_pull = simInputAutopilot.AFS.VS_FPA_pull;
+    autopilotStateMachineInput.in.input.LOC_push = simInputAutopilot.AFS.LOC_push;
+    autopilotStateMachineInput.in.input.APPR_push = simInputAutopilot.AFS.APPR_push;
+    autopilotStateMachineInput.in.input.EXPED_push = simInputAutopilot.AFS.EXPED_push;
+    autopilotStateMachineInput.in.input.V_fcu_kn = fcuOutBus.selectedAirspeed.value();
+    autopilotStateMachineInput.in.input.H_fcu_ft = fcuOutBus.selectedAltitude.value();
     autopilotStateMachineInput.in.input.H_constraint_ft = idFmgcAltitudeConstraint->get();
-    autopilotStateMachineInput.in.input.H_dot_fcu_fpm = idFcuSelectedVs->get();
-    autopilotStateMachineInput.in.input.FPA_fcu_deg = idFcuSelectedFpa->get();
-    autopilotStateMachineInput.in.input.Psi_fcu_deg = idFcuSelectedHeading->get();
-    autopilotStateMachineInput.in.input.TRK_FPA_mode = idFcuTrkFpaModeActive->get();
-    autopilotStateMachineInput.in.input.DIR_TO_trigger = simInputAutopilot.DIR_TO_trigger;
+    autopilotStateMachineInput.in.input.H_dot_fcu_fpm = fcuOutBus.selectedVerticalSpeed.value();
+    autopilotStateMachineInput.in.input.FPA_fcu_deg = fcuOutBus.selectedFpa.value();
+    autopilotStateMachineInput.in.input.Psi_fcu_deg = fcuOutBus.selectedHeading.value();
+    autopilotStateMachineInput.in.input.TRK_FPA_mode = fcuOutBus.selectedTrack.value();
+    autopilotStateMachineInput.in.input.DIR_TO_trigger = false;  // simInputAutopilot.DIR_TO_trigger;
     autopilotStateMachineInput.in.input.is_FLX_active = autoThrust.getExternalOutputs().out.data_computed.is_FLX_active;
     autopilotStateMachineInput.in.input.Slew_trigger = wasInSlew;
     autopilotStateMachineInput.in.input.MACH_mode = simData.is_mach_mode_active;
-    autopilotStateMachineInput.in.input.ATHR_engaged = (autoThrustOutput.status == 2);
+    autopilotStateMachineInput.in.input.ATHR_engaged = fmgcsDiscreteOutputs[0].athrOwnEngaged || fmgcsDiscreteOutputs[1].athrOwnEngaged;
     autopilotStateMachineInput.in.input.is_SPEED_managed = (simData.speed_slot_index == 2);
     autopilotStateMachineInput.in.input.FDR_event = idFdrEvent->get();
     autopilotStateMachineInput.in.input.Phi_loc_c = autopilotLawsOutput.Phi_loc_c;
@@ -898,19 +1178,6 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
     idRadioReceiverGlideSlopeDeviation->set(clientData.nav_e_gs_error_deg);
   }
 
-  // update autopilot state -------------------------------------------------------------------------------------------
-  idAutopilotActiveAny->set(autopilotStateMachineOutput.enabled_AP1 || autopilotStateMachineOutput.enabled_AP2);
-  idAutopilotActive_1->set(autopilotStateMachineOutput.enabled_AP1);
-  idAutopilotActive_2->set(autopilotStateMachineOutput.enabled_AP2);
-
-  bool isLocArmed = static_cast<unsigned long long>(autopilotStateMachineOutput.lateral_mode_armed) >> 1 & 0x01;
-  bool isLocEngaged = autopilotStateMachineOutput.lateral_mode >= 30 && autopilotStateMachineOutput.lateral_mode <= 34;
-  bool isGsArmed = static_cast<unsigned long long>(autopilotStateMachineOutput.vertical_mode_armed) >> 4 & 0x01;
-  bool isGsEngaged = autopilotStateMachineOutput.vertical_mode >= 30 && autopilotStateMachineOutput.vertical_mode <= 34;
-  bool isFinalArmed = static_cast<unsigned long long>(autopilotStateMachineOutput.vertical_mode_armed) >> 5 & 0x01;
-  bool isFinalEngaged = autopilotStateMachineOutput.vertical_mode == 24;
-  idFcuLocModeActive->set((isLocArmed || isLocEngaged) && !(isGsArmed || isGsEngaged));
-  idFcuApprModeActive->set(((isLocArmed || isLocEngaged) && (isGsArmed || isGsEngaged)) || isFinalArmed || isFinalEngaged);
   idFcuHeadingSync->set(autopilotStateMachineOutput.mode_reversion_lateral);
   idFcuModeReversionActive->set(autopilotStateMachineOutput.mode_reversion_vertical);
   idFcuModeReversionTargetFpm->set(autopilotStateMachineOutput.mode_reversion_vertical_target_fpm);
@@ -928,41 +1195,42 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
   // update autothrust mode -------------------------------------------------------------------------------------------
   idAutopilotAutothrustMode->set(autopilotStateMachineOutput.autothrust_mode);
 
-  // connect FD if requested ------------------------------------------------------------------------------------------
-  if (simData.ap_fd_1_active) {
-    flightDirectorConnectLatch_1 = false;
-  }
-  if (simData.ap_fd_2_active) {
-    flightDirectorConnectLatch_2 = false;
-  }
-  if (autopilotStateMachineOutput.FD_connect) {
-    if (!simData.ap_fd_1_active && !flightDirectorConnectLatch_1) {
-      flightDirectorConnectLatch_1 = true;
-      simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 1);
-    }
-    if (!simData.ap_fd_2_active && !flightDirectorConnectLatch_2) {
-      flightDirectorConnectLatch_2 = true;
-      simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 2);
-    }
-  }
-
-  // disconnect FD if requested ---------------------------------------------------------------------------------------
-  if (!simData.ap_fd_1_active) {
-    flightDirectorDisconnectLatch_1 = false;
-  }
-  if (!simData.ap_fd_2_active) {
-    flightDirectorDisconnectLatch_2 = false;
-  }
-  if (autopilotStateMachineOutput.FD_disconnect) {
-    if (simData.ap_fd_1_active && !flightDirectorDisconnectLatch_1) {
-      flightDirectorDisconnectLatch_1 = true;
-      simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 1);
-    }
-    if (simData.ap_fd_2_active && !flightDirectorDisconnectLatch_2) {
-      flightDirectorDisconnectLatch_2 = true;
-      simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 2);
-    }
-  }
+  // connect FD if requested ---------------------------------------------------------------------------------------
+  // For now deactivated
+  // if (simData.ap_fd_1_active) {
+  //   flightDirectorConnectLatch_1 = false;
+  // }
+  // if (simData.ap_fd_2_active) {
+  //   flightDirectorConnectLatch_2 = false;
+  // }
+  // if (autopilotStateMachineOutput.FD_connect) {
+  //   if (!simData.ap_fd_1_active && !flightDirectorConnectLatch_1) {
+  //     flightDirectorConnectLatch_1 = true;
+  //     simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 1);
+  //   }
+  //   if (!simData.ap_fd_2_active && !flightDirectorConnectLatch_2) {
+  //     flightDirectorConnectLatch_2 = true;
+  //     simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 2);
+  //   }
+  // }
+  //
+  // // disconnect FD if requested ---------------------------------------------------------------------------------------
+  // if (!simData.ap_fd_1_active) {
+  //   flightDirectorDisconnectLatch_1 = false;
+  // }
+  // if (!simData.ap_fd_2_active) {
+  //   flightDirectorDisconnectLatch_2 = false;
+  // }
+  // if (autopilotStateMachineOutput.FD_disconnect) {
+  //   if (simData.ap_fd_1_active && !flightDirectorDisconnectLatch_1) {
+  //     flightDirectorDisconnectLatch_1 = true;
+  //     simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 1);
+  //   }
+  //   if (simData.ap_fd_2_active && !flightDirectorDisconnectLatch_2) {
+  //     flightDirectorDisconnectLatch_2 = true;
+  //     simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 2);
+  //   }
+  // }
 
   // update FMA variables ---------------------------------------------------------------------------------------------
   idFmaLateralMode->set(autopilotStateMachineOutput.lateral_mode);
@@ -977,95 +1245,95 @@ bool FlyByWireInterface::updateAutopilotStateMachine(double sampleTime) {
   // calculate and set approach capability
   // when no RA is available at all -> CAT1, at least one RA is needed to get into CAT2 or higher
   // CAT3 requires two valid RA which are not simulated yet
-  bool landModeArmedOrActive = (isLocArmed || isLocEngaged) && (isGsArmed || isGsEngaged);
-  int numberOfAutopilotsEngaged = autopilotStateMachineOutput.enabled_AP1 + autopilotStateMachineOutput.enabled_AP2;
-  bool autoThrustEngaged = (autoThrustOutput.status == 2);
-  bool radioAltimeterAvailable = (simData.H_radio_ft <= 5000);
-  bool isCat1 = landModeArmedOrActive;
-  bool isCat2 = landModeArmedOrActive && radioAltimeterAvailable && !autoThrustEngaged && numberOfAutopilotsEngaged >= 1;
-  bool isCat3S = landModeArmedOrActive && radioAltimeterAvailable && autoThrustEngaged && numberOfAutopilotsEngaged >= 1;
-  bool isCat3D = landModeArmedOrActive && radioAltimeterAvailable && autoThrustEngaged && numberOfAutopilotsEngaged == 2;
-  int newApproachCapability = currentApproachCapability;
-
-  if (currentApproachCapability == 0) {
-    if (isCat1) {
-      newApproachCapability = 1;
-    }
-  } else if (currentApproachCapability == 1) {
-    if (!isCat1) {
-      newApproachCapability = 0;
-    }
-    if (isCat3S) {
-      newApproachCapability = 3;
-    } else if (isCat2) {
-      newApproachCapability = 2;
-    }
-  } else if (currentApproachCapability == 2) {
-    if (isCat3D) {
-      newApproachCapability = 4;
-    } else if (isCat3S) {
-      newApproachCapability = 3;
-    } else if (!isCat2) {
-      newApproachCapability = 1;
-    }
-  } else if (currentApproachCapability == 3) {
-    if ((simData.H_radio_ft > 100) || (simData.H_radio_ft < 100 && numberOfAutopilotsEngaged == 0)) {
-      if (isCat3D) {
-        newApproachCapability = 4;
-      } else if (!isCat3S && !isCat2) {
-        newApproachCapability = 1;
-      } else if (!isCat3S && isCat2) {
-        newApproachCapability = 2;
-      }
-    }
-  } else if (currentApproachCapability == 4) {
-    if ((simData.H_radio_ft > 100) || (simData.H_radio_ft < 100 && numberOfAutopilotsEngaged == 0)) {
-      if (!autoThrustEngaged) {
-        newApproachCapability = 2;
-      } else if (!isCat3D) {
-        newApproachCapability = 3;
-      }
-    }
-  }
-
-  bool doUpdate = false;
-  bool canDowngrade = (simData.simulationTime - previousApproachCapabilityUpdateTime) > 3.0;
-  bool canUpgrade = (simData.simulationTime - previousApproachCapabilityUpdateTime) > 1.5;
-  if (newApproachCapability != currentApproachCapability) {
-    doUpdate = (newApproachCapability == 0 && currentApproachCapability == 1) ||
-               (newApproachCapability == 1 && currentApproachCapability == 0) ||
-               (newApproachCapability > currentApproachCapability && canUpgrade) ||
-               (newApproachCapability < currentApproachCapability && canDowngrade);
-  } else {
-    previousApproachCapabilityUpdateTime = simData.simulationTime;
-  }
-
-  if (doUpdate) {
-    currentApproachCapability = newApproachCapability;
-    idFmaApproachCapability->set(currentApproachCapability);
-    previousApproachCapabilityUpdateTime = simData.simulationTime;
-  }
-
-  // autoland warning -------------------------------------------------------------------------------------------------
-  // if at least one AP engaged and LAND or FLARE mode -> latch
-  if (simData.H_radio_ft < 200 && numberOfAutopilotsEngaged > 0 &&
-      (autopilotStateMachineOutput.vertical_mode == 32 || autopilotStateMachineOutput.vertical_mode == 33)) {
-    autolandWarningLatch = true;
-  } else if (simData.H_radio_ft >= 200 ||
-             (autopilotStateMachineOutput.vertical_mode != 32 && autopilotStateMachineOutput.vertical_mode != 33)) {
-    autolandWarningLatch = false;
-    autolandWarningTriggered = false;
-    idAutopilotAutolandWarning->set(0);
-  }
-
-  if (autolandWarningLatch && !autolandWarningTriggered) {
-    if (numberOfAutopilotsEngaged == 0 ||
-        (simData.H_radio_ft > 15 && (abs(simData.nav_loc_error_deg) > 0.2 || simData.nav_loc_valid == false)) ||
-        (simData.H_radio_ft > 100 && (abs(simData.nav_gs_error_deg) > 0.4 || simData.nav_gs_valid == false))) {
-      autolandWarningTriggered = true;
-      idAutopilotAutolandWarning->set(1);
-    }
-  }
+  // bool landModeArmedOrActive = (isLocArmed || isLocEngaged) && (isGsArmed || isGsEngaged);
+  // int numberOfAutopilotsEngaged = autopilotStateMachineOutput.enabled_AP1 + autopilotStateMachineOutput.enabled_AP2;
+  // bool autoThrustEngaged = (autoThrustOutput.status == 2);
+  // bool radioAltimeterAvailable = (simData.H_radio_ft <= 5000);
+  // bool isCat1 = landModeArmedOrActive;
+  // bool isCat2 = landModeArmedOrActive && radioAltimeterAvailable && !autoThrustEngaged && numberOfAutopilotsEngaged >= 1;
+  // bool isCat3S = landModeArmedOrActive && radioAltimeterAvailable && autoThrustEngaged && numberOfAutopilotsEngaged >= 1;
+  // bool isCat3D = landModeArmedOrActive && radioAltimeterAvailable && autoThrustEngaged && numberOfAutopilotsEngaged == 2;
+  // int newApproachCapability = currentApproachCapability;
+  //
+  // if (currentApproachCapability == 0) {
+  //  if (isCat1) {
+  //    newApproachCapability = 1;
+  //  }
+  //} else if (currentApproachCapability == 1) {
+  //  if (!isCat1) {
+  //    newApproachCapability = 0;
+  //  }
+  //  if (isCat3S) {
+  //    newApproachCapability = 3;
+  //  } else if (isCat2) {
+  //    newApproachCapability = 2;
+  //  }
+  //} else if (currentApproachCapability == 2) {
+  //  if (isCat3D) {
+  //    newApproachCapability = 4;
+  //  } else if (isCat3S) {
+  //    newApproachCapability = 3;
+  //  } else if (!isCat2) {
+  //    newApproachCapability = 1;
+  //  }
+  //} else if (currentApproachCapability == 3) {
+  //  if ((simData.H_radio_ft > 100) || (simData.H_radio_ft < 100 && numberOfAutopilotsEngaged == 0)) {
+  //    if (isCat3D) {
+  //      newApproachCapability = 4;
+  //    } else if (!isCat3S && !isCat2) {
+  //      newApproachCapability = 1;
+  //    } else if (!isCat3S && isCat2) {
+  //      newApproachCapability = 2;
+  //    }
+  //  }
+  //} else if (currentApproachCapability == 4) {
+  //  if ((simData.H_radio_ft > 100) || (simData.H_radio_ft < 100 && numberOfAutopilotsEngaged == 0)) {
+  //    if (!autoThrustEngaged) {
+  //      newApproachCapability = 2;
+  //    } else if (!isCat3D) {
+  //      newApproachCapability = 3;
+  //    }
+  //  }
+  //}
+  //
+  // bool doUpdate = false;
+  // bool canDowngrade = (simData.simulationTime - previousApproachCapabilityUpdateTime) > 3.0;
+  // bool canUpgrade = (simData.simulationTime - previousApproachCapabilityUpdateTime) > 1.5;
+  // if (newApproachCapability != currentApproachCapability) {
+  //  doUpdate = (newApproachCapability == 0 && currentApproachCapability == 1) ||
+  //             (newApproachCapability == 1 && currentApproachCapability == 0) ||
+  //             (newApproachCapability > currentApproachCapability && canUpgrade) ||
+  //             (newApproachCapability < currentApproachCapability && canDowngrade);
+  //} else {
+  //  previousApproachCapabilityUpdateTime = simData.simulationTime;
+  //}
+  //
+  // if (doUpdate) {
+  //  currentApproachCapability = newApproachCapability;
+  //  idFmaApproachCapability->set(currentApproachCapability);
+  //  previousApproachCapabilityUpdateTime = simData.simulationTime;
+  //}
+  //
+  //// autoland warning -------------------------------------------------------------------------------------------------
+  //// if at least one AP engaged and LAND or FLARE mode -> latch
+  // if (simData.H_radio_ft < 200 && numberOfAutopilotsEngaged > 0 &&
+  //    (autopilotStateMachineOutput.vertical_mode == 32 || autopilotStateMachineOutput.vertical_mode == 33)) {
+  //  autolandWarningLatch = true;
+  //} else if (simData.H_radio_ft >= 200 ||
+  //           (autopilotStateMachineOutput.vertical_mode != 32 && autopilotStateMachineOutput.vertical_mode != 33)) {
+  //  autolandWarningLatch = false;
+  //  autolandWarningTriggered = false;
+  //  idAutopilotAutolandWarning->set(0);
+  //}
+  //
+  // if (autolandWarningLatch && !autolandWarningTriggered) {
+  //  if (numberOfAutopilotsEngaged == 0 ||
+  //      (simData.H_radio_ft > 15 && (abs(simData.nav_loc_error_deg) > 0.2 || simData.nav_loc_valid == false)) ||
+  //      (simData.H_radio_ft > 100 && (abs(simData.nav_gs_error_deg) > 0.4 || simData.nav_gs_valid == false))) {
+  //    autolandWarningTriggered = true;
+  //    idAutopilotAutolandWarning->set(1);
+  //  }
+  //}
 
   // FMA triple click and mode reversion ------------------------------------------------------------------------------
   idFmaTripleClick->set(autopilotStateMachineOutput.mode_reversion_triple_click);
@@ -1216,11 +1484,6 @@ bool FlyByWireInterface::updateAutopilotLaws(double sampleTime) {
     autopilotLawsOutput.Phi_loc_c = clientDataLaws.locPhiCommand;
     autopilotLawsOutput.Nosewheel_c = clientDataLaws.nosewheelCommand;
   }
-
-  // update flight director -------------------------------------------------------------------------------------------
-  idFlightDirectorPitch->set(-autopilotLawsOutput.flight_director.Theta_c_deg);
-  idFlightDirectorBank->set(-autopilotLawsOutput.flight_director.Phi_c_deg);
-  idFlightDirectorYaw->set(autopilotLawsOutput.flight_director.Beta_c_deg);
 
   // return result ----------------------------------------------------------------------------------------------------
   return true;
@@ -1434,8 +1697,9 @@ bool FlyByWireInterface::updateFlyByWire(double sampleTime) {
   idSpeedAlphaMax->set(flyByWireOutput.sim.data_speeds_aoa.v_alpha_max_kn);
 
   // update aileron positions
-  animationAileronHandler->update(idAutopilotActiveAny->get(), spoilersHandler->getIsGroundSpoilersActive(), simData.simulationTime,
-                                  simData.Theta_deg, flapsHandleIndexFlapConf->get(), flapsPosition->get(),
+  animationAileronHandler->update(fmgcsDiscreteOutputs[0].apOwnEngaged || fmgcsDiscreteOutputs[1].apOwnEngaged,
+                                  spoilersHandler->getIsGroundSpoilersActive(), simData.simulationTime, simData.Theta_deg,
+                                  flapsHandleIndexFlapConf->get(), flapsPosition->get(),
                                   idExternalOverride->get() == 1 ? simData.xi_pos : flyByWireOutput.output.xi_pos, sampleTime);
   idAileronPositionLeft->set(animationAileronHandler->getPositionLeft());
   idAileronPositionRight->set(animationAileronHandler->getPositionRight());

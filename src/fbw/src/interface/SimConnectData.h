@@ -131,21 +131,48 @@ struct SimInput {
   double inputs[3];
 };
 
-struct SimInputAutopilot {
-  double AP_engage;
-  double AP_1_push;
-  double AP_2_push;
-  double AP_disconnect;
-  double HDG_push;
-  double HDG_pull;
-  double ALT_push;
-  double ALT_pull;
-  double VS_push;
-  double VS_pull;
-  double LOC_push;
-  double APPR_push;
-  double EXPED_push;
-  double DIR_TO_trigger;
+struct SimInputFcuEis {
+  int BARO_pull;
+  int BARO_push;
+  int BARO_inc;
+  int BARO_dec;
+  int FD_push;
+  int LS_push;
+  int FILTER_push;
+};
+
+struct SimInputFcuAfs {
+  int HDG_TRK_push;
+  int HDG_TRK_pull;
+  int HDG_TRK_inc;
+  int HDG_TRK_dec;
+  int ALT_push;
+  int ALT_pull;
+  int ALT_inc;
+  int ALT_dec;
+  int VS_FPA_push;
+  int VS_FPA_pull;
+  int VS_FPA_inc;
+  int VS_FPA_dec;
+  int SPEED_MACH_push;
+  int SPEED_MACH_pull;
+  int SPEED_MACH_inc;
+  int SPEED_MACH_dec;
+  int LOC_push;
+  int APPR_push;
+  int EXPED_push;
+  int SPD_MACH_MODE_push;
+  int TRK_FPA_push;
+  int METRIC_ALT_push;
+};
+
+struct SimInputFcu {
+  SimInputFcuAfs AFS;
+  SimInputFcuEis EIS_LEFT;
+  SimInputFcuEis EIS_RIGHT;
+  int AP_1_push;
+  int AP_2_push;
+  int ATHR_push;
 };
 
 struct SimInputThrottles {

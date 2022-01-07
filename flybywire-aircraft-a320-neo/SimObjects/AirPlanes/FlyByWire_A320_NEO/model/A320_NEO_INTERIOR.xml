@@ -3199,176 +3199,21 @@
                 <ANIMTIP_2_ON_CURSOR>UpArrow</ANIMTIP_2_ON_CURSOR>
             </UseTemplate>
 
-            <UseTemplate Name="FBW_AIRBUS_NAV_AID_SWITCH_Template">
-                <BASE_NAME>SWITCH_AUTOPILOT_ADF1_L</BASE_NAME>
-                <SIDE>L</SIDE>
-                <INDEX>1</INDEX>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_NAV_AID_SWITCH_Template">
-                <BASE_NAME>SWITCH_AUTOPILOT_ADF2_L</BASE_NAME>
-                <SIDE>L</SIDE>
-                <INDEX>2</INDEX>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_NAV_AID_SWITCH_Template">
-                <BASE_NAME>SWITCH_AUTOPILOT_ADF1_R</BASE_NAME>
-                <SIDE>R</SIDE>
-                <INDEX>1</INDEX>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_NAV_AID_SWITCH_Template">
-                <BASE_NAME>SWITCH_AUTOPILOT_ADF2_R</BASE_NAME>
-                <SIDE>R</SIDE>
-                <INDEX>2</INDEX>
-            </UseTemplate>
             <CameraTitle>PA</CameraTitle>
         </Component>
 
-        <Component ID="EFIS_L">
-            <DefaultTemplateParameters>
-                <SIDE>L</SIDE>
-            </DefaultTemplateParameters>
-
-            <UseTemplate Name="FBW_AIRLINER_Switch_Baro_Selector_Template">
-                <NODE_ID>KNOB_AUTOPILOT_SELECTOR_L1</NODE_ID>
-                <ANIM_NAME>KNOB_AUTOPILOT_SELECTOR_L1</ANIM_NAME>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_Airbus_FCU_Baro_Knob">
-                <NODE_ID>KNOB_AUTOPILOT_KNOB1_L</NODE_ID>
-                <ANIM_NAME_KNOB>KNOB_AUTOPILOT_KNOB1_L</ANIM_NAME_KNOB>
-                <ANIM_NAME_PUSHPULL>PUSH_AUTOPILOT_KNOB1_L</ANIM_NAME_PUSHPULL>
-                <AIRLINER_TYPE>A320</AIRLINER_TYPE>
-            </UseTemplate>
-
-            <UseTemplate Name="A32NX_AUTOPILOT_Push_FlightDirector_Template">
+        <Component ID="FCU">
+            <UseTemplate Name="FBW_AIRBUS_Efis_Control_Template">
                 <SIDE>L</SIDE>
                 <ID>1</ID>
             </UseTemplate>
 
-            <UseTemplate Name="FBW_AIRBUS_Push_ILS_Template">
-                <SIDE>L</SIDE>
-                <ID>1</ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRLINER_Knob_ND_Template">
-                <TYPE>AIRBUS</TYPE>
-                <NODE_ID>KNOB_AUTOPILOT_ROSE_L</NODE_ID>
-                <PART_ID>KNOB_AUTOPILOT_ROSE_L</PART_ID>
-                <ANIM_NAME>KNOB_AUTOPILOT_ROSE_L_</ANIM_NAME>
-                <KNOB_POSITION_VAR>A32NX_EFIS_L_ND_MODE</KNOB_POSITION_VAR>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRLINER_Knob_ND_Range_Template">
-                <TYPE>AIRBUS</TYPE>
-                <NODE_ID>KNOB_AUTOPILOT_L1</NODE_ID>
-                <ANIM_NAME>KNOB_AUTOPILOT_L1</ANIM_NAME>
-                <KNOB_POSITION_VAR>A32NX_EFIS_L_ND_RANGE</KNOB_POSITION_VAR>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>L</SIDE>
-                <BASE_NAME>CSTR</BASE_NAME>
-                <OPTION_ID>1</OPTION_ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>L</SIDE>
-                <BASE_NAME>VORD</BASE_NAME>
-                <OPTION_ID>2</OPTION_ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>L</SIDE>
-                <BASE_NAME>WPT</BASE_NAME>
-                <OPTION_ID>3</OPTION_ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>L</SIDE>
-                <BASE_NAME>NDB</BASE_NAME>
-                <OPTION_ID>4</OPTION_ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>L</SIDE>
-                <BASE_NAME>ARPT</BASE_NAME>
-                <OPTION_ID>5</OPTION_ID>
-            </UseTemplate>
-        </Component>
-
-        <Component ID="EFIS_R">
-            <DefaultTemplateParameters>
-                <SIDE>R</SIDE>
-            </DefaultTemplateParameters>
-
-            <UseTemplate Name="FBW_AIRLINER_Switch_Baro_Selector_Template">
-                <NODE_ID>KNOB_AUTOPILOT_SELECTOR_R1</NODE_ID>
-                <ANIM_NAME>KNOB_AUTOPILOT_SELECTOR_R1</ANIM_NAME>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_Airbus_FCU_Baro_Knob">
-                <NODE_ID>KNOB_AUTOPILOT_KNOB1_R</NODE_ID>
-                <ANIM_NAME_KNOB>KNOB_AUTOPILOT_KNOB1_R</ANIM_NAME_KNOB>
-                <ANIM_NAME_PUSHPULL>PUSH_AUTOPILOT_KNOB1_R</ANIM_NAME_PUSHPULL>
-                <AIRLINER_TYPE>A320</AIRLINER_TYPE>
-            </UseTemplate>
-
-            <UseTemplate Name="A32NX_AUTOPILOT_Push_FlightDirector_Template">
+            <UseTemplate Name="FBW_AIRBUS_Efis_Control_Template">
                 <SIDE>R</SIDE>
                 <ID>2</ID>
             </UseTemplate>
 
-            <UseTemplate Name="FBW_AIRBUS_Push_ILS_Template">
-                <SIDE>R</SIDE>
-                <ID>2</ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRLINER_Knob_ND_Template">
-                <TYPE>AIRBUS</TYPE>
-                <NODE_ID>KNOB_AUTOPILOT_ROSE_R</NODE_ID>
-                <PART_ID>KNOB_AUTOPILOT_ROSE_R</PART_ID>
-                <ANIM_NAME>KNOB_AUTOPILOT_ROSE_R</ANIM_NAME>
-                <KNOB_POSITION_VAR>A32NX_EFIS_R_ND_MODE</KNOB_POSITION_VAR>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRLINER_Knob_ND_Range_Template">
-                <TYPE>AIRBUS</TYPE>
-                <NODE_ID>KNOB_AUTOPILOT_R1</NODE_ID>
-                <ANIM_NAME>KNOB_AUTOPILOT_R1</ANIM_NAME>
-                <KNOB_POSITION_VAR>A32NX_EFIS_R_ND_RANGE</KNOB_POSITION_VAR>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>R</SIDE>
-                <BASE_NAME>CSTR</BASE_NAME>
-                <OPTION_ID>1</OPTION_ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>R</SIDE>
-                <BASE_NAME>VORD</BASE_NAME>
-                <OPTION_ID>2</OPTION_ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>R</SIDE>
-                <BASE_NAME>WPT</BASE_NAME>
-                <OPTION_ID>3</OPTION_ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>R</SIDE>
-                <BASE_NAME>NDB</BASE_NAME>
-                <OPTION_ID>4</OPTION_ID>
-            </UseTemplate>
-
-            <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Option">
-                <SIDE>R</SIDE>
-                <BASE_NAME>ARPT</BASE_NAME>
-                <OPTION_ID>5</OPTION_ID>
-            </UseTemplate>
+            <CameraTitle>PA</CameraTitle>
         </Component>
 
         <Component ID="Airbus_EICAS">

@@ -1,3 +1,4 @@
+import { useArinc429Var } from '@instruments/common/arinc429.js';
 import React, { Component } from 'react';
 import { createDeltaTimeCalculator, getSimVar, renderTarget } from '../util.js';
 
@@ -710,19 +711,21 @@ const D3Cell = () => {
 };
 
 const E1Cell = () => {
-    const AP1Engaged = getSimVar('L:A32NX_AUTOPILOT_1_ACTIVE', 'bool');
-    const AP2Engaged = getSimVar('L:A32NX_AUTOPILOT_2_ACTIVE', 'bool');
+    const fmgc1DiscreteWord4 = useArinc429Var('L:A32NX_FMGC_1_DISCRETE_WORD_4');
+    const fmgc2DiscreteWord4 = useArinc429Var('L:A32NX_FMGC_2_DISCRETE_WORD_4');
+    const ap1Engaged = fmgc1DiscreteWord4.getBitValueOr(12, false);
+    const ap2Engaged = fmgc2DiscreteWord4.getBitValueOr(12, false);
 
-    if (!AP1Engaged && !AP2Engaged) {
+    if (!ap1Engaged && !ap2Engaged) {
         return null;
     }
 
     let text: string;
     let id = 0;
-    if (AP1Engaged && !AP2Engaged) {
+    if (ap1Engaged && !ap2Engaged) {
         text = 'AP1';
         id = 1;
-    } else if (AP2Engaged && !AP1Engaged) {
+    } else if (ap2Engaged && !ap1Engaged) {
         text = 'AP2';
         id = 2;
     } else {
@@ -741,29 +744,42 @@ const E1Cell = () => {
 };
 
 const E2Cell = () => {
-    const FD1Active = getSimVar('AUTOPILOT FLIGHT DIRECTOR ACTIVE:1', 'bool');
-    const FD2Active = getSimVar('AUTOPILOT FLIGHT DIRECTOR ACTIVE:2', 'bool');
+    const fcuDiscreteWord2 = useArinc429Var('L:A32NX_FCU_DISCRETE_WORD_2');
+    const fmgc1DiscreteWord4 = useArinc429Var('L:A32NX_FMGC_1_DISCRETE_WORD_4');
+    const fmgc2DiscreteWord4 = useArinc429Var('L:A32NX_FMGC_2_DISCRETE_WORD_4');
+    const fdLeftPushbuttonActive = !fcuDiscreteWord2.getBitValueOr(26, true);
+    const fdRightPushbuttonActive = !fcuDiscreteWord2.getBitValueOr(27, true);
+    const fd1Engaged = fmgc1DiscreteWord4.getBitValueOr(13, false);
+    const fd2Engaged = fmgc2DiscreteWord4.getBitValueOr(13, false);
+    const ap1Engaged = fmgc1DiscreteWord4.getBitValueOr(12, false);
+    const ap2Engaged = fmgc2DiscreteWord4.getBitValueOr(12, false);
 
-    if (!FD1Active && !FD2Active && !getSimVar('L:A32NX_AUTOPILOT_1_ACTIVE', 'bool') && !getSimVar('L:A32NX_AUTOPILOT_2_ACTIVE', 'bool')) {
+    if (!fd1Engaged && !fd2Engaged && !ap1Engaged && !ap2Engaged) {
         return null;
     }
 
     let leftString;
     let id = 0;
-    if (FD1Active) {
+    if (fdLeftPushbuttonActive && fd1Engaged) {
         leftString = '1';
         id |= (1 << 0);
+    } else if (fdLeftPushbuttonActive && !fd1Engaged && fd2Engaged) {
+        leftString = '2';
+        id |= (1 << 1);
     } else {
         leftString = '-';
-        id |= (1 << 1);
+        id |= (1 << 2);
     }
     let rightString;
-    if (FD2Active) {
+    if (fdRightPushbuttonActive && fd2Engaged) {
         rightString = '2';
-        id |= (1 << 2);
+        id |= (1 << 3);
+    } else if (fdRightPushbuttonActive && !fd2Engaged && fd1Engaged) {
+        rightString = '1';
+        id |= (1 << 4);
     } else {
         rightString = '-';
-        id |= (1 << 3);
+        id |= (1 << 5);
     }
 
     const text = `${leftString} FD ${rightString}`;
@@ -778,23 +794,22 @@ const E2Cell = () => {
 };
 
 const E3Cell = () => {
-    const status = getSimVar('L:A32NX_AUTOTHRUST_STATUS', 'enum');
+    const fcuAthrWord = useArinc429Var('L:A32NX_FCU_ATS_WORD');
+    const athrEngaged = fcuAthrWord.getBitValueOr(13, false);
+    const athrActive = fcuAthrWord.getBitValueOr(14, false);
 
     let style: string;
     let yPos: number;
     let id = 0;
-    switch (status) {
-    case 1:
+    if (athrEngaged && !athrActive) {
         style = 'FontSmall Cyan';
         yPos = 21.253048;
         id = 1;
-        break;
-    case 2:
+    } else if (athrEngaged && athrActive) {
         style = 'FontMedium White';
         yPos = 21.753487;
         id = 2;
-        break;
-    default:
+    } else {
         return null;
     }
 

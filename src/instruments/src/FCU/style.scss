@@ -1,0 +1,70 @@
+@font-face {
+  font-family: "Poppins-SemiBold";
+  src: url("/fonts/Poppins-SemiBold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Digital";
+  src: url("/fonts/AirbusFCU.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+$color-background: hsl(53, 82%, 2%);
+$color-active: hsl(32, 100%, 69%);
+$color-inactive: hsl(0, 0%, 4%);
+
+svg.baro-svg {
+  position: absolute;
+  width: 179px;
+  height: 102px;
+
+  background: $color-background;
+}
+
+svg.fcu-svg {
+  position: absolute;
+  width: 1280px;
+  height: 102px;
+
+  left: 0;
+  top: 0;
+
+  background: $color-background;
+}
+
+div.wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0%;
+}
+
+text.active {
+  font-family: "Poppins-SemiBold";
+  font-size: 28px;
+  fill: $color-active;
+}
+path.active {
+  stroke: $color-active;
+  stroke-width: 5;
+  fill: none;
+}
+.active {
+  fill: $color-active;
+}
+text.inactive {
+  font-family: "Poppins-SemiBold";
+  font-size: 28px;
+  fill: $color-inactive;
+}
+.inactive {
+  fill: $color-inactive;
+}
+text.value {
+  font-family: "Digital";
+  font-size: 55px;
+  fill: $color-active;
+}

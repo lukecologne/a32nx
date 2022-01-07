@@ -1,4 +1,5 @@
 import { Arinc429Word } from '@shared/arinc429';
+import { useArinc429Var } from '@instruments/common/arinc429.js';
 import React from 'react';
 import { getSimVar } from '../util.js';
 
@@ -74,7 +75,23 @@ export const AttitudeIndicatorFixedCenter = ({ pitch, roll, isOnGround, FDActive
                 <path d="m88.55 86.114h2.5184v-4.0317h12.592v-2.5198h-15.11z" />
                 <path d="m34.153 79.563h15.11v6.5516h-2.5184v-4.0317h-12.592z" />
             </g>
+            <FDFlag isAttExcessive={isAttExcessive} FDActive={FDActive} />
         </g>
+    );
+};
+
+// The FD flag should require that the FD button was on for more than 500ms, but i'm too lazy to implement this right now
+const FDFlag = ({ isAttExcessive, FDActive }) => {
+    const fmgc1DiscreteWord4 = useArinc429Var('L:A32NX_FMGC_1_DISCRETE_WORD_4');
+    const fmgc2DiscreteWord4 = useArinc429Var('L:A32NX_FMGC_2_DISCRETE_WORD_4');
+    const fd1Engaged = fmgc1DiscreteWord4.getBitValueOr(13, false);
+    const fd2Engaged = fmgc2DiscreteWord4.getBitValueOr(13, false);
+    if (isAttExcessive || !FDActive || fd1Engaged || fd2Engaged) {
+        return null;
+    }
+
+    return (
+        <text id="FDText" x="53.702862" y="57.065434" className="FontTrulyLargest Red Blink9Seconds EndAlign">FD</text>
     );
 };
 

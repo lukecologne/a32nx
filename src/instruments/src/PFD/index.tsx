@@ -1,7 +1,7 @@
 import React, { useReducer, useState } from 'react';
 import { A320Failure, FailuresConsumer } from '@flybywiresim/failures';
 import { useArinc429Var } from '@instruments/common/arinc429';
-import { useInteractionEvent, useUpdate } from '@instruments/common/hooks';
+import { useUpdate } from '@instruments/common/hooks';
 import { getSupplier, isCaptainSide } from '@instruments/common/utils';
 import { Horizon } from './AttitudeIndicatorHorizon';
 import { AttitudeIndicatorFixedUpper, AttitudeIndicatorFixedCenter } from './AttitudeIndicatorFixed';
@@ -11,7 +11,7 @@ import { HeadingOfftape, HeadingTape } from './HeadingIndicator';
 import { AltitudeIndicatorOfftape, AltitudeIndicator } from './AltitudeIndicator';
 import { AirspeedIndicatorOfftape, AirspeedIndicator, MachNumber } from './SpeedIndicator';
 import { FMA } from './FMA';
-import { getSimVar, setSimVar } from '../util.js';
+import { getSimVar } from '../util.js';
 import { SmoothSin, LagFilter, RateLimiter } from './PFDUtils';
 import { DisplayUnit } from '../Common/displayUnit';
 import { render } from '../Common';
@@ -39,7 +39,16 @@ export const PFD: React.FC = () => {
 
     const [isAttExcessive, setIsAttExcessive] = useState(false);
 
-    const [lsButtonPressed, setLsButtonPressed] = useState(false);
+    const fcuEisWord1 = useArinc429Var(`L:A32NX_FCU_${displayIndex === 1 ? 'L' : 'R'}_EIS_WORD_1`);
+    const fcuEisWord2 = useArinc429Var(`L:A32NX_FCU_${displayIndex === 1 ? 'L' : 'R'}_EIS_WORD_2`);
+    const lsButtonPressed = fcuEisWord2.getBitValueOr(22, true);
+    const fdButtonPressed = !fcuEisWord2.getBitValueOr(23, false);
+    const altIsStd = fcuEisWord2.getBitValueOr(28, true);
+    const altIsQnh = fcuEisWord2.getBitValueOr(29, true);
+    const altIsInHg = fcuEisWord1.getBitValueOr(11, false);
+
+    const altimeterSettingInHg = useArinc429Var(`L:A32NX_FCU_${displayIndex === 1 ? 'L' : 'R'}_BARO_CORR_INHG`);
+    const altimeterSettingHpa = useArinc429Var(`L:A32NX_FCU_${displayIndex === 1 ? 'L' : 'R'}_BARO_CORR_HPA`);
 
     const [barTimer, setBarTimer] = useState(10);
     const [showSpeedBars, setShowSpeedBars] = useState(true);
@@ -79,11 +88,6 @@ export const PFD: React.FC = () => {
         forceUpdate();
     });
 
-    useInteractionEvent(`A320_Neo_PFD_BTN_LS_${displayIndex}`, () => {
-        setLsButtonPressed(!lsButtonPressed);
-        setSimVar(`L:BTN_LS_${displayIndex}_FILTER_ACTIVE`, !lsButtonPressed, 'Bool');
-    });
-
     const pitch = useArinc429Var(`L:A32NX_ADIRS_IR_${inertialReferenceSource}_PITCH`);
     const roll = useArinc429Var(`L:A32NX_ADIRS_IR_${inertialReferenceSource}_ROLL`);
 
@@ -110,11 +114,11 @@ export const PFD: React.FC = () => {
 
     const FlightPhase = getSimVar('L:A32NX_FWC_FLIGHT_PHASE', 'Enum');
 
-    const pressureMode = Simplane.getPressureSelectedMode(Aircraft.A320_NEO);
-
     const mach = useArinc429Var(`L:A32NX_ADIRS_ADR_${airDataReferenceSource}_MACH`);
 
     const VMax = getSimVar('L:A32NX_SPEEDS_VMAX', 'number');
+
+    const selectedHeading = useArinc429Var('L:A32NX_FCU_SELECTED_HEADING');
 
     const armedVerticalBitmask = getSimVar('L:A32NX_FMA_VERTICAL_ARMED', 'number');
     const activeVerticalMode = getSimVar('L:A32NX_FMA_VERTICAL_MODE', 'enum');
@@ -141,13 +145,6 @@ export const PFD: React.FC = () => {
         targetSpeed = getSimVar('L:A32NX_SPEEDS_MANAGED_PFD', 'knots') || NaN;
     }
 
-    const FDActive = getSimVar(`AUTOPILOT FLIGHT DIRECTOR ACTIVE:${displayIndex}`, 'Bool');
-
-    let selectedHeading: number = NaN;
-    if (getSimVar('L:A320_FCU_SHOW_SELECTED_HEADING', 'number')) {
-        selectedHeading = Simplane.getAutoPilotSelectedHeadingLockValue(false) || 0;
-    }
-
     let ILSCourse = -1;
     if (lsButtonPressed) {
         ILSCourse = getSimVar('L:A32NX_FM_LS_COURSE', 'number');
@@ -164,12 +161,12 @@ export const PFD: React.FC = () => {
                     pitch={pitch}
                     roll={roll}
                     heading={heading}
-                    FDActive={FDActive}
-                    selectedHeading={selectedHeading}
+                    FDActive={fdButtonPressed}
                     isOnGround={isOnGround}
                     radioAlt={radioAlt}
                     decisionHeight={decisionHeight}
                     isAttExcessive={isAttExcessive}
+                    selectedHeading={selectedHeading}
                 />
                 <path
                     id="Mask1"
@@ -196,10 +193,20 @@ export const PFD: React.FC = () => {
                 />
                 <LandingSystem LSButtonPressed={lsButtonPressed} />
                 <AttitudeIndicatorFixedUpper pitch={pitch} roll={roll} />
-                <AttitudeIndicatorFixedCenter pitch={pitch} roll={roll} isOnGround={isOnGround} FDActive={FDActive} isAttExcessive={isAttExcessive} />
+                <AttitudeIndicatorFixedCenter pitch={pitch} roll={roll} isOnGround={isOnGround} FDActive={fdButtonPressed} isAttExcessive={isAttExcessive} />
                 <VerticalSpeedIndicator radioAlt={radioAlt} verticalSpeed={verticalSpeed} />
                 <HeadingOfftape ILSCourse={ILSCourse} groundTrack={groundTrack} heading={heading} selectedHeading={selectedHeading} />
-                <AltitudeIndicatorOfftape altitude={altitude} radioAlt={radioAlt} MDA={mda} targetAlt={targetAlt} altIsManaged={isManaged} mode={pressureMode} />
+                <AltitudeIndicatorOfftape
+                    altimeterValue={altIsInHg ? altimeterSettingInHg : altimeterSettingHpa}
+                    altitude={altitude}
+                    radioAlt={radioAlt}
+                    MDA={mda}
+                    targetAlt={targetAlt}
+                    altIsManaged={isManaged}
+                    altIsStd={altIsStd}
+                    altIsQnh={altIsQnh}
+                    altIsInHg={altIsInHg}
+                />
                 <AirspeedIndicatorOfftape airspeed={clampedAirspeed} targetSpeed={targetSpeed} speedIsManaged={!isSelected} />
                 <MachNumber mach={mach} />
                 <FMA isAttExcessive={isAttExcessive} />

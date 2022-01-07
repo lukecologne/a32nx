@@ -66,7 +66,7 @@ export const HeadingTape = ({ heading }: HeadingTapeProps) => {
 };
 
 interface HeadingOfftapeProps {
-    selectedHeading: number;
+    selectedHeading: Arinc429Word;
     heading: Arinc429Word;
     ILSCourse: number;
     groundTrack: Arinc429Word;
@@ -95,17 +95,17 @@ export const HeadingOfftape = ({ selectedHeading, heading, ILSCourse, groundTrac
 };
 
 interface SelectedHeadingProps {
-    selectedHeading: number;
+    selectedHeading: Arinc429Word;
     heading: Arinc429Word;
 }
 
 const SelectedHeading = ({ selectedHeading, heading }: SelectedHeadingProps) => {
-    if (Number.isNaN(selectedHeading)) {
+    if (!selectedHeading.isNormalOperation()) {
         return null;
     }
 
-    const headingDelta = getSmallestAngle(selectedHeading, heading.value);
-    const text = Math.round(selectedHeading).toString().padStart(3, '0');
+    const headingDelta = getSmallestAngle(selectedHeading.value, heading.value);
+    const text = Math.round(selectedHeading.value).toString().padStart(3, '0');
     if (Math.abs(headingDelta) < DisplayRange) {
         const offset = headingDelta * DistanceSpacing / ValueSpacing;
 
