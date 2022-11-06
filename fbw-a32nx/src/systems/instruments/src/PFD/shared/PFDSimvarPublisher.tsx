@@ -41,8 +41,6 @@ export type PFDSimvars = AdirsSimVars & SwitchingPanelVSimVars & {
     hasGlideslope: boolean;
     glideSlopeError: number;
     markerBeacon: number;
-    isAltManaged: boolean;
-    targetSpeedManaged: number;
     flapHandleIndex: number;
     transAlt: number;
     transAltAppr: number;
@@ -61,15 +59,10 @@ export type PFDSimvars = AdirsSimVars & SwitchingPanelVSimVars & {
     tcasFail: boolean;
     engOneRunning: boolean;
     engTwoRunning: boolean;
-    expediteMode: boolean;
     setHoldSpeed: boolean;
     tdReached: boolean;
-    trkFpaDeselectedTCAS: boolean;
-    tcasRaInhibited: boolean;
     radioAltitude1: number;
     radioAltitude2: number;
-    crzAltMode: boolean;
-    tcasModeDisarmed: boolean;
     flexTemp: number;
     autoBrakeMode: number;
     autoBrakeActive: boolean;
@@ -210,8 +203,6 @@ export enum PFDVars {
     hasGlideslope = 'L:A32NX_RADIO_RECEIVER_GS_IS_VALID',
     glideSlopeError = 'L:A32NX_RADIO_RECEIVER_GS_DEVIATION',
     markerBeacon = 'MARKER BEACON STATE',
-    isAltManaged = 'L:A32NX_FCU_ALT_MANAGED',
-    targetSpeedManaged = 'L:A32NX_SPEEDS_MANAGED_PFD',
     mach = 'L:A32NX_ADIRS_ADR_1_MACH',
     flapHandleIndex = 'L:A32NX_FLAPS_HANDLE_INDEX',
     transAlt = 'L:AIRLINER_TRANS_ALT',
@@ -230,15 +221,10 @@ export enum PFDVars {
     tcasFail = 'L:A32NX_TCAS_FAULT',
     engOneRunning = 'GENERAL ENG COMBUSTION:1',
     engTwoRunning = 'GENERAL ENG COMBUSTION:2',
-    expediteMode = 'L:A32NX_FMA_EXPEDITE_MODE',
     setHoldSpeed = 'L:A32NX_PFD_MSG_SET_HOLD_SPEED',
-    trkFpaDeselectedTCAS = 'L:A32NX_AUTOPILOT_TCAS_MESSAGE_TRK_FPA_DESELECTION',
     tdReached = 'L:A32NX_PFD_MSG_TD_REACHED',
-    tcasRaInhibited = 'L:A32NX_AUTOPILOT_TCAS_MESSAGE_RA_INHIBITED',
     radioAltitude1 = 'L:A32NX_RA_1_RADIO_ALTITUDE',
     radioAltitude2 = 'L:A32NX_RA_2_RADIO_ALTITUDE',
-    crzAltMode = 'L:A32NX_FMA_CRUISE_ALT_MODE',
-    tcasModeDisarmed = 'L:A32NX_AUTOPILOT_TCAS_MESSAGE_DISARM',
     flexTemp = 'L:AIRLINER_TO_FLEX_TEMP',
     autoBrakeMode = 'L:A32NX_AUTOBRAKES_ARMED_MODE',
     autoBrakeActive = 'L:A32NX_AUTOBRAKES_ACTIVE',
@@ -384,8 +370,6 @@ export class PFDSimvarPublisher extends UpdatableSimVarPublisher<PFDSimvars> {
         ['hasGlideslope', { name: PFDVars.hasGlideslope, type: SimVarValueType.Bool }],
         ['glideSlopeError', { name: PFDVars.glideSlopeError, type: SimVarValueType.Degree }],
         ['markerBeacon', { name: PFDVars.markerBeacon, type: SimVarValueType.Enum }],
-        ['isAltManaged', { name: PFDVars.isAltManaged, type: SimVarValueType.Bool }],
-        ['targetSpeedManaged', { name: PFDVars.targetSpeedManaged, type: SimVarValueType.Knots }],
         ['mach', { name: PFDVars.mach, type: SimVarValueType.Number }],
         ['flapHandleIndex', { name: PFDVars.flapHandleIndex, type: SimVarValueType.Number }],
         ['transAlt', { name: PFDVars.transAlt, type: SimVarValueType.Number }],
@@ -404,15 +388,10 @@ export class PFDSimvarPublisher extends UpdatableSimVarPublisher<PFDSimvars> {
         ['tcasFail', { name: PFDVars.tcasFail, type: SimVarValueType.Bool }],
         ['engOneRunning', { name: PFDVars.engOneRunning, type: SimVarValueType.Bool }],
         ['engTwoRunning', { name: PFDVars.engTwoRunning, type: SimVarValueType.Bool }],
-        ['expediteMode', { name: PFDVars.expediteMode, type: SimVarValueType.Bool }],
         ['setHoldSpeed', { name: PFDVars.setHoldSpeed, type: SimVarValueType.Bool }],
         ['tdReached', { name: PFDVars.tdReached, type: SimVarValueType.Bool }],
-        ['trkFpaDeselectedTCAS', { name: PFDVars.trkFpaDeselectedTCAS, type: SimVarValueType.Bool }],
-        ['tcasRaInhibited', { name: PFDVars.tcasRaInhibited, type: SimVarValueType.Bool }],
         ['radioAltitude1', { name: PFDVars.radioAltitude1, type: SimVarValueType.Number }],
         ['radioAltitude2', { name: PFDVars.radioAltitude2, type: SimVarValueType.Number }],
-        ['crzAltMode', { name: PFDVars.crzAltMode, type: SimVarValueType.Bool }],
-        ['tcasModeDisarmed', { name: PFDVars.tcasModeDisarmed, type: SimVarValueType.Bool }],
         ['flexTemp', { name: PFDVars.flexTemp, type: SimVarValueType.Number }],
         ['autoBrakeMode', { name: PFDVars.autoBrakeMode, type: SimVarValueType.Number }],
         ['autoBrakeActive', { name: PFDVars.autoBrakeActive, type: SimVarValueType.Bool }],
