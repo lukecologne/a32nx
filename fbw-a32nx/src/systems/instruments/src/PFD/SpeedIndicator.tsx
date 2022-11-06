@@ -1066,46 +1066,68 @@ export class MachNumber extends DisplayComponent<{bus: ArincEventBus}> {
 
     private failedRef = FSComponent.createRef<SVGTextElement>();
 
-    private showMach = false;
+    private machHysteresis = false;
 
     private onGround = false;
+
+    private mach = new Arinc429Word(0);
+
+    private fcuEisDiscreteWord2 = new Arinc429Word(0);
 
     private leftMainGearCompressed = true;
 
     private rightMainGearCompressed = true;
+
+    private handleMachDisplay() {
+        if (this.mach.value > 0.5) {
+            this.machHysteresis = true;
+        } else if (this.mach.value < 0.45) {
+            this.machHysteresis = false;
+        }
+
+        const stdBaro = this.fcuEisDiscreteWord2.getBitValueOr(28, false) || this.fcuEisDiscreteWord2.isFailureWarning();
+        const lsDisplay = this.fcuEisDiscreteWord2.getBitValueOr(22, false) || this.fcuEisDiscreteWord2.isFailureWarning();
+
+        const hideMachDisplay = (!this.machHysteresis && this.mach.isNormalOperation()) || (!this.mach.isNormalOperation() && (this.onGround || stdBaro)) || lsDisplay;
+
+        if (hideMachDisplay) {
+            this.failedRef.instance.style.visibility = 'hidden';
+            this.machTextSub.set('');
+        } else if (!this.mach.isNormalOperation()) {
+            this.failedRef.instance.style.visibility = 'visible';
+            this.machTextSub.set('');
+        } else {
+            this.failedRef.instance.style.visibility = 'hidden';
+            const machPermille = Math.round(this.mach.value * 1000);
+            this.machTextSub.set(`.${machPermille}`);
+        }
+    }
 
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
         const sub = this.props.bus.getSubscriber<Arinc429Values & PFDSimvars>();
 
-        sub.on('machAr').handle((mach) => {
-            if (!mach.isNormalOperation() && !this.onGround) {
-                this.machTextSub.set('');
-                this.failedRef.instance.style.display = 'inline';
-                return;
-            }
-            this.failedRef.instance.style.display = 'none';
-            const machPermille = Math.round(mach.valueOr(0) * 1000);
-            if (this.showMach && machPermille < 450) {
-                this.showMach = false;
-                this.machTextSub.set('');
-            } else if (!this.showMach && machPermille > 500) {
-                this.showMach = true;
-            }
-            if (this.showMach) {
-                this.machTextSub.set(`.${machPermille}`);
-            }
+        sub.on('machAr').withArinc429Precision(2).handle((mach) => {
+            this.mach = mach;
+            this.handleMachDisplay();
         });
 
         sub.on('leftMainGearCompressed').whenChanged().handle((g) => {
             this.leftMainGearCompressed = g;
             this.onGround = this.rightMainGearCompressed || g;
+            this.handleMachDisplay();
         });
 
         sub.on('rightMainGearCompressed').whenChanged().handle((g) => {
             this.rightMainGearCompressed = g;
             this.onGround = this.leftMainGearCompressed || g;
+            this.handleMachDisplay();
+        });
+
+        sub.on('fcuEisDiscreteWord2').whenChanged().handle((word) => {
+            this.fcuEisDiscreteWord2 = word;
+            this.handleMachDisplay();
         });
     }
 
