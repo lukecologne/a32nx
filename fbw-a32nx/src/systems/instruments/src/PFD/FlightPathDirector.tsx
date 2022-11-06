@@ -4,7 +4,6 @@
 
 import { ClockEvents, DisplayComponent, FSComponent, Subscribable, VNode } from '@microsoft/msfs-sdk';
 import { Arinc429Word } from '@flybywiresim/fbw-sdk';
-import { getDisplayIndex } from './PFD';
 import { calculateHorizonOffsetFromPitch } from './PFDUtils';
 import { Arinc429Values } from './shared/ArincValueProvider';
 import { PFDSimvars } from './shared/PFDSimvarPublisher';
@@ -18,10 +17,9 @@ interface FlightPathVectorData {
     pitch: Arinc429Word;
     fpa: Arinc429Word;
     da: Arinc429Word;
-    activeVerticalMode: number;
-    activeLateralMode: number;
-    fdRoll: number;
-    fdPitch: number;
+    rollFdCommand: Arinc429Word;
+    pitchFdCommand: Arinc429Word;
+    fdEngaged: boolean;
     fdActive: boolean;
 }
 
@@ -31,11 +29,10 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
         pitch: new Arinc429Word(0),
         fpa: new Arinc429Word(0),
         da: new Arinc429Word(0),
-        fdPitch: 0,
-        fdRoll: 0,
-        fdActive: true,
-        activeLateralMode: 0,
-        activeVerticalMode: 0,
+        rollFdCommand: new Arinc429Word(0),
+        pitchFdCommand: new Arinc429Word(0),
+        fdEngaged: false,
+        fdActive: false,
     }
 
     private isTrkFpaActive = false;
@@ -53,19 +50,11 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
 
         const sub = this.props.bus.getSubscriber<PFDSimvars & Arinc429Values & ClockEvents>();
 
-        sub.on('fd1Active').whenChanged().handle((fd) => {
-            if (getDisplayIndex() === 1) {
-                this.data.fdActive = fd;
-                this.needsUpdate = true;
-            }
+        sub.on('fdEngaged').whenChanged().handle((fd) => {
+            this.data.fdEngaged = fd;
+            this.needsUpdate = true;
         });
 
-        sub.on('fd2Active').whenChanged().handle((fd) => {
-            if (getDisplayIndex() === 2) {
-                this.data.fdActive = fd;
-                this.needsUpdate = true;
-            }
-        });
         sub.on('trkFpaActive').whenChanged().handle((a) => {
             this.isTrkFpaActive = a;
             this.needsUpdate = true;
@@ -81,23 +70,13 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
             this.needsUpdate = true;
         });
 
-        sub.on('activeVerticalMode').whenChanged().handle((vm) => {
-            this.data.activeLateralMode = vm;
+        sub.on('rollFdCommand').handle((fdp) => {
+            this.data.rollFdCommand = fdp;
             this.needsUpdate = true;
         });
 
-        sub.on('activeLateralMode').whenChanged().handle((lm) => {
-            this.data.activeLateralMode = lm;
-            this.needsUpdate = true;
-        });
-
-        sub.on('fdPitch').handle((fdp) => {
-            this.data.fdPitch = fdp;
-            this.needsUpdate = true;
-        });
-
-        sub.on('fdBank').handle((fdr) => {
-            this.data.fdRoll = fdr;
+        sub.on('rollFdCommand').handle((fdr) => {
+            this.data.pitchFdCommand = fdr;
             this.needsUpdate = true;
         });
 
@@ -124,12 +103,11 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
     }
 
     private handlePath() {
-        const showLateralFD = this.data.activeLateralMode !== 0 && this.data.activeLateralMode !== 34 && this.data.activeLateralMode !== 40;
-        const showVerticalFD = this.data.activeVerticalMode !== 0 && this.data.activeVerticalMode !== 34;
+        const rollFdInvalid = this.data.rollFdCommand.isFailureWarning() || this.data.rollFdCommand.isNoComputedData();
+        const pitchFdInvalid = this.data.pitchFdCommand.isFailureWarning() || this.data.pitchFdCommand.isNoComputedData();
         const daAndFpaValid = this.data.fpa.isNormalOperation() && this.data.da.isNormalOperation();
 
-        if (!showVerticalFD && !showLateralFD || !this.isTrkFpaActive
-            || !this.data.fdActive || !daAndFpaValid || this.props.isAttExcessive.get()) {
+        if (rollFdInvalid || pitchFdInvalid || !daAndFpaValid || !this.data.fdEngaged || !this.isTrkFpaActive || !this.data.fdActive || this.props.isAttExcessive.get()) {
             this.birdPath.instance.style.visibility = 'hidden';
             this.isVisible = false;
         } else {
@@ -140,9 +118,9 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
 
     private moveBird() {
         if (this.data.fdActive && this.isTrkFpaActive) {
-            const FDRollOrder = this.data.fdRoll;
+            const FDRollOrder = this.data.rollFdCommand.value;
             const FDRollOrderLim = Math.max(Math.min(FDRollOrder, 45), -45);
-            const FDPitchOrder = this.data.fdPitch;
+            const FDPitchOrder = this.data.pitchFdCommand.value;
             const FDPitchOrderLim = Math.max(Math.min(FDPitchOrder, 22.5), -22.5) * 1.9;
 
             const daLimConv = Math.max(Math.min(this.data.da.value, 21), -21) * DistanceSpacing / ValueSpacing;

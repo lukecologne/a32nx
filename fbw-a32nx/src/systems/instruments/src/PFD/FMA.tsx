@@ -1346,6 +1346,10 @@ class BC3Cell extends DisplayComponent<{ isAttExcessive: Subscribable<boolean>, 
 }
 
 class D1D2Cell extends ShowForSecondsComponent<CellProps> {
+    private fmgcDiscreteWord4 = new Arinc429Word(0);
+
+    private fmgcDiscreteWord3 = new Arinc429Word(0);
+
     private text1Sub = Subject.create('');
 
     private text2Sub = Subject.create('');
@@ -1354,63 +1358,70 @@ class D1D2Cell extends ShowForSecondsComponent<CellProps> {
         super(props, 9);
     }
 
+    private setText() {
+        const landModeArmed = this.fmgcDiscreteWord3.getBitValueOr(20, false);
+        const landModeActive = this.fmgcDiscreteWord4.getBitValueOr(14, false);
+        const land2Capacity = this.fmgcDiscreteWord4.getBitValueOr(23, false);
+        const land3FailPassiveCapacity = this.fmgcDiscreteWord4.getBitValueOr(24, false);
+        const land3FailOperationalCapacity = this.fmgcDiscreteWord4.getBitValueOr(25, false);
+
+        let text1: string;
+        let text2: string | undefined;
+        this.isShown = true;
+        if (landModeArmed || landModeActive) {
+            text1 = 'CAT 1';
+        } else if (land2Capacity) {
+            text1 = 'CAT 2';
+        } else if (land3FailPassiveCapacity) {
+            text1 = 'CAT 3';
+            text2 = 'SINGLE';
+        } else if (land3FailOperationalCapacity) {
+            text1 = 'CAT 3';
+            text2 = 'DUAL';
+        } else if (false) {
+            text1 = 'AUTO';
+            text2 = 'LAND';
+        } else if (false) {
+            text1 = 'F-APP';
+        } else if (false) {
+            text1 = 'F-APP';
+            text2 = '+ RAW';
+        } else if (false) {
+            text1 = 'RAW';
+            text2 = 'ONLY';
+        } else {
+            text1 = '';
+            this.isShown = false;
+        }
+
+        this.text1Sub.set(text1);
+
+        if (text2) {
+            this.text2Sub.set(text2);
+            this.modeChangedPathRef.instance.setAttribute('d', 'm104.1 1.8143h27.994v13.506h-27.994z');
+        } else {
+            this.text2Sub.set('');
+            this.modeChangedPathRef.instance.setAttribute('d', 'm104.1 1.8143h27.994v6.0476h-27.994z');
+        }
+        if (text1.length === 0 && !text2) {
+            this.isShown = false;
+        }
+        this.displayModeChangedPath();
+    }
+
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<PFDSimvars>();
+        const sub = this.props.bus.getSubscriber<Arinc429Values>();
 
-        sub.on('approachCapability').whenChanged().handle((c) => {
-            let text1: string;
-            let text2: string | undefined;
+        sub.on('fmgcDiscreteWord4').whenChanged().handle((c) => {
+            this.fmgcDiscreteWord4 = c;
+            this.setText();
+        });
 
-            this.isShown = true;
-            switch (c) {
-            case 1:
-                text1 = 'CAT1';
-                break;
-            case 2:
-                text1 = 'CAT2';
-                break;
-            case 3:
-                text1 = 'CAT3';
-                text2 = 'SINGLE';
-                break;
-            case 4:
-                text1 = 'CAT3';
-                text2 = 'DUAL';
-                break;
-            case 5:
-                text1 = 'AUTO';
-                text2 = 'LAND';
-                break;
-            case 6:
-                text1 = 'F-APP';
-                break;
-            case 7:
-                text1 = 'F-APP';
-                text2 = '+ RAW';
-                break;
-            case 8:
-                text1 = 'RAW';
-                text2 = 'ONLY';
-                break;
-            default:
-                text1 = '';
-            }
-
-            this.text1Sub.set(text1);
-
-            if (text2) {
-                this.text2Sub.set(text2);
-                this.modeChangedPathRef.instance.setAttribute('d', 'm104.1 1.8143h27.994v13.506h-27.994z');
-            } else {
-                this.text2Sub.set('');
-                this.modeChangedPathRef.instance.setAttribute('d', 'm104.1 1.8143h27.994v6.0476h-27.994z');
-            }
-            if (text1.length === 0 && !text2) {
-                this.isShown = false;
-            }
-            this.displayModeChangedPath();
+        sub.on('fmgcDiscreteWord3').whenChanged().handle((c) => {
+            this.fmgcDiscreteWord3 = c;
+            this.setText();
         });
     }
 
@@ -1472,9 +1483,9 @@ class D3Cell extends DisplayComponent<{bus: ArincEventBus}> {
 }
 
 class E1Cell extends ShowForSecondsComponent<CellProps> {
-    private ap1Active = false;
+    private fmgc1DiscreteWord4 = new Arinc429Word(0);
 
-    private ap2Active = false;
+    private fmgc2DiscreteWord4 = new Arinc429Word(0);
 
     private textSub = Subject.create('');
 
@@ -1483,17 +1494,20 @@ class E1Cell extends ShowForSecondsComponent<CellProps> {
     }
 
     private setText() {
+        const ap1Engaged = this.fmgc1DiscreteWord4.getBitValueOr(12, false);
+        const ap2Engaged = this.fmgc1DiscreteWord4.getBitValueOr(12, false);
+
         let text: string;
         this.isShown = true;
-        if (this.ap1Active && !this.ap2Active) {
+        if (ap1Engaged && ap2Engaged) {
+            text = 'AP1+2';
+        } else if (ap1Engaged) {
             text = 'AP1';
-        } else if (this.ap2Active && !this.ap1Active) {
+        } else if (ap2Engaged) {
             text = 'AP2';
-        } else if (!this.ap2Active && !this.ap1Active) {
+        } else {
             text = '';
             this.isShown = false;
-        } else {
-            text = 'AP1+2';
         }
         this.displayModeChangedPath();
         this.textSub.set(text);
@@ -1502,17 +1516,15 @@ class E1Cell extends ShowForSecondsComponent<CellProps> {
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<PFDSimvars>();
+        const sub = this.props.bus.getSubscriber<Arinc429Values>();
 
-        sub.on('ap1Active').whenChanged().handle((ap) => {
-            this.ap1Active = ap;
-            this.displayModeChangedPath();
+        sub.on('fmgc1DiscreteWord4').whenChanged().handle((ap) => {
+            this.fmgc1DiscreteWord4 = ap;
             this.setText();
         });
 
-        sub.on('ap2Active').whenChanged().handle((ap) => {
-            this.ap2Active = ap;
-            this.displayModeChangedPath();
+        sub.on('fmgc2DiscreteWord4').whenChanged().handle((ap) => {
+            this.fmgc2DiscreteWord4 = ap;
             this.setText();
         });
     }
@@ -1528,13 +1540,13 @@ class E1Cell extends ShowForSecondsComponent<CellProps> {
 }
 
 class E2Cell extends ShowForSecondsComponent<CellProps> {
-    private fd1Active = false;
+    private fmgc1DiscreteWord4 = new Arinc429Word(0);
 
-    private fd2Active = false;
+    private fmgc2DiscreteWord4 = new Arinc429Word(0);
 
-    private ap1Active = false;
+    private fdLeftActive = false;
 
-    private ap2Active = false;
+    private fdRightActive = false;
 
     private textSub = Subject.create('');
 
@@ -1543,48 +1555,57 @@ class E2Cell extends ShowForSecondsComponent<CellProps> {
     }
 
     private getText() {
+        const ap1Engaged = this.fmgc1DiscreteWord4.getBitValueOr(12, false);
+        const ap2Engaged = this.fmgc2DiscreteWord4.getBitValueOr(12, false);
+
+        const fd1Engaged = this.fmgc1DiscreteWord4.getBitValueOr(13, false);
+        const fd2Engaged = this.fmgc2DiscreteWord4.getBitValueOr(13, false);
+
+        const fd1EngagedOnLeft = this.fdLeftActive && fd1Engaged;
+        const fd2EngagedOnRight = this.fdRightActive && fd2Engaged;
+        const fd1EngagedOnRight = this.fdRightActive && fd1Engaged;
+        const fd2EngagedOnLeft = this.fdLeftActive && fd2Engaged;
+
+        const anyFdOrApEngaged = ap1Engaged || ap2Engaged || fd1Engaged || fd2Engaged;
+
+        let text: string;
         this.isShown = true;
-        if (!this.ap1Active && !this.ap2Active && !this.fd1Active && !this.fd2Active) {
+        if (!anyFdOrApEngaged) {
             this.isShown = false;
-            this.textSub.set('');
+            text = '';
+        } else if (fd1EngagedOnLeft && fd2EngagedOnRight) {
+            text = '1 FD 2';
+        } else if (fd1EngagedOnLeft && fd1EngagedOnRight) {
+            text = '1 FD 1';
+        } else if (fd2EngagedOnLeft && fd2EngagedOnRight) {
+            text = '2 FD 2';
+        } else if (fd1EngagedOnLeft) {
+            text = '1 FD -';
+        } else if (fd1EngagedOnRight) {
+            text = '- FD 1';
+        } else if (fd2EngagedOnRight) {
+            text = '- FD 2';
+        } else if (fd2EngagedOnLeft) {
+            text = '2 FD -';
         } else {
-            const text = `${this.fd1Active ? '1' : '-'} FD ${this.fd2Active ? '2' : '-'}`;
-            this.textSub.set(text);
+            text = '- FD -';
         }
+        this.textSub.set(text);
+        this.displayModeChangedPath();
     }
 
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<PFDSimvars>();
+        const sub = this.props.bus.getSubscriber<Arinc429Values>();
 
-        sub.on('fd1Active').whenChanged().handle((fd) => {
-            this.fd1Active = fd;
-            if (fd || this.fd2Active) {
-                this.displayModeChangedPath();
-            } else {
-                this.displayModeChangedPath(true);
-            }
+        sub.on('fmgc1DiscreteWord4').whenChanged().handle((fd) => {
+            this.fmgc1DiscreteWord4 = fd;
             this.getText();
         });
 
-        sub.on('ap1Active').whenChanged().handle((fd) => {
-            this.ap1Active = fd;
-            this.getText();
-        });
-
-        sub.on('ap2Active').whenChanged().handle((fd) => {
-            this.ap2Active = fd;
-            this.getText();
-        });
-
-        sub.on('fd2Active').whenChanged().handle((fd) => {
-            this.fd2Active = fd;
-            if (fd || this.fd1Active) {
-                this.displayModeChangedPath();
-            } else {
-                this.displayModeChangedPath(true);
-            }
+        sub.on('fmgc2DiscreteWord4').whenChanged().handle((fd) => {
+            this.fmgc2DiscreteWord4 = fd;
             this.getText();
         });
     }
