@@ -23,24 +23,41 @@ const DistanceSpacing = 15;
 const ValueSpacing = 10;
 
 class HeadingBug extends DisplayComponent<{ bus: ArincEventBus, isCaptainSide: boolean, yOffset: Subscribable<number> }> {
-    private isActive = false;
+    private fcuSelectedHeading = new Arinc429Word(0);
 
-    private selectedHeading = 0;
+    private fcuSelectedTrack = new Arinc429Word(0);
 
-    private heading = Arinc429Register.empty();;
+    private fcuEisDiscreteWord2 = new Arinc429Word(0);
+
+    private fcuDiscreteWord1 = new Arinc429Word(0);
+
+    private heading = new Arinc429Word(0);
 
     private horizonHeadingBug = FSComponent.createRef<SVGGElement>();
 
     private yOffset = 0;
 
     private calculateAndSetOffset() {
-        const headingDelta = getSmallestAngle(this.selectedHeading, this.heading.value);
+        const fdActive = this.fcuEisDiscreteWord2.getBitValueOr(23, false);
+        const trkFpaActive = this.fcuDiscreteWord1.getBitValueOr(25, false);
 
-        const offset = headingDelta * DistanceSpacing / ValueSpacing;
+        const targetValue = trkFpaActive ? this.fcuSelectedTrack : this.fcuSelectedHeading;
 
-        if (Math.abs(offset) <= DisplayRange + 10) {
+        const showSelectedHeadingBug = !(fdActive || targetValue.isNoComputedData() || targetValue.isFailureWarning());
+
+        if (showSelectedHeadingBug) {
             this.horizonHeadingBug.instance.classList.remove('HiddenElement');
-            this.horizonHeadingBug.instance.style.transform = `translate3d(${offset}px, ${this.yOffset}px, 0px)`;
+
+            const headingDelta = getSmallestAngle(targetValue.value, this.heading.value);
+
+            const offset = headingDelta * DistanceSpacing / ValueSpacing;
+
+            if (Math.abs(offset) <= DisplayRange + 10) {
+                this.horizonHeadingBug.instance.classList.remove('HiddenElement');
+                this.horizonHeadingBug.instance.style.transform = `translate3d(${offset}px, ${this.yOffset}px, 0px)`;
+            } else {
+                this.horizonHeadingBug.instance.classList.add('HiddenElement');
+            }
         } else {
             this.horizonHeadingBug.instance.classList.add('HiddenElement');
         }
@@ -51,34 +68,32 @@ class HeadingBug extends DisplayComponent<{ bus: ArincEventBus, isCaptainSide: b
 
         const sub = this.props.bus.getSubscriber<DmcLogicEvents & PFDSimvars & Arinc429Values>();
 
-        sub.on('selectedHeading').whenChanged().handle((s) => {
-            this.selectedHeading = s;
-            if (this.isActive) {
-                this.calculateAndSetOffset();
-            }
+        sub.on('fcuSelectedHeading').whenChanged().handle((s) => {
+            this.fcuSelectedHeading = s;
+            this.calculateAndSetOffset();
+        });
+
+        sub.on('fcuSelectedTrack').whenChanged().handle((s) => {
+            this.fcuSelectedTrack = s;
+            this.calculateAndSetOffset();
         });
 
         sub.on('heading').handle((h) => {
-            this.heading.set(h);
-            if (this.isActive) {
-                this.calculateAndSetOffset();
-            }
+            this.heading = h;
+            this.calculateAndSetOffset();
         });
 
-        sub.on(this.props.isCaptainSide ? 'fd1Active' : 'fd2Active').whenChanged().handle((fd) => {
-            this.isActive = !fd;
-            if (this.isActive) {
-                this.horizonHeadingBug.instance.classList.remove('HiddenElement');
-            } else {
-                this.horizonHeadingBug.instance.classList.add('HiddenElement');
-            }
+        sub.on('fcuEisDiscreteWord2').whenChanged().handle((fd) => {
+            this.fcuEisDiscreteWord2 = fd;
+        });
+
+        sub.on('fcuDiscreteWord1').whenChanged().handle((fd) => {
+            this.fcuDiscreteWord1 = fd;
         });
 
         this.props.yOffset.sub((yOffset) => {
             this.yOffset = yOffset;
-            if (this.isActive) {
-                this.calculateAndSetOffset();
-            }
+            this.calculateAndSetOffset();
         });
     }
 

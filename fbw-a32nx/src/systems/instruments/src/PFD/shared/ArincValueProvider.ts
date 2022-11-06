@@ -50,7 +50,22 @@ export interface Arinc429Values {
     trueTrack: Arinc429Word;
     mdaAr: Arinc429Word;
     dhAr: Arinc429Word;
+    fcuSelectedHeading: Arinc429Word;
+    fcuSelectedAltitude: Arinc429Word;
+    fcuSelectedAirspeed: Arinc429Word;
+    fcuSelectedVerticalSpeed: Arinc429Word;
+    fcuSelectedTrack: Arinc429Word;
+    fcuSelectedFpa: Arinc429Word;
+    fcuAtsDiscreteWord: Arinc429Word;
+    fcuAtsFmaDiscreteWord: Arinc429Word;
+    fcuEisDiscreteWord1: Arinc429Word;
+    fcuEisDiscreteWord2: Arinc429Word;
+    fcuEisBaro: Arinc429Word;
+    fcuEisBaroHpa: Arinc429Word;
+    fcuDiscreteWord1: Arinc429Word;
+    fcuDiscreteWord2: Arinc429Word;
     fdEngaged: boolean;
+    pfdSelectedSpeed: Arinc429Word;
     rollFdCommand: Arinc429Word;
     pitchFdCommand: Arinc429Word;
     yawFdCommand: Arinc429Word;
@@ -58,6 +73,7 @@ export interface Arinc429Values {
     fmgc1DiscreteWord4: Arinc429Word;
     fmgc2DiscreteWord4: Arinc429Word;
     fmgcDiscreteWord4: Arinc429Word;
+    fmgcFmAltitudeConstraint: Arinc429Word;
     fmgcDiscreteWord3: Arinc429Word;
 }
 export class ArincValueProvider {
@@ -114,6 +130,8 @@ export class ArincValueProvider {
     private fac2VAlphaMax = new Arinc429Word(0);
 
     private facToUse = 0;
+
+    private fcuEisDiscreteWord2 = new Arinc429Word(0);
 
     private fmgc1DiscreteWord4 = new Arinc429Word(0);
 
@@ -516,6 +534,110 @@ export class ArincValueProvider {
             publisher.pub('dhAr', new Arinc429Word(word));
         });
 
+        subscriber.on('fcuSelectedHeadingRaw').handle((word) => {
+            publisher.pub('fcuSelectedHeading', new Arinc429Word(word));
+        });
+
+        subscriber.on('fcuSelectedAltitudeRaw').handle((word) => {
+            publisher.pub('fcuSelectedAltitude', new Arinc429Word(word));
+        });
+
+        subscriber.on('fcuSelectedAirspeedRaw').handle((word) => {
+            publisher.pub('fcuSelectedAirspeed', new Arinc429Word(word));
+        });
+
+        subscriber.on('fcuSelectedVerticalSpeedRaw').handle((word) => {
+            publisher.pub('fcuSelectedVerticalSpeed', new Arinc429Word(word));
+        });
+
+        subscriber.on('fcuSelectedTrackRaw').handle((word) => {
+            publisher.pub('fcuSelectedTrack', new Arinc429Word(word));
+        });
+
+        subscriber.on('fcuSelectedFpaRaw').handle((word) => {
+            publisher.pub('fcuSelectedFpa', new Arinc429Word(word));
+        });
+
+        subscriber.on('fcuAtsDiscreteWordRaw').handle((word) => {
+            publisher.pub('fcuAtsDiscreteWord', new Arinc429Word(word));
+        });
+
+        subscriber.on('fcuAtsFmaDiscreteWordRaw').handle((word) => {
+            publisher.pub('fcuAtsFmaDiscreteWord', new Arinc429Word(word));
+        });
+
+        subscriber.on('fcuEisLeftDiscreteWord1Raw').handle((word) => {
+            if (getDisplayIndex() === 1) {
+                publisher.pub('fcuEisDiscreteWord1', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fcuEisLeftDiscreteWord2Raw').handle((word) => {
+            if (getDisplayIndex() === 1) {
+                this.fcuEisDiscreteWord2 = new Arinc429Word(word);
+                this.determineFmgcToUseForFlightDirector(publisher);
+                publisher.pub('fcuEisDiscreteWord2', this.fcuEisDiscreteWord2);
+            }
+        });
+
+        subscriber.on('fcuEisLeftBaroRaw').handle((word) => {
+            if (getDisplayIndex() === 1) {
+                publisher.pub('fcuEisBaro', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fcuEisLeftBaroHpaRaw').handle((word) => {
+            if (getDisplayIndex() === 1) {
+                publisher.pub('fcuEisBaroHpa', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fcuEisRightDiscreteWord1Raw').handle((word) => {
+            if (getDisplayIndex() === 2) {
+                publisher.pub('fcuEisDiscreteWord1', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fcuEisRightDiscreteWord2Raw').handle((word) => {
+            if (getDisplayIndex() === 2) {
+                this.fcuEisDiscreteWord2 = new Arinc429Word(word);
+                this.determineFmgcToUseForFlightDirector(publisher);
+                publisher.pub('fcuEisDiscreteWord2', this.fcuEisDiscreteWord2);
+            }
+        });
+
+        subscriber.on('fcuEisRightBaroRaw').handle((word) => {
+            if (getDisplayIndex() === 2) {
+                publisher.pub('fcuEisBaro', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fcuEisRightBaroHpaRaw').handle((word) => {
+            if (getDisplayIndex() === 2) {
+                publisher.pub('fcuEisBaroHpa', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fcuDiscreteWord1Raw').handle((word) => {
+            publisher.pub('fcuDiscreteWord1', new Arinc429Word(word));
+        });
+
+        subscriber.on('fcuDiscreteWord2Raw').handle((word) => {
+            publisher.pub('fcuDiscreteWord2', new Arinc429Word(word));
+        });
+
+        subscriber.on('fmgc1PfdSelectedSpeedRaw').handle((word) => {
+            if (this.fg1Selected) {
+                publisher.pub('pfdSelectedSpeed', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fmgc2PfdSelectedSpeedRaw').handle((word) => {
+            if (!this.fg1Selected) {
+                publisher.pub('pfdSelectedSpeed', new Arinc429Word(word));
+            }
+        });
+
         subscriber.on('fmgc1RollFdCommandRaw').handle((word) => {
             if (this.fg1ForFlightDirectorSelected) {
                 publisher.pub('rollFdCommand', new Arinc429Word(word));
@@ -581,6 +703,18 @@ export class ArincValueProvider {
             publisher.pub('fmgc2DiscreteWord4', new Arinc429Word(word));
             if (!this.fg1Selected) {
                 publisher.pub('fmgcDiscreteWord4', this.fmgc2DiscreteWord4);
+            }
+        });
+
+        subscriber.on('fmgc1FmAltitudeConstraintRaw').handle((word) => {
+            if (this.fg1Selected) {
+                publisher.pub('fmgcFmAltitudeConstraint', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fmgc2FmAltitudeConstraintRaw').handle((word) => {
+            if (!this.fg1Selected) {
+                publisher.pub('fmgcFmAltitudeConstraint', new Arinc429Word(word));
             }
         });
 
@@ -677,7 +811,7 @@ export class ArincValueProvider {
 
         const fd1Engaged = this.fmgc1DiscreteWord4.getBitValueOr(13, false);
         const fd2Engaged = this.fmgc2DiscreteWord4.getBitValueOr(13, false);
-        const fdOwnSelectedOn = false;
+        const fdOwnSelectedOn = this.fcuEisDiscreteWord2.getBitValueOr(23, false);
 
         const ownFdEngaged = side2 ? fd2Engaged : fd1Engaged;
         const oppFdEngaged = side2 ? fd1Engaged : fd2Engaged;
@@ -688,7 +822,7 @@ export class ArincValueProvider {
         this.fg1ForFlightDirectorSelected = (!side2 && !ownFdEngagedAndOn && !oppFdEngagedAndOn)
         || (!side2 && ownFdEngagedAndOn) || (side2 && oppFdEngagedAndOn);
 
-        publisher.pub('fdEngaged', this.fg1Selected ? fd1Engaged : fd2Engaged);
+        publisher.pub('fdEngaged', this.fg1ForFlightDirectorSelected ? fd1Engaged : fd2Engaged);
     }
 
     private determineFmgcToUse() {

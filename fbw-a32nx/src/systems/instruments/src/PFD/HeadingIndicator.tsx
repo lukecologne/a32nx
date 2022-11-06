@@ -1,5 +1,6 @@
 import { DisplayComponent, FSComponent, HEvent, Subject, Subscribable, VNode } from '@microsoft/msfs-sdk';
 import { DmcLogicEvents } from '../MsfsAvionicsCommon/providers/DmcPublisher';
+import { Arinc429Word } from '@shared/arinc429';
 import { HorizontalTape } from './HorizontalTape';
 import { getSmallestAngle } from './PFDUtils';
 import { PFDSimvars } from './shared/PFDSimvarPublisher';
@@ -113,9 +114,13 @@ interface SelectedHeadingProps {
 }
 
 class SelectedHeading extends DisplayComponent<SelectedHeadingProps> {
-    private selectedHeading = NaN;
+    private selectedHeading = new Arinc429Word(0);
 
-    private showSelectedHeading = 0;
+    private selectedTrack = new Arinc429Word(0);
+
+    private fcuDiscreteWord1 = new Arinc429Word(0);
+
+    private heading = 0;
 
     private targetIndicator = FSComponent.createRef<SVGPathElement>();
 
@@ -128,41 +133,43 @@ class SelectedHeading extends DisplayComponent<SelectedHeadingProps> {
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<PFDSimvars>();
+        const sub = this.props.bus.getSubscriber<PFDSimvars & Arinc429Values>();
 
-        sub.on('selectedHeading').whenChanged().handle((h) => {
-            if (this.showSelectedHeading === 1) {
-                this.selectedHeading = h;
-                this.handleDelta(this.props.heading.get(), this.selectedHeading);
-            } else {
-                this.selectedHeading = NaN;
-            }
+        sub.on('fcuSelectedHeading').whenChanged().handle((h) => {
+            this.selectedHeading = h;
+            this.handleDelta();
         });
 
-        sub.on('showSelectedHeading').whenChanged().handle((sh) => {
-            this.showSelectedHeading = sh;
-            if (this.showSelectedHeading === 0) {
-                this.selectedHeading = NaN;
-            }
-            this.handleDelta(this.props.heading.get(), this.selectedHeading);
+        sub.on('fcuSelectedTrack').whenChanged().handle((t) => {
+            this.selectedTrack = t;
+            this.handleDelta();
+        });
+
+        sub.on('fcuDiscreteWord1').whenChanged().handle((a) => {
+            this.fcuDiscreteWord1 = a;
+            this.handleDelta();
         });
 
         this.props.heading.sub((h) => {
-            this.handleDelta(h, this.selectedHeading);
+            this.heading = h;
+            this.handleDelta();
         }, true);
     }
 
-    private handleDelta(heading: number, selectedHeading: number) {
-        const headingDelta = getSmallestAngle(selectedHeading, heading);
+    private handleDelta() {
+        const trkFpaActive = this.fcuDiscreteWord1.getBitValueOr(25, false);
+        const targetValue = trkFpaActive ? this.selectedTrack : this.selectedHeading;
 
-        this.text.set(Math.round(selectedHeading).toString().padStart(3, '0'));
-
-        if (Number.isNaN(selectedHeading)) {
+        if (targetValue.isNoComputedData() || targetValue.isFailureWarning()) {
             this.headingTextLeft.instance.classList.add('HiddenElement');
             this.targetIndicator.instance.classList.add('HiddenElement');
             this.headingTextRight.instance.classList.add('HiddenElement');
             return;
         }
+
+        const headingDelta = getSmallestAngle(targetValue.value, this.heading);
+
+        this.text.set(Math.round(targetValue.value).toString().padStart(3, '0'));
 
         if (Math.abs(headingDelta) < DisplayRange) {
             const offset = headingDelta * DistanceSpacing / ValueSpacing;

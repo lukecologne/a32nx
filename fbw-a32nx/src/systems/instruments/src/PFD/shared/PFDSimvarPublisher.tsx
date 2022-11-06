@@ -46,14 +46,9 @@ export type PFDSimvars = AdirsSimVars & SwitchingPanelVSimVars & {
     flapHandleIndex: number;
     transAlt: number;
     transAltAppr: number;
-    selectedHeading: number;
-    showSelectedHeading: number;
-    altConstraint: number;
-    trkFpaActive: boolean;
+    magTrackRaw: number;
     aoa: number;
-    selectedFpa: number;
     ilsCourse: number;
-    metricAltToggle: boolean;
     tla1: number;
     tla2: number;
     landingElevation: number;
@@ -82,8 +77,6 @@ export type PFDSimvars = AdirsSimVars & SwitchingPanelVSimVars & {
     fpaRaw: number;
     daRaw: number;
     latAccRaw: number;
-    ls1Button: boolean;
-    ls2Button: boolean;
     fcdc1DiscreteWord1Raw: number;
     fcdc2DiscreteWord1Raw: number;
     fcdc1DiscreteWord2Raw: number;
@@ -144,6 +137,42 @@ export type PFDSimvars = AdirsSimVars & SwitchingPanelVSimVars & {
     fmgc2AtsDiscreteWordRaw: number;
     fmgc1DiscreteWord3Raw: number;
     fmgc2DiscreteWord3Raw: number;
+    fcuSelectedHeadingRaw: number;
+    fcuSelectedAltitudeRaw: number;
+    fcuSelectedAirspeedRaw: number;
+    fcuSelectedVerticalSpeedRaw: number;
+    fcuSelectedTrackRaw: number;
+    fcuSelectedFpaRaw: number;
+    fcuAtsDiscreteWordRaw: number;
+    fcuAtsFmaDiscreteWordRaw: number;
+    fcuEisLeftDiscreteWord1Raw: number;
+    fcuEisLeftDiscreteWord2Raw: number;
+    fcuEisLeftBaroRaw: number;
+    fcuEisLeftBaroHpaRaw: number;
+    fcuEisRightDiscreteWord1Raw: number;
+    fcuEisRightDiscreteWord2Raw: number;
+    fcuEisRightBaroRaw: number;
+    fcuEisRightBaroHpaRaw: number;
+    fcuDiscreteWord1Raw: number;
+    fcuDiscreteWord2Raw: number;
+    fmgc1PfdSelectedSpeedRaw: number;
+    fmgc2PfdSelectedSpeedRaw: number;
+    fmgc1RollFdCommandRaw: number;
+    fmgc2RollFdCommandRaw: number;
+    fmgc1PitchFdCommandRaw: number;
+    fmgc2PitchFdCommandRaw: number;
+    fmgc1YawFdCommandRaw: number;
+    fmgc2YawFdCommandRaw: number;
+    fmgc1DiscreteWord5Raw: number;
+    fmgc2DiscreteWord5Raw: number;
+    fmgc1DiscreteWord4Raw: number;
+    fmgc2DiscreteWord4Raw: number;
+    fmgc1FmAltitudeConstraintRaw: number;
+    fmgc2FmAltitudeConstraintRaw: number;
+    fmgc1AtsDiscreteWordRaw: number;
+    fmgc2AtsDiscreteWordRaw: number;
+    fmgc1DiscreteWord3Raw: number;
+    fmgc2DiscreteWord3Raw: number;
   }
 
 export enum PFDVars {
@@ -188,14 +217,8 @@ export enum PFDVars {
     transAlt = 'L:AIRLINER_TRANS_ALT',
     transAltAppr = 'L:AIRLINER_APPR_TRANS_ALT',
     magTrackRaw = 'L:A32NX_ADIRS_IR_1_TRACK',
-    selectedHeading = 'L:A32NX_FCU_HEADING_SELECTED',
-    showSelectedHeading = 'L:A320_FCU_SHOW_SELECTED_HEADING',
-    altConstraint = 'L:A32NX_FG_ALTITUDE_CONSTRAINT',
-    trkFpaActive = 'L:A32NX_TRK_FPA_MODE_ACTIVE',
     aoa = 'INCIDENCE ALPHA',
-    selectedFpa = 'L:A32NX_AUTOPILOT_FPA_SELECTED',
     ilsCourse = 'L:A32NX_FM_LS_COURSE',
-    metricAltToggle = 'L:A32NX_METRIC_ALT_TOGGLE',
     tla1='L:A32NX_AUTOTHRUST_TLA:1',
     tla2='L:A32NX_AUTOTHRUST_TLA:2',
     tcasState = 'L:A32NX_TCAS_STATE',
@@ -223,8 +246,6 @@ export enum PFDVars {
     fpaRaw = 'L:A32NX_ADIRS_IR_1_FLIGHT_PATH_ANGLE',
     daRaw = 'L:A32NX_ADIRS_IR_1_DRIFT_ANGLE',
     latAccRaw = 'L:A32NX_ADIRS_IR_1_BODY_LATERAL_ACC',
-    ls1Button = 'L:BTN_LS_1_FILTER_ACTIVE',
-    ls2Button = 'L:BTN_LS_2_FILTER_ACTIVE',
     fcdc1DiscreteWord1Raw = 'L:A32NX_FCDC_1_DISCRETE_WORD_1',
     fcdc2DiscreteWord1Raw = 'L:A32NX_FCDC_2_DISCRETE_WORD_1',
     fcdc1DiscreteWord2Raw = 'L:A32NX_FCDC_1_DISCRETE_WORD_2',
@@ -287,6 +308,42 @@ export enum PFDVars {
     fmgc2AtsDiscreteWordRaw = 'L:A32NX_FMGC_2_ATS_DISCRETE_WORD',
     fmgc1DiscreteWord3Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_3',
     fmgc2DiscreteWord3Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_3',
+    fcuSelectedHeadingRaw = 'L:A32NX_FCU_SELECTED_HEADING',
+    fcuSelectedAltitudeRaw = 'L:A32NX_FCU_SELECTED_ALTITUDE',
+    fcuSelectedAirspeedRaw = 'L:A32NX_FCU_SELECTED_AIRSPEED',
+    fcuSelectedVerticalSpeedRaw = 'L:A32NX_FCU_SELECTED_VERTICAL_SPEED',
+    fcuSelectedTrackRaw = 'L:A32NX_FCU_SELECTED_TRACK',
+    fcuSelectedFpaRaw = 'L:A32NX_FCU_SELECTED_FPA',
+    fcuAtsDiscreteWordRaw = 'L:A32NX_FCU_ATS_DISCRETE_WORD',
+    fcuAtsFmaDiscreteWordRaw = 'L:A32NX_FCU_ATS_FMA_DISCRETE_WORD',
+    fcuEisLeftDiscreteWord1Raw = 'L:A32NX_FCU_LEFT_EIS_DISCRETE_WORD_1',
+    fcuEisLeftDiscreteWord2Raw = 'L:A32NX_FCU_LEFT_EIS_DISCRETE_WORD_2',
+    fcuEisLeftBaroRaw = 'L:A32NX_FCU_LEFT_EIS_BARO',
+    fcuEisLeftBaroHpaRaw = 'L:A32NX_FCU_LEFT_EIS_BARO_HPA',
+    fcuEisRightDiscreteWord1Raw = 'L:A32NX_FCU_RIGHT_EIS_DISCRETE_WORD_1',
+    fcuEisRightDiscreteWord2Raw = 'L:A32NX_FCU_RIGHT_EIS_DISCRETE_WORD_2',
+    fcuEisRightBaroRaw = 'L:A32NX_FCU_RIGHT_EIS_BARO',
+    fcuEisRightBaroHpaRaw = 'L:A32NX_FCU_RIGHT_EIS_BARO_HPA',
+    fcuDiscreteWord1Raw = 'L:A32NX_FCU_DISCRETE_WORD_1',
+    fcuDiscreteWord2Raw = 'L:A32NX_FCU_DISCRETE_WORD_2',
+    fmgc1PfdSelectedSpeedRaw = 'L:A32NX_FMGC_1_PFD_SELECTED_SPEED',
+    fmgc2PfdSelectedSpeedRaw = 'L:A32NX_FMGC_2_PFD_SELECTED_SPEED',
+    fmgc1RollFdCommandRaw = 'L:A32NX_FMGC_1_ROLL_FD_COMMAND',
+    fmgc2RollFdCommandRaw = 'L:A32NX_FMGC_2_ROLL_FD_COMMAND',
+    fmgc1PitchFdCommandRaw = 'L:A32NX_FMGC_1_PITCH_FD_COMMAND',
+    fmgc2PitchFdCommandRaw = 'L:A32NX_FMGC_2_PITCH_FD_COMMAND',
+    fmgc1YawFdCommandRaw = 'L:A32NX_FMGC_1_YAW_FD_COMMAND',
+    fmgc2YawFdCommandRaw = 'L:A32NX_FMGC_2_YAW_FD_COMMAND',
+    fmgc1DiscreteWord5Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_5',
+    fmgc2DiscreteWord5Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_5',
+    fmgc1DiscreteWord4Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_4',
+    fmgc2DiscreteWord4Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_4',
+    fmgc1FmAltitudeConstraintRaw = 'L:A32NX_FMGC_1_FM_ALTITUDE_CONSTRAINT',
+    fmgc2FmAltitudeConstraintRaw = 'L:A32NX_FMGC_2_FM_ALTITUDE_CONSTRAINT',
+    fmgc1AtsDiscreteWordRaw = 'L:A32NX_FMGC_1_ATS_DISCRETE_WORD',
+    fmgc2AtsDiscreteWordRaw = 'L:A32NX_FMGC_2_ATS_DISCRETE_WORD',
+    fmgc1DiscreteWord3Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_3',
+    fmgc2DiscreteWord3Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_3',
   }
 
 /** A publisher to poll and publish nav/com simvars. */
@@ -334,14 +391,8 @@ export class PFDSimvarPublisher extends UpdatableSimVarPublisher<PFDSimvars> {
         ['transAlt', { name: PFDVars.transAlt, type: SimVarValueType.Number }],
         ['transAltAppr', { name: PFDVars.transAltAppr, type: SimVarValueType.Number }],
         ['magTrackRaw', { name: PFDVars.magTrackRaw, type: SimVarValueType.Number }],
-        ['selectedHeading', { name: PFDVars.selectedHeading, type: SimVarValueType.Degree }],
-        ['showSelectedHeading', { name: PFDVars.showSelectedHeading, type: SimVarValueType.Number }],
-        ['altConstraint', { name: PFDVars.altConstraint, type: SimVarValueType.Feet }],
-        ['trkFpaActive', { name: PFDVars.trkFpaActive, type: SimVarValueType.Bool }],
         ['aoa', { name: PFDVars.aoa, type: SimVarValueType.Degree }],
-        ['selectedFpa', { name: PFDVars.selectedFpa, type: SimVarValueType.Degree }],
         ['ilsCourse', { name: PFDVars.ilsCourse, type: SimVarValueType.Number }],
-        ['metricAltToggle', { name: PFDVars.metricAltToggle, type: SimVarValueType.Bool }],
         ['tla1', { name: PFDVars.tla1, type: SimVarValueType.Number }],
         ['tla2', { name: PFDVars.tla2, type: SimVarValueType.Number }],
         ['tcasState', { name: PFDVars.tcasState, type: SimVarValueType.Enum }],
@@ -369,8 +420,6 @@ export class PFDSimvarPublisher extends UpdatableSimVarPublisher<PFDSimvars> {
         ['fpaRaw', { name: PFDVars.fpaRaw, type: SimVarValueType.Number }],
         ['daRaw', { name: PFDVars.daRaw, type: SimVarValueType.Number }],
         ['latAccRaw', { name: PFDVars.latAccRaw, type: SimVarValueType.Number }],
-        ['ls1Button', { name: PFDVars.ls1Button, type: SimVarValueType.Bool }],
-        ['ls2Button', { name: PFDVars.ls2Button, type: SimVarValueType.Bool }],
         ['fcdc1DiscreteWord1Raw', { name: PFDVars.fcdc1DiscreteWord1Raw, type: SimVarValueType.Number }],
         ['fcdc2DiscreteWord1Raw', { name: PFDVars.fcdc2DiscreteWord1Raw, type: SimVarValueType.Number }],
         ['fcdc1DiscreteWord2Raw', { name: PFDVars.fcdc1DiscreteWord2Raw, type: SimVarValueType.Number }],

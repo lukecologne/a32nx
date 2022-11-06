@@ -180,14 +180,15 @@ export class AttitudeIndicatorFixedCenter extends DisplayComponent<AttitudeIndic
 class FDYawBar extends DisplayComponent<{ bus: ArincEventBus }> {
     private fdEngaged = false;
 
-    private fdActive = false;
+    private fcuEisDiscreteWord2 = new Arinc429Word(0);
 
     private fdYawCommand = new Arinc429Word(0);
 
     private yawRef = FSComponent.createRef<SVGPathElement>();
 
     private handleFdState() {
-        const showFd = this.fdEngaged && this.fdActive;
+        const fdActive = this.fcuEisDiscreteWord2.getBitValueOr(23, false);
+        const showFd = this.fdEngaged && fdActive;
 
         const showYaw = showFd && !(this.fdYawCommand.isFailureWarning() || this.fdYawCommand.isNoComputedData());
 
@@ -227,9 +228,9 @@ class FDYawBar extends DisplayComponent<{ bus: ArincEventBus }> {
 class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
     private fdEngaged = false;
 
-    private fdActive = false;
+    private fcuEisDiscreteWord2 = new Arinc429Word(0);
 
-    private trkFpaActive = false;
+    private fcuDiscreteWord1 = new Arinc429Word(0);
 
     private fdRollCommand = new Arinc429Word(0);
 
@@ -246,9 +247,12 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
     private pitchBarOffsetSub = Subject.create(0);
 
     private handleFdState() {
-        const showFd = this.fdEngaged && this.fdActive;
+        const fdActive = this.fcuEisDiscreteWord2.getBitValueOr(23, false);
+        const showFd = this.fdEngaged && fdActive;
 
-        const showRoll = showFd && !this.trkFpaActive && !(this.fdRollCommand.isFailureWarning() || this.fdRollCommand.isNoComputedData());
+        const trkFpaActive = this.fcuDiscreteWord1.getBitValueOr(25, false);
+
+        const showRoll = showFd && !trkFpaActive && !(this.fdRollCommand.isFailureWarning() || this.fdRollCommand.isNoComputedData());
 
         if (showRoll) {
             const FDRollOffset = Math.min(Math.max(this.fdRollCommand.value, -45), 45) * 0.44;
@@ -259,7 +263,7 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
             this.rollBarVisibleSub.set('hidden');
         }
 
-        const showPitch = showFd && !this.trkFpaActive && !(this.fdPitchCommand.isFailureWarning() || this.fdPitchCommand.isNoComputedData());
+        const showPitch = showFd && !trkFpaActive && !(this.fdPitchCommand.isFailureWarning() || this.fdPitchCommand.isNoComputedData());
 
         if (showPitch) {
             const FDPitchOffset = Math.min(Math.max(this.fdPitchCommand.value, -22.5), 22.5) * 0.89;
@@ -274,14 +278,22 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<PFDSimvars & Arinc429Values>();
+        const sub = this.props.bus.getSubscriber<Arinc429Values>();
 
         sub.on('fdEngaged').whenChanged().handle((fd) => {
             this.fdEngaged = fd;
+
+            this.handleFdState();
         });
 
-        sub.on('trkFpaActive').whenChanged().handle((tr) => {
-            this.trkFpaActive = tr;
+        sub.on('fcuEisDiscreteWord2').whenChanged().handle((tr) => {
+            this.fcuEisDiscreteWord2 = tr;
+
+            this.handleFdState();
+        });
+
+        sub.on('fcuDiscreteWord1').whenChanged().handle((tr) => {
+            this.fcuDiscreteWord1 = tr;
 
             this.handleFdState();
         });

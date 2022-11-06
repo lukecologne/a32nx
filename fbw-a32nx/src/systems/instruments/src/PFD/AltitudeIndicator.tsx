@@ -7,7 +7,6 @@ import { Arinc429Word } from '@flybywiresim/fbw-sdk';
 import { VerticalMode } from '@shared/autopilot';
 import { PFDSimvars } from './shared/PFDSimvarPublisher';
 import { DigitalAltitudeReadout } from './DigitalAltitudeReadout';
-import { SimplaneValues } from './shared/SimplaneValueProvider';
 import { VerticalTape } from './VerticalTape';
 import { Arinc429Values } from './shared/ArincValueProvider';
 import { ArincEventBus } from '../MsfsAvionicsCommon/ArincEventBus';
@@ -162,7 +161,7 @@ class MinimumDescentAltitudeIndicator extends DisplayComponent<{ bus: ArincEvent
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getArincSubscriber<PFDSimvars & Arinc429Values & SimplaneValues>();
+        const sub = this.props.bus.getArincSubscriber<PFDSimvars & Arinc429Values>();
 
         sub.on('chosenRa').whenArinc429SsmChanged().handle((ra) => {
             this.radioAltitudeValid = !ra.isFailureWarning() && !ra.isNoComputedData();
@@ -439,7 +438,7 @@ class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getArincSubscriber<PFDSimvars & Arinc429Values & SimplaneValues>();
+        const sub = this.props.bus.getArincSubscriber<PFDSimvars & Arinc429Values>();
 
         sub.on('altitudeAr').withArinc429Precision(2).handle((a) => {
             this.altitude = a;
@@ -557,7 +556,7 @@ class AltimeterIndicator extends DisplayComponent<AltimeterIndicatorProps> {
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<PFDSimvars & SimplaneValues>();
+        const sub = this.props.bus.getSubscriber<PFDSimvars >();
 
         sub.on('baroMode').whenChanged().handle((m) => {
             if (m === 'QFE') {
@@ -699,7 +698,7 @@ class MetricAltIndicator extends DisplayComponent<MetricAltIndicatorProps> {
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getArincSubscriber<PFDSimvars & Arinc429Values & ClockEvents & SimplaneValues>();
+        const sub = this.props.bus.getSubscriber<PFDSimvars & Arinc429Values & ClockEvents >();
 
         sub.on('mdaAr').withArinc429Precision(0).handle((mda) => {
             this.state.MDA = mda;
@@ -721,8 +720,8 @@ class MetricAltIndicator extends DisplayComponent<MetricAltIndicatorProps> {
             this.needsUpdate = true;
         });
 
-        sub.on('metricAltToggle').whenChanged().handle((m) => {
-            this.state.metricAltToggle = m;
+        sub.on('fcuDiscreteWord1').whenChanged().handle((m) => {
+            this.state.fcuDiscreteWord1 = m;
             this.needsUpdate = true;
         });
 
@@ -738,7 +737,8 @@ class MetricAltIndicator extends DisplayComponent<MetricAltIndicatorProps> {
     private updateState(_time: number) {
         if (this.needsUpdate) {
             this.needsUpdate = false;
-            const showMetricAlt = this.state.metricAltToggle;
+
+            const showMetricAlt = this.state.fcuDiscreteWord1.getBitValueOr(20, false);
             if (!showMetricAlt) {
                 this.metricAlt.instance.style.display = 'none';
             } else {

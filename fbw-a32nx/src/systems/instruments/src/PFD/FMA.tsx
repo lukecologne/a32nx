@@ -1544,9 +1544,7 @@ class E2Cell extends ShowForSecondsComponent<CellProps> {
 
     private fmgc2DiscreteWord4 = new Arinc429Word(0);
 
-    private fdLeftActive = false;
-
-    private fdRightActive = false;
+    private fcuDiscreteWord2 = new Arinc429Word(0);
 
     private textSub = Subject.create('');
 
@@ -1561,10 +1559,13 @@ class E2Cell extends ShowForSecondsComponent<CellProps> {
         const fd1Engaged = this.fmgc1DiscreteWord4.getBitValueOr(13, false);
         const fd2Engaged = this.fmgc2DiscreteWord4.getBitValueOr(13, false);
 
-        const fd1EngagedOnLeft = this.fdLeftActive && fd1Engaged;
-        const fd2EngagedOnRight = this.fdRightActive && fd2Engaged;
-        const fd1EngagedOnRight = this.fdRightActive && fd1Engaged;
-        const fd2EngagedOnLeft = this.fdLeftActive && fd2Engaged;
+        const fdLeftActive = this.fcuDiscreteWord2.getBitValueOr(26, false);
+        const fdRightActive = this.fcuDiscreteWord2.getBitValueOr(27, false);
+
+        const fd1EngagedOnLeft = fdLeftActive && fd1Engaged;
+        const fd2EngagedOnRight = fdRightActive && fd2Engaged;
+        const fd1EngagedOnRight = fdRightActive && fd1Engaged;
+        const fd2EngagedOnLeft = fdLeftActive && fd2Engaged;
 
         const anyFdOrApEngaged = ap1Engaged || ap2Engaged || fd1Engaged || fd2Engaged;
 
@@ -1608,6 +1609,11 @@ class E2Cell extends ShowForSecondsComponent<CellProps> {
             this.fmgc2DiscreteWord4 = fd;
             this.getText();
         });
+
+        sub.on('fcuDiscreteWord2').whenChanged().handle((fd) => {
+            this.fcuDiscreteWord2 = fd;
+            this.getText();
+        });
     }
 
     render(): VNode {
@@ -1630,17 +1636,14 @@ class E3Cell extends ShowForSecondsComponent<CellProps> {
         super(props, 9);
     }
 
-    private getClass(athrStatus: number): string {
+    private getClass(atEngaged: boolean, atActive: boolean): string {
         let className: string = '';
         this.isShown = true;
-        switch (athrStatus) {
-        case 1:
-            className = 'Cyan FontSmall';
-            break;
-        case 2:
+        if (atEngaged && atActive) {
             className = 'White FontMedium';
-            break;
-        default:
+        } else if (atEngaged) {
+            className = 'Cyan FontSmall';
+        } else {
             this.isShown = false;
             className = 'HiddenElement';
         }
@@ -1650,11 +1653,14 @@ class E3Cell extends ShowForSecondsComponent<CellProps> {
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<PFDSimvars>();
+        const sub = this.props.bus.getSubscriber<Arinc429Values>();
 
-        sub.on('athrStatus').whenChanged().handle((a) => {
-            const className = this.getClass(a);
-            this.posSub.set(a === 1 ? 21.253048 : 21.753487);
+        sub.on('fcuAtsDiscreteWord').whenChanged().handle((a) => {
+            const atEngaged = a.getBitValueOr(13, false);
+            const atActive = a.getBitValueOr(14, false);
+
+            const className = this.getClass(atEngaged, atActive);
+            this.posSub.set(!atActive ? 21.253048 : 21.753487);
             this.classSub.set(`MiddleAlign ${className}`);
             if (className !== 'HiddenElement') {
                 this.displayModeChangedPath();

@@ -24,7 +24,7 @@ export class FlightPathVector extends DisplayComponent<{ bus: ArincEventBus }> {
 
     private fpvFlag = FSComponent.createRef<SVGGElement>();
 
-    private isTrkFpaActive = false;
+    private fcuDiscreteWord1 = new Arinc429Word(0);
 
     private data: FlightPathVectorData = {
         roll: new Arinc429Word(0),
@@ -40,14 +40,9 @@ export class FlightPathVector extends DisplayComponent<{ bus: ArincEventBus }> {
 
         const sub = this.props.bus.getSubscriber<PFDSimvars & Arinc429Values & ClockEvents>();
 
-        sub.on('trkFpaActive').whenChanged().handle((a) => {
-            this.isTrkFpaActive = a;
-            if (this.isTrkFpaActive) {
-                this.moveBird();
-                this.bird.instance.classList.remove('HiddenElement');
-            } else {
-                this.bird.instance.classList.add('HiddenElement');
-            }
+        sub.on('fcuDiscreteWord1').whenChanged().handle((a) => {
+            this.fcuDiscreteWord1 = a;
+            this.needsUpdate = true;
         });
 
         sub.on('fpa').handle((fpa) => {
@@ -74,12 +69,13 @@ export class FlightPathVector extends DisplayComponent<{ bus: ArincEventBus }> {
             if (this.needsUpdate) {
                 this.needsUpdate = false;
 
+                const trkFpaActive = this.fcuDiscreteWord1.getBitValueOr(25, false);
                 const daAndFpaValid = this.data.fpa.isNormalOperation() && this.data.da.isNormalOperation();
-                if (this.isTrkFpaActive && daAndFpaValid) {
+                if (trkFpaActive && daAndFpaValid) {
                     this.fpvFlag.instance.style.visibility = 'hidden';
                     this.bird.instance.classList.remove('HiddenElement');
                     this.moveBird();
-                } else if (this.isTrkFpaActive && this.data.pitch.isNormalOperation() && this.data.roll.isNormalOperation()) {
+                } else if (trkFpaActive && this.data.pitch.isNormalOperation() && this.data.roll.isNormalOperation()) {
                     this.fpvFlag.instance.style.visibility = 'visible';
                     this.bird.instance.classList.add('HiddenElement');
                 }

@@ -35,7 +35,7 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
         fdActive: false,
     }
 
-    private isTrkFpaActive = false;
+    private fcuDiscreteWord1 = new Arinc429Word(0);
 
     private needsUpdate = false;
 
@@ -55,8 +55,8 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
             this.needsUpdate = true;
         });
 
-        sub.on('trkFpaActive').whenChanged().handle((a) => {
-            this.isTrkFpaActive = a;
+        sub.on('fcuDiscreteWord1').whenChanged().handle((a) => {
+            this.fcuDiscreteWord1 = a;
             this.needsUpdate = true;
         });
 
@@ -106,8 +106,9 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
         const rollFdInvalid = this.data.rollFdCommand.isFailureWarning() || this.data.rollFdCommand.isNoComputedData();
         const pitchFdInvalid = this.data.pitchFdCommand.isFailureWarning() || this.data.pitchFdCommand.isNoComputedData();
         const daAndFpaValid = this.data.fpa.isNormalOperation() && this.data.da.isNormalOperation();
+        const trkFpaActive = this.fcuDiscreteWord1.getBitValueOr(25, false);
 
-        if (rollFdInvalid || pitchFdInvalid || !daAndFpaValid || !this.data.fdEngaged || !this.isTrkFpaActive || !this.data.fdActive || this.props.isAttExcessive.get()) {
+        if (rollFdInvalid || pitchFdInvalid || !daAndFpaValid || !this.data.fdEngaged || !trkFpaActive || !this.data.fdActive || this.props.isAttExcessive.get()) {
             this.birdPath.instance.style.visibility = 'hidden';
             this.isVisible = false;
         } else {
@@ -117,7 +118,7 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
     }
 
     private moveBird() {
-        if (this.data.fdActive && this.isTrkFpaActive) {
+        if (this.isVisible) {
             const FDRollOrder = this.data.rollFdCommand.value;
             const FDRollOrderLim = Math.max(Math.min(FDRollOrder, 45), -45);
             const FDPitchOrder = this.data.pitchFdCommand.value;

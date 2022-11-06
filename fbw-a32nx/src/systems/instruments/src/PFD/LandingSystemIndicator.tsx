@@ -12,7 +12,7 @@ import { ArincEventBus } from '../MsfsAvionicsCommon/ArincEventBus';
 
 // TODO true ref
 export class LandingSystem extends DisplayComponent<{ bus: ArincEventBus, instrument: BaseInstrument }> {
-    private lsButtonPressedVisibility = false;
+    private lsButtonPressed = false;
 
     private xtkValid = Subject.create(false);
 
@@ -31,9 +31,9 @@ export class LandingSystem extends DisplayComponent<{ bus: ArincEventBus, instru
     private altitude = Arinc429Word.empty();
 
     private handleGsReferenceLine() {
-        if (this.lsButtonPressedVisibility || (this.altitude.isNormalOperation())) {
+        if (this.lsButtonPressed || (this.altitude.isNormalOperation())) {
             this.gsReferenceLine.instance.style.display = 'inline';
-        } else if (!this.lsButtonPressedVisibility) {
+        } else if (!this.lsButtonPressed) {
             this.gsReferenceLine.instance.style.display = 'none';
         }
     }
@@ -43,20 +43,10 @@ export class LandingSystem extends DisplayComponent<{ bus: ArincEventBus, instru
 
         const sub = this.props.bus.getSubscriber<PFDSimvars & HEvent & Arinc429Values>();
 
-        sub.on('hEvent').handle((eventName) => {
-            if (eventName === `A320_Neo_PFD_BTN_LS_${getDisplayIndex()}`) {
-                this.lsButtonPressedVisibility = !this.lsButtonPressedVisibility;
-                SimVar.SetSimVarValue(`L:BTN_LS_${getDisplayIndex()}_FILTER_ACTIVE`, 'Bool', this.lsButtonPressedVisibility);
-
-                this.lsGroupRef.instance.style.display = this.lsButtonPressedVisibility ? 'inline' : 'none';
-                this.handleGsReferenceLine();
-            }
-        });
-
-        sub.on(getDisplayIndex() === 1 ? 'ls1Button' : 'ls2Button').whenChanged().handle((lsButton) => {
-            this.lsButtonPressedVisibility = lsButton;
-            this.lsGroupRef.instance.style.display = this.lsButtonPressedVisibility ? 'inline' : 'none';
-            this.deviationGroup.instance.style.display = this.lsButtonPressedVisibility ? 'none' : 'inline';
+        sub.on('fcuEisDiscreteWord2').whenChanged().handle((word) => {
+            this.lsButtonPressed = word.getBitValueOr(22, false) || word.isFailureWarning();
+            this.lsGroupRef.instance.style.display = this.lsButtonPressed ? 'inline' : 'none';
+            this.deviationGroup.instance.style.display = this.lsButtonPressed ? 'none' : 'inline';
             this.handleGsReferenceLine();
         });
 
