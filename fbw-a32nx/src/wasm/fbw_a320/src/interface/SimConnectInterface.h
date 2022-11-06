@@ -12,6 +12,7 @@
 
 #include "../model/ElacComputer_types.h"
 #include "../model/FacComputer_types.h"
+#include "../model/FmgcComputer_types.h"
 #include "../model/SecComputer_types.h"
 
 class SimConnectInterface {
@@ -182,12 +183,10 @@ class SimConnectInterface {
   ~SimConnectInterface() = default;
 
   bool connect(bool clientDataEnabled,
-               bool autopilotStateMachineEnabled,
-               bool autopilotLawsEnabled,
-               bool flyByWireEnabled,
                int elacDisabled,
                int secDisabled,
                int facDisabled,
+               int fmgcDisabled,
                const std::vector<std::shared_ptr<ThrottleAxisMapping>>& throttleAxis,
                std::shared_ptr<SpoilersHandler> spoilersHandler,
                double keyChangeAileron,
@@ -225,10 +224,6 @@ class SimConnectInterface {
 
   bool sendEvent(Events eventId, DWORD data, DWORD priority);
 
-  bool setClientDataLocalVariables(ClientDataLocalVariables output);
-
-  bool setClientDataLocalVariablesAutothrust(ClientDataLocalVariablesAutothrust output);
-
   void resetSimInputRudderTrim();
 
   void resetSimInputAutopilot();
@@ -244,19 +239,6 @@ class SimConnectInterface {
   SimInputRudderTrim getSimInputRudderTrim();
 
   SimInputThrottles getSimInputThrottles();
-
-  bool setClientDataAutopilotStateMachine(ClientDataAutopilotStateMachine output);
-  ClientDataAutopilotStateMachine getClientDataAutopilotStateMachine();
-
-  bool setClientDataAutopilotLaws(ClientDataAutopilotLaws output);
-  ClientDataAutopilotLaws getClientDataAutopilotLaws();
-
-  ClientDataAutothrust getClientDataAutothrust();
-
-  bool setClientDataFlyByWireInput(ClientDataFlyByWireInput output);
-
-  bool setClientDataFlyByWire(ClientDataFlyByWire output);
-  ClientDataFlyByWire getClientDataFlyByWire();
 
   bool setClientDataElacDiscretes(base_elac_discrete_inputs output);
   bool setClientDataElacAnalog(base_elac_analog_inputs output);
@@ -282,12 +264,19 @@ class SimConnectInterface {
   base_fac_analog_outputs getClientDataFacAnalogsOutput();
   base_fac_bus getClientDataFacBusOutput();
 
+  bool setClientDataFmgcDiscretes(base_fmgc_discrete_inputs output);
+  bool setClientDataFmgcABus(base_fmgc_a_bus output, int fmgcIndex);
+  bool setClientDataFmgcBBus(base_fmgc_b_bus output, int fmgcIndex);
+
+  base_fmgc_discrete_outputs getClientDataFmgcDiscretesOutput();
+  base_fmgc_a_bus getClientDataFmgcABusOutput();
+  base_fmgc_b_bus getClientDataFmgcBBusOutput();
+
   bool setClientDataAdr(base_adr_bus output, int adrIndex);
   bool setClientDataIr(base_ir_bus output, int irIndex);
   bool setClientDataRa(base_ra_bus output, int raIndex);
   bool setClientDataLgciu(base_lgciu_bus output, int lgciuIndex);
   bool setClientDataSfcc(base_sfcc_bus output, int sfccIndex);
-  bool setClientDataFmgcB(base_fmgc_b_bus output, int fmgcIndex);
 
   void setLoggingFlightControlsEnabled(bool enabled);
   bool getLoggingFlightControlsEnabled();
@@ -302,9 +291,6 @@ class SimConnectInterface {
 
  private:
   enum ClientData {
-    AUTOPILOT_STATE_MACHINE,
-    AUTOPILOT_LAWS,
-    AUTOTHRUST,
     ELAC_DISCRETE_INPUTS,
     ELAC_ANALOG_INPUTS,
     ELAC_DISCRETE_OUTPUTS,
@@ -323,6 +309,12 @@ class SimConnectInterface {
     FAC_ANALOG_OUTPUTS,
     FAC_1_BUS_OUTPUT,
     FAC_2_BUS_OUTPUT,
+    FMGC_DISCRETE_INPUTS,
+    FMGC_DISCRETE_OUTPUTS,
+    FMGC_1_BUS_A_OUTPUT,
+    FMGC_2_BUS_A_OUTPUT,
+    FMGC_1_BUS_B_OUTPUT,
+    FMGC_2_BUS_B_OUTPUT,
     ADR_1_INPUTS,
     ADR_2_INPUTS,
     ADR_3_INPUTS,
@@ -335,10 +327,6 @@ class SimConnectInterface {
     LGCIU_2_BUS,
     SFCC_1_BUS,
     SFCC_2_BUS,
-    FMGC_1_B_BUS,
-    FMGC_2_B_BUS,
-    LOCAL_VARIABLES,
-    LOCAL_VARIABLES_AUTOTHRUST,
   };
 
   bool isConnected = false;
@@ -370,11 +358,6 @@ class SimConnectInterface {
 
   std::shared_ptr<SpoilersHandler> spoilersHandler;
 
-  ClientDataAutopilotStateMachine clientDataAutopilotStateMachine = {};
-  ClientDataAutopilotLaws clientDataAutopilotLaws = {};
-  ClientDataAutothrust clientDataAutothrust = {};
-  ClientDataFlyByWire clientDataFlyByWire = {};
-
   base_elac_discrete_outputs clientDataElacDiscreteOutputs = {};
   base_elac_analog_outputs clientDataElacAnalogOutputs = {};
   base_elac_out_bus clientDataElacBusOutputs = {};
@@ -386,6 +369,10 @@ class SimConnectInterface {
   base_fac_discrete_outputs clientDataFacDiscreteOutputs = {};
   base_fac_analog_outputs clientDataFacAnalogOutputs = {};
   base_fac_bus clientDataFacBusOutputs = {};
+
+  base_fmgc_discrete_outputs clientDataFmgcDiscreteOutputs = {};
+  base_fmgc_a_bus clientDataFmgcABusOutputs = {};
+  base_fmgc_b_bus clientDataFmgcBBusOutputs = {};
 
   // change to non-static when aileron events can be processed via SimConnect
   static double flightControlsKeyChangeAileron;

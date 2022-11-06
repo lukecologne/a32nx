@@ -3,6 +3,8 @@
 export const A320Failure = Object.freeze({
     Fac1Failure: 22000,
     Fac2Failure: 22001,
+    Fmgc1Failure: 22002,
+    Fmgc2Failure: 22003,
     TransformerRectifier1: 24000,
     TransformerRectifier2: 24001,
     TransformerRectifierEssential: 24002,

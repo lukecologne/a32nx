@@ -5,9 +5,6 @@
 
 #include "AdditionalData.h"
 #include "Arinc429.h"
-#include "AutopilotLaws.h"
-#include "AutopilotStateMachine.h"
-#include "Autothrust.h"
 #include "CalculatedRadioReceiver.h"
 #include "EngineData.h"
 #include "FlightDataRecorder.h"
@@ -21,6 +18,7 @@
 #include "fac/Fac.h"
 #include "failures/FailuresConsumer.h"
 #include "fcdc/Fcdc.h"
+#include "fmgc/Fmgc.h"
 #include "sec/Sec.h"
 
 #include "utils/ConfirmNode.h"
@@ -56,13 +54,10 @@ class FlyByWireInterface {
   double targetSimulationRate = 1;
   bool targetSimulationRateModified = false;
 
-  bool autopilotStateMachineEnabled = false;
-  bool autopilotLawsEnabled = false;
-  bool flyByWireEnabled = false;
   int elacDisabled = -1;
   int secDisabled = -1;
   int facDisabled = -1;
-  bool autoThrustEnabled = false;
+  int fmgcDisabled = -1;
   bool tailstrikeProtectionEnabled = true;
 
   ConfirmNode elac2EmerPowersupplyRelayTimer = ConfirmNode(true, 30);
@@ -116,25 +111,11 @@ class FlyByWireInterface {
 
   FailuresConsumer failuresConsumer;
 
-  AutopilotStateMachineModelClass autopilotStateMachine;
-  AutopilotStateMachineModelClass::ExternalInputs_AutopilotStateMachine_T autopilotStateMachineInput = {};
-  ap_raw_laws_input autopilotStateMachineOutput;
-
-  AutopilotLawsModelClass autopilotLaws;
-  AutopilotLawsModelClass::ExternalInputs_AutopilotLaws_T autopilotLawsInput = {};
-  ap_raw_output autopilotLawsOutput;
-
-  AutothrustModelClass autoThrust;
-  AutothrustModelClass::ExternalInputs_Autothrust_T autoThrustInput = {};
-  athr_output autoThrustOutput;
-
   base_ra_bus raBusOutputs[2] = {};
 
   base_lgciu_bus lgciuBusOutputs[2] = {};
 
   base_sfcc_bus sfccBusOutputs[2] = {};
-
-  base_fmgc_b_bus fmgcBBusOutputs = {};
 
   base_adr_bus adrBusOutputs[3] = {};
   base_ir_bus irBusOutputs[3] = {};
@@ -152,6 +133,10 @@ class FlyByWireInterface {
   Fcdc fcdcs[2] = {Fcdc(true), Fcdc(false)};
   FcdcDiscreteOutputs fcdcsDiscreteOutputs[2] = {};
   base_fcdc_bus fcdcsBusOutputs[2] = {};
+
+  Fmgc fmgcs[2] = {Fmgc(true), Fmgc(false)};
+  base_fmgc_discrete_outputs fmgcsDiscreteOutputs[2] = {};
+  base_fmgc_bus_outputs fmgcsBusOutputs[2] = {};
 
   Fac facs[2] = {Fac(true), Fac(false)};
   base_fac_discrete_outputs facsDiscreteOutputs[2] = {};
@@ -572,6 +557,25 @@ class FlyByWireInterface {
   std::unique_ptr<LocalVariable> idCaptPriorityButtonPressed;
   std::unique_ptr<LocalVariable> idFoPriorityButtonPressed;
 
+  // FMGC discrete output Lvars
+  std::unique_ptr<LocalVariable> idFmgcHealthy[2];
+  std::unique_ptr<LocalVariable> idFmgcAthrEngaged[2];
+  std::unique_ptr<LocalVariable> idFmgcFdEngaged[2];
+  std::unique_ptr<LocalVariable> idFmgcApEngaged[2];
+
+  // FMGC A Bus output Lvars
+  std::unique_ptr<LocalVariable> idFmgcABusRollFdCommand[2];
+  std::unique_ptr<LocalVariable> idFmgcABusPitchFdCommand[2];
+  std::unique_ptr<LocalVariable> idFmgcABusYawFdCommand[2];
+  std::unique_ptr<LocalVariable> idFmgcABusDiscreteWord5[2];
+  std::unique_ptr<LocalVariable> idFmgcABusDiscreteWord4[2];
+  std::unique_ptr<LocalVariable> idFmgcABusAtsDiscreteWord[2];
+  std::unique_ptr<LocalVariable> idFmgcABusAtsFmaDiscreteWord[2];
+  std::unique_ptr<LocalVariable> idFmgcABusDiscreteWord3[2];
+  std::unique_ptr<LocalVariable> idFmgcABusDiscreteWord1[2];
+  std::unique_ptr<LocalVariable> idFmgcABusDiscreteWord2[2];
+  std::unique_ptr<LocalVariable> idFmgcABusDiscreteWord6[2];
+
   void loadConfiguration();
   void setupLocalVariables();
 
@@ -587,8 +591,6 @@ class FlyByWireInterface {
   bool updateEngineData(double sampleTime);
   bool updateAdditionalData(double sampleTime);
 
-  bool updateAutopilotStateMachine(double sampleTime);
-  bool updateAutopilotLaws(double sampleTime);
   bool updateFlyByWire(double sampleTime);
   bool updateAutothrust(double sampleTime);
 
@@ -605,6 +607,8 @@ class FlyByWireInterface {
   bool updateSec(double sampleTime, int secIndex);
 
   bool updateFcdc(double sampleTime, int fcdcIndex);
+
+  bool updateFmgc(double sampleTime, int fmgcIndex);
 
   bool updateFac(double sampleTime, int facIndex);
 
