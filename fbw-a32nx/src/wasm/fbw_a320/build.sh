@@ -90,6 +90,8 @@ clang++ \
   "${DIR}/src/fcdc/Fcdc.cpp" \
   -I "${DIR}/src/fac" \
   "${DIR}/src/fac/Fac.cpp" \
+  -I "${DIR}/src/fmgc" \
+  "${DIR}/src/fmgc/Fmgc.cpp" \
   -I "${DIR}/src/failures" \
   "${DIR}/src/failures/FailuresConsumer.cpp" \
   -I "${DIR}/src/utils" \

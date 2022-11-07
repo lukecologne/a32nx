@@ -1,4 +1,5 @@
 #include "Fmgc.h"
+#include "../Arinc429.h"
 
 Fmgc::Fmgc(bool isUnit1) : isUnit1(isUnit1) {
   fmgcComputer.initialize();
@@ -93,6 +94,18 @@ base_fmgc_discrete_outputs Fmgc::getDiscreteOutputs() {
   } else {
     output = modelOutputs.discrete_outputs;
   }
+
+  return output;
+}
+
+base_fmgc_bus_outputs Fmgc::getBusOutputs() {
+  base_fmgc_bus_outputs output = {};
+
+  if (!monitoringHealthy) {
+    return output;
+  }
+
+  output = modelOutputs.bus_outputs;
 
   return output;
 }
