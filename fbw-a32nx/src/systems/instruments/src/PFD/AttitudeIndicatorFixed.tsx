@@ -197,6 +197,8 @@ class FDYawBar extends DisplayComponent<{ bus: ArincEventBus }> {
 
             this.yawRef.instance.style.visibility = 'visible';
             this.yawRef.instance.style.transform = `translate3d(${offset}px, 0px, 0px)`;
+        } else {
+            this.yawRef.instance.style.visibility = 'hidden';
         }
     }
 

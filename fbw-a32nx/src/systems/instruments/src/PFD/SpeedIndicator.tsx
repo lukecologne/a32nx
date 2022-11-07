@@ -981,7 +981,7 @@ class SpeedTarget extends DisplayComponent <{ bus: ArincEventBus }> {
             <>
                 <text ref={this.upperBoundRef} id="SelectedSpeedLowerText" class="FontSmallest EndAlign Cyan" x="24.078989" y="128.27917">{this.textSub}</text>
                 <text ref={this.lowerBoundRef} id="SelectedSpeedLowerText" class="FontSmallest EndAlign Cyan" x="24.113895" y="36.670692">{this.textSub}</text>
-                <text ref={this.spdSelFlagRef} id="SelectedSpeedFailText" class="FontSmallest EndAlign Red" x="24.078989" y="128.27917">SPD SEL</text>
+                <text ref={this.spdSelFlagRef} id="SelectedSpeedFailText" class="FontSmall EndAlign Red Blink9Seconds" x="24.078989" y="36.670692">SPD SEL</text>
                 <path ref={this.speedTargetRef} class="NormalStroke CornerRound Cyan" style="transform: translate3d(0px, 0px, 0px)" d="m19.274 81.895 5.3577 1.9512v-6.0476l-5.3577 1.9512" />
                 <SpeedMargins bus={this.props.bus} />
             </>

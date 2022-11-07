@@ -537,7 +537,7 @@ class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
                     <path class={`NormalStroke ${this.selectedAltitudeColor}`} d="m122.79 83.831v6.5516h-7.0514v-8.5675l2.0147-1.0079m4.8441-3.0238v-6.5516h-6.8588v8.5675l2.0147 1.0079" />
                     <text id="AltTapeTargetText" class={`FontMedium StartAlign ${this.selectedAltitudeColor}`} x="118.228" y="83.067062" style="white-space: pre">{this.textSub}</text>
                 </g>
-                <text id="SelectedAltUpperText" ref={this.selectedAltFailText} class="FontMedium EndAlign Red" x="136.22987" y="37.250134">ALT SEL</text>
+                <text id="SelectedAltUpperText" ref={this.selectedAltFailText} class="FontSmall EndAlign Red Blink9Seconds" x="136.22987" y="37.250134">ALT SEL</text>
             </>
         );
     }
