@@ -168,12 +168,12 @@ void FlyByWireInterface::loadConfiguration() {
   clientDataEnabled = (elacDisabled != -1 || secDisabled != -1 || facDisabled != -1 || fmgcDisabled != -1);
 
   // print configuration into console
-  cout << "WASM: MODEL     : CLIENT_DATA_ENABLED (auto)           = " << clientDataEnabled << endl;
-  cout << "WASM: MODEL     : ELAC_DISABLED                        = " << elacDisabled << endl;
-  cout << "WASM: MODEL     : SEC_DISABLED                         = " << secDisabled << endl;
-  cout << "WASM: MODEL     : FAC_DISABLED                         = " << facDisabled << endl;
-  cout << "WASM: MODEL     : FMGC_DISABLED                        = " << fmgcDisabled << endl;
-  cout << "WASM: MODEL     : TAILSTRIKE_PROTECTION_ENABLED        = " << tailstrikeProtectionEnabled << endl;
+  std::cout << "WASM: MODEL     : CLIENT_DATA_ENABLED (auto)           = " << clientDataEnabled << std::endl;
+  std::cout << "WASM: MODEL     : ELAC_DISABLED                        = " << elacDisabled << std::endl;
+  std::cout << "WASM: MODEL     : SEC_DISABLED                         = " << secDisabled << std::endl;
+  std::cout << "WASM: MODEL     : FAC_DISABLED                         = " << facDisabled << std::endl;
+  std::cout << "WASM: MODEL     : FMGC_DISABLED                        = " << fmgcDisabled << std::endl;
+  std::cout << "WASM: MODEL     : TAILSTRIKE_PROTECTION_ENABLED        = " << tailstrikeProtectionEnabled << std::endl;
 
   // --------------------------------------------------------------------------
   // load values - autopilot
@@ -700,28 +700,28 @@ void FlyByWireInterface::setupLocalVariables() {
   idHydGreenPressurised = std::make_unique<LocalVariable>("A32NX_HYD_GREEN_SYSTEM_1_SECTION_PRESSURE_SWITCH");
   idHydBluePressurised = std::make_unique<LocalVariable>("A32NX_HYD_BLUE_SYSTEM_1_SECTION_PRESSURE_SWITCH");
 
-  idCaptPriorityButtonPressed = make_unique<LocalVariable>("A32NX_PRIORITY_TAKEOVER:1");
-  idFoPriorityButtonPressed = make_unique<LocalVariable>("A32NX_PRIORITY_TAKEOVER:2");
+  idCaptPriorityButtonPressed = std::make_unique<LocalVariable>("A32NX_PRIORITY_TAKEOVER:1");
+  idFoPriorityButtonPressed = std::make_unique<LocalVariable>("A32NX_PRIORITY_TAKEOVER:2");
 
   for (int i = 0; i < 2; i++) {
-    string idString = std::to_string(i + 1);
+    std::string idString = std::to_string(i + 1);
 
-    idFmgcHealthy[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_HEALTHY");
-    idFmgcAthrEngaged[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_ATHR_ENGAGED");
-    idFmgcFdEngaged[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_FD_ENGAGED");
-    idFmgcApEngaged[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_AP_ENGAGED");
+    idFmgcHealthy[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_HEALTHY");
+    idFmgcAthrEngaged[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_ATHR_ENGAGED");
+    idFmgcFdEngaged[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_FD_ENGAGED");
+    idFmgcApEngaged[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_AP_ENGAGED");
 
-    idFmgcABusRollFdCommand[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_ROLL_FD_COMMAND");
-    idFmgcABusPitchFdCommand[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_PITCH_FD_COMMAND");
-    idFmgcABusYawFdCommand[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_YAW_FD_COMMAND");
-    idFmgcABusDiscreteWord5[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_5");
-    idFmgcABusDiscreteWord4[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_4");
-    idFmgcABusAtsDiscreteWord[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_ATS_DISCRETE_WORD");
-    idFmgcABusAtsFmaDiscreteWord[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_ATS_FMA_DISCRETE_WORD");
-    idFmgcABusDiscreteWord3[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_3");
-    idFmgcABusDiscreteWord1[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_1");
-    idFmgcABusDiscreteWord2[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_2");
-    idFmgcABusDiscreteWord6[i] = make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_6");
+    idFmgcABusRollFdCommand[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_ROLL_FD_COMMAND");
+    idFmgcABusPitchFdCommand[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_PITCH_FD_COMMAND");
+    idFmgcABusYawFdCommand[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_YAW_FD_COMMAND");
+    idFmgcABusDiscreteWord5[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_5");
+    idFmgcABusDiscreteWord4[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_4");
+    idFmgcABusAtsDiscreteWord[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_ATS_DISCRETE_WORD");
+    idFmgcABusAtsFmaDiscreteWord[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_ATS_FMA_DISCRETE_WORD");
+    idFmgcABusDiscreteWord3[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_3");
+    idFmgcABusDiscreteWord1[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_1");
+    idFmgcABusDiscreteWord2[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_2");
+    idFmgcABusDiscreteWord6[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_6");
   }
 }
 
