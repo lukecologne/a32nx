@@ -168,6 +168,10 @@ export type PFDSimvars = AdirsSimVars & SwitchingPanelVSimVars & {
     fmgc2DiscreteWord3Raw: number;
     fmgc1DiscreteWord1Raw: number;
     fmgc2DiscreteWord1Raw: number;
+    fmgc1DiscreteWord2Raw: number;
+    fmgc2DiscreteWord2Raw: number;
+    fmgc1DiscreteWord7Raw: number;
+    fmgc2DiscreteWord7Raw: number;
   }
 
 export enum PFDVars {
@@ -334,6 +338,10 @@ export enum PFDVars {
     fmgc2DiscreteWord3Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_3',
     fmgc1DiscreteWord1Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_1',
     fmgc2DiscreteWord1Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_1',
+    fmgc1DiscreteWord2Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_2',
+    fmgc2DiscreteWord2Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_2',
+    fmgc1DiscreteWord7Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_7',
+    fmgc2DiscreteWord7Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_7',
   }
 
 /** A publisher to poll and publish nav/com simvars. */
@@ -465,6 +473,10 @@ export class PFDSimvarPublisher extends UpdatableSimVarPublisher<PFDSimvars> {
         ['fmgc2DiscreteWord3Raw', { name: PFDVars.fmgc2DiscreteWord3Raw, type: SimVarValueType.Number }],
         ['fmgc1DiscreteWord1Raw', { name: PFDVars.fmgc1DiscreteWord1Raw, type: SimVarValueType.Number }],
         ['fmgc2DiscreteWord1Raw', { name: PFDVars.fmgc2DiscreteWord1Raw, type: SimVarValueType.Number }],
+        ['fmgc1DiscreteWord2Raw', { name: PFDVars.fmgc1DiscreteWord2Raw, type: SimVarValueType.Number }],
+        ['fmgc2DiscreteWord2Raw', { name: PFDVars.fmgc2DiscreteWord2Raw, type: SimVarValueType.Number }],
+        ['fmgc1DiscreteWord7Raw', { name: PFDVars.fmgc1DiscreteWord7Raw, type: SimVarValueType.Number }],
+        ['fmgc2DiscreteWord7Raw', { name: PFDVars.fmgc2DiscreteWord7Raw, type: SimVarValueType.Number }],
     ])
 
     public constructor(bus: ArincEventBus) {

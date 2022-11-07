@@ -76,6 +76,8 @@ export interface Arinc429Values {
     fmgcFmAltitudeConstraint: Arinc429Word;
     fmgcDiscreteWord3: Arinc429Word;
     fmgcDiscreteWord1: Arinc429Word;
+    fmgcDiscreteWord2: Arinc429Word;
+    fmgcDiscreteWord7: Arinc429Word;
 }
 export class ArincValueProvider {
     private roll = new Arinc429Word(0);
@@ -750,6 +752,30 @@ export class ArincValueProvider {
         subscriber.on('fmgc2DiscreteWord1Raw').handle((word) => {
             if (!this.fg1Selected) {
                 publisher.pub('fmgcDiscreteWord1', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fmgc1DiscreteWord2Raw').handle((word) => {
+            if (this.fg1Selected) {
+                publisher.pub('fmgcDiscreteWord2', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fmgc2DiscreteWord2Raw').handle((word) => {
+            if (!this.fg1Selected) {
+                publisher.pub('fmgcDiscreteWord2', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fmgc1DiscreteWord7Raw').handle((word) => {
+            if (this.fg1Selected) {
+                publisher.pub('fmgcDiscreteWord7', new Arinc429Word(word));
+            }
+        });
+
+        subscriber.on('fmgc2DiscreteWord7Raw').handle((word) => {
+            if (!this.fg1Selected) {
+                publisher.pub('fmgcDiscreteWord7', new Arinc429Word(word));
             }
         });
     }
