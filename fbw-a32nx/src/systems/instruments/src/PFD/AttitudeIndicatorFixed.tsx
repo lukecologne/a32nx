@@ -238,7 +238,11 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
 
     private fdPitchCommand = new Arinc429Word(0);
 
-    private fdRef = FSComponent.createRef<SVGGElement>();
+    private fdYawCommand = new Arinc429Word(0);
+
+    private leftMainGearCompressed = false;
+
+    private rightMainGearCompressed = false;
 
     private rollBarVisibleSub = Subject.create('hidden');
 
@@ -247,6 +251,8 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
     private pitchBarVisibleSub = Subject.create('hidden');
 
     private pitchBarOffsetSub = Subject.create(0);
+
+    private fdFlagVisibleSub = Subject.create('hidden');
 
     private handleFdState() {
         const fdActive = this.fcuEisDiscreteWord2.getBitValueOr(23, false);
@@ -275,12 +281,20 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
         } else {
             this.pitchBarVisibleSub.set('hidden');
         }
+
+        const onGround = this.leftMainGearCompressed || this.rightMainGearCompressed;
+        if (fdActive && (!this.fdEngaged || this.fdRollCommand.isFailureWarning()
+        || this.fdPitchCommand.isFailureWarning() || (this.fdYawCommand.isFailureWarning() && onGround))) {
+            this.fdFlagVisibleSub.set('visible');
+        } else {
+            this.fdFlagVisibleSub.set('hidden');
+        }
     }
 
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<Arinc429Values>();
+        const sub = this.props.bus.getSubscriber<Arinc429Values & PFDSimvars>();
 
         sub.on('fdEngaged').whenChanged().handle((fd) => {
             this.fdEngaged = fd;
@@ -305,28 +319,44 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
 
             this.handleFdState();
         });
+
         sub.on('pitchFdCommand').withArinc429Precision(2).handle((fd) => {
             this.fdPitchCommand = fd;
 
+            this.handleFdState();
+        });
+
+        sub.on('yawFdCommand').withArinc429Precision(2).handle((fd) => {
+            this.fdYawCommand = fd;
+
+            this.handleFdState();
+        });
+
+        sub.on('leftMainGearCompressed').whenChanged().handle((g) => {
+            this.leftMainGearCompressed = g;
+            this.handleFdState();
+        });
+
+        sub.on('rightMainGearCompressed').whenChanged().handle((g) => {
+            this.rightMainGearCompressed = g;
             this.handleFdState();
         });
     }
 
     render(): VNode | null {
         return (
-            <g ref={this.fdRef} style="display: none">
+            <g>
                 <g class="ThickOutline">
-
                     <path visibility={this.rollBarVisibleSub} transform={`translate3d(${this.rollBarOffsetSub}px, 0px, 0px)`} d="m68.903 61.672v38.302" />
 
                     <path visibility={this.pitchBarVisibleSub} transform={`translate3d(0px, ${this.pitchBarOffsetSub}px, 0px)`} d="m49.263 80.823h39.287" />
                 </g>
                 <g class="ThickStroke Green">
-
                     <path visibility={this.rollBarVisibleSub} transform={`translate3d(${this.rollBarOffsetSub}px, 0px, 0px)`} id="FlightDirectorRoll" d="m68.903 61.672v38.302" />
 
                     <path visibility={this.pitchBarVisibleSub} transform={`translate3d(0px, ${this.pitchBarOffsetSub}px, 0px)`} id="FlightDirectorPitch" d="m49.263 80.823h39.287" />
                 </g>
+                <text visibility={this.fdFlagVisibleSub} id="FDFlag" x="53.702862" y="57.065434" class="FontHuge EndAlign Red Blink9Seconds">FD</text>
             </g>
         );
     }
