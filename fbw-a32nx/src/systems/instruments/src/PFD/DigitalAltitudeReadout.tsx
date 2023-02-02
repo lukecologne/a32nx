@@ -1,51 +1,7 @@
-import { DisplayComponent, EventBus, FSComponent, NodeReference, Subject, Subscribable, VNode } from 'msfssdk';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { DisplayComponent, EventBus, FSComponent, Subject, VNode } from 'msfssdk';
 import { Arinc429Values } from './shared/ArincValueProvider';
 import { PFDSimvars } from './shared/PFDSimvarPublisher';
-
-const TensDigits = (value: number) => {
-    let text: string;
-    if (value < 0) {
-        text = (value + 100).toString();
-    } else if (value >= 100) {
-        text = (value - 100).toString().padEnd(2, '0');
-    } else {
-        text = value.toString().padEnd(2, '0');
-    }
-
-    return text;
-};
-
-const HundredsDigit = (value: number) => {
-    let text: string;
-    if (value < 0) {
-        text = (value + 1).toString();
-    } else if (value >= 10) {
-        text = (value - 10).toString();
-    } else {
-        text = value.toString();
-    }
-
-    return text;
-};
-const ThousandsDigit = (value: number) => {
-    let text: string;
-    if (!Number.isNaN(value)) {
-        text = (value % 10).toString();
-    } else {
-        text = '';
-    }
-
-    return text;
-};
-const TenThousandsDigit = (value: number) => {
-    let text: string;
-    if (!Number.isNaN(value)) {
-        text = value.toString();
-    } else {
-        text = '';
-    }
-    return text;
-};
 
 interface DigitalAltitudeReadoutProps {
     bus: EventBus;
@@ -58,23 +14,37 @@ export class DigitalAltitudeReadout extends DisplayComponent<DigitalAltitudeRead
 
     private isNegativeSub = Subject.create('hidden')
 
-    private colorSub = Subject.create('')
+    private largeDigitClassList = Subject.create('');
 
-    private showThousandsZeroSub = Subject.create(false);
+    private smallDigitClassList = Subject.create('');
 
-    private tenDigitsSub = Subject.create(0);
+    private tensDigits1Value = Subject.create('');
 
-    private hundredsValue = Subject.create(0);
+    private tensDigits2Value = Subject.create('');
 
-    private hundredsPosition = Subject.create(0);
+    private tensDigits3Value = Subject.create('');
 
-    private thousandsValue = Subject.create(0);
+    private tensDigits4Value = Subject.create('');
 
-    private thousandsPosition = Subject.create(0);
+    private tensPosition = Subject.create('');
 
-    private tenThousandsValue = Subject.create(0);
+    private hundredsUpperValue = Subject.create('');
 
-    private tenThousandsPosition = Subject.create(0);
+    private hundredsLowerValue = Subject.create('');
+
+    private hundredsPosition = Subject.create('');
+
+    private thousandsUpperValue = Subject.create('');
+
+    private thousandsLowerValue = Subject.create('');
+
+    private thousandsPosition = Subject.create('');
+
+    private tenThousandsUpperValue = Subject.create('');
+
+    private tenThousandsLowerValue = Subject.create('');
+
+    private tenThousandsPosition = Subject.create('');
 
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
@@ -93,104 +63,81 @@ export class DigitalAltitudeReadout extends DisplayComponent<DigitalAltitudeRead
             this.altitude = altitude.value;
             this.updateColor();
 
-            const absAlt = Math.abs(Math.max(Math.min(altitude.value, 50000), -1500));
-            const tensDigits = absAlt % 100;
-            this.tenDigitsSub.set(tensDigits);
+            const largeLetterSpacing = 7.1;
+            const smallLetterSpacing = 4.53 / 2;
 
-            const HundredsValue = Math.floor((absAlt / 100) % 10);
-            this.hundredsValue.set(HundredsValue);
-            let HundredsPosition = 0;
-            if (tensDigits > 80) {
-                HundredsPosition = tensDigits / 20 - 4;
-                this.hundredsPosition.set(HundredsPosition);
-            } else {
-                this.hundredsPosition.set(0);
-            }
+            const absalt = Math.abs(this.altitude);
+            const round10000 = Math.trunc(absalt / 10000);
+            const round1000 = Math.trunc(absalt / 1000);
+            const round100 = Math.trunc(absalt / 100);
 
-            const ThousandsValue = Math.floor((absAlt / 1000) % 10);
-            this.thousandsValue.set(ThousandsValue);
-            let ThousandsPosition = 0;
-            if (HundredsValue >= 9) {
-                ThousandsPosition = HundredsPosition;
-                this.thousandsPosition.set(ThousandsPosition);
-            } else {
-                this.thousandsPosition.set(0);
-            }
+            const tenThousandsOffset = (absalt - round10000 * 10000) / 10000;
+            this.tenThousandsPosition.set(`translate(0 ${tenThousandsOffset * largeLetterSpacing})`);
 
-            const TenThousandsValue = Math.floor((absAlt / 10000) % 10);
-            this.tenThousandsValue.set(TenThousandsValue);
-            let TenThousandsPosition = 0;
-            if (ThousandsValue >= 9) {
-                TenThousandsPosition = ThousandsPosition;
-            }
+            const tenThousandsDigitHigh = round10000 + 1;
+            const tenThousandsDigitLow = round10000;
+            this.tenThousandsUpperValue.set(tenThousandsDigitHigh.toString());
+            this.tenThousandsLowerValue.set(tenThousandsDigitLow.toString());
 
-            this.tenThousandsPosition.set(TenThousandsPosition);
-            const showThousandsZero = TenThousandsValue !== 0;
+            const thousandsDigitOffset = (this.altitude - Math.trunc(this.altitude / 1000) * 1000) / 1000;
+            this.thousandsPosition.set(`translate(0 ${thousandsDigitOffset * largeLetterSpacing})`);
 
-            this.showThousandsZeroSub.set(showThousandsZero);
+            const thousandsDigitHigh = round1000 - round10000 * 10;
+            const thousandsDigitLow = thousandsDigitHigh + 1 - Math.trunc((thousandsDigitHigh + 1) / 10) * 10;
+            this.thousandsUpperValue.set(thousandsDigitLow.toString());
+            this.thousandsLowerValue.set(thousandsDigitHigh.toString());
+
+            const hundredsDigitOffset = (this.altitude - Math.trunc(this.altitude / 100) * 100) / 100;
+            this.hundredsPosition.set(`translate(0 ${hundredsDigitOffset * largeLetterSpacing})`);
+
+            const hundredsDigitLow = round100 - 10 * round1000;
+            const hundredsDigitHigh = hundredsDigitLow + 1 - Math.trunc((hundredsDigitLow + 1) / 10) * 10;
+            this.hundredsUpperValue.set(hundredsDigitHigh.toString());
+            this.hundredsLowerValue.set(hundredsDigitLow.toString());
+
+            const tenthDigitsOffset = (this.altitude - Math.trunc(this.altitude / 20) * 20) / 10;
+            this.tensPosition.set(`translate(0 ${tenthDigitsOffset * smallLetterSpacing})`);
+
+            const tenthDigitModulus = (Math.trunc(this.altitude / 20) * 2 - Math.trunc(this.altitude / 100) * 10) * 10;
+            const tenthDigit2 = tenthDigitModulus;
+            const tenthDigit3 = tenthDigitModulus + 20 - Math.trunc((tenthDigitModulus + 20) / 100) * 100;
+            const tenthDigit4 = tenthDigitModulus + 40 - Math.trunc((tenthDigitModulus + 40) / 100) * 100;
+            const tenthDigit1 = tenthDigitModulus - 20 + 100 - Math.trunc((tenthDigitModulus - 20 + 100) / 100) * 100;
+
+            this.tensDigits1Value.set(tenthDigit1.toFixed(0).padStart(2, '0'));
+            this.tensDigits2Value.set(tenthDigit2.toFixed(0).padStart(2, '0'));
+            this.tensDigits3Value.set(tenthDigit3.toFixed(0).padStart(2, '0'));
+            this.tensDigits4Value.set(tenthDigit4.toFixed(0).padStart(2, '0'));
         });
     }
 
     private updateColor() {
         const color = (this.mda !== 0 && this.altitude < this.mda) ? 'Amber' : 'Green';
-        this.colorSub.set(color);
+
+        this.largeDigitClassList.set(`FontLargest MiddleAlign ${color}`);
+        this.smallDigitClassList.set(`FontSmallest MiddleAlign ${color}`);
     }
 
     render(): VNode {
         return (
             <g id="AltReadoutGroup">
-                <g>
-                    <svg x="117.754" y="76.3374" width="13.5" height="8.9706" viewBox="0 0 13.5 8.9706">
-                        <Drum
-                            type="ten-thousands"
-                            position={this.tenThousandsPosition}
-                            value={this.tenThousandsValue}
-                            color={this.colorSub}
-                            showZero={Subject.create(false)}
-                            getText={TenThousandsDigit}
-                            valueSpacing={1}
-                            distanceSpacing={7}
-                            displayRange={1}
-                            amount={2}
-                        />
-                        <Drum
-                            type="thousands"
-                            position={this.thousandsPosition}
-                            value={this.thousandsValue}
-                            color={this.colorSub}
-                            showZero={this.showThousandsZeroSub}
-                            getText={ThousandsDigit}
-                            valueSpacing={1}
-                            distanceSpacing={7}
-                            displayRange={1}
-                            amount={2}
-
-                        />
-                        <Drum
-                            type="hundreds"
-                            position={this.hundredsPosition}
-                            value={this.hundredsValue}
-                            color={this.colorSub}
-                            getText={HundredsDigit}
-                            valueSpacing={1}
-                            distanceSpacing={7}
-                            displayRange={1}
-                            amount={10}
-                        />
-                    </svg>
-                    <svg x="130.85" y="73.6664" width="8.8647" height="14.313" viewBox="0 0 8.8647 14.313">
-                        <Drum
-                            type="tens"
-                            amount={4}
-                            position={this.tenDigitsSub}
-                            value={this.tenDigitsSub}
-                            color={this.colorSub}
-                            getText={TensDigits}
-                            valueSpacing={20}
-                            distanceSpacing={4.7}
-                            displayRange={40}
-                        />
-                    </svg>
+                <g transform={this.tenThousandsPosition}>
+                    <text x="120.4772" y="76.179276" class={this.largeDigitClassList}>{this.tenThousandsUpperValue}</text>
+                    <text x="120.47482" y="83.269829" class={this.largeDigitClassList}>{this.tenThousandsLowerValue}</text>
+                </g>
+                <g transform={this.thousandsPosition}>
+                    <text x="125.0332" y="76.179688" class={this.largeDigitClassList}>{this.thousandsUpperValue}</text>
+                    <text x="125.03112" y="83.269867" class={this.largeDigitClassList}>{this.thousandsLowerValue}</text>
+                </g>
+                <g transform={this.hundredsPosition}>
+                    <text x="129.46671" y="76.177689" class={this.largeDigitClassList}>{this.hundredsUpperValue}</text>
+                    <text x="129.4669" y="83.269379" class={this.largeDigitClassList}>{this.hundredsLowerValue}</text>
+                </g>
+                <g transform={this.tensPosition}>
+                    <text x="135.52931" y="86.963669" class={this.smallDigitClassList}>{this.tensDigits1Value}</text>
+                    <text x="135.52954" y="82.51902" class={this.smallDigitClassList}>{this.tensDigits2Value}</text>
+                    <text x="135.53026" y="78.014465" class={this.smallDigitClassList}>{this.tensDigits3Value}</text>
+                    <text x="135.53026" y="73.484421" class={this.smallDigitClassList}>{this.tensDigits4Value}</text>
                 </g>
                 <path id="AltReadoutReducedAccurMarks" class="NormalStroke Amber" style="display: none" d="m132.61 81.669h4.7345m-4.7345-1.6933h4.7345" />
                 <path id="AltReadoutOutline" class="NormalStroke Yellow" d="m117.75 76.337h13.096v-2.671h8.8647v14.313h-8.8647v-2.671h-13.096" />
@@ -201,131 +148,6 @@ export class DigitalAltitudeReadout extends DisplayComponent<DigitalAltitudeRead
                     <text class="White" x="121.63675" y="88.486031">G</text>
                 </g>
 
-            </g>
-        );
-    }
-}
-
-interface DrumProperties {
-    type: string,
-    displayRange: number,
-    amount: number,
-    valueSpacing: number,
-    distanceSpacing: number,
-    position: Subscribable<number>,
-    value: Subscribable<number>,
-    color: Subscribable<string>,
-    getText: any,
-    showZero?: Subscribable<boolean>;
-}
-class Drum extends DisplayComponent<DrumProperties> {
-    private digitRefElements: NodeReference<SVGTextElement>[] = [];
-
-    private buildElements(amount: number) {
-        const highestPosition = Math.round((this.position + this.props.displayRange) / this.props.valueSpacing) * this.props.valueSpacing;
-
-        const highestValue = Math.round((this.value + this.props.displayRange) / this.props.valueSpacing) * this.props.valueSpacing;
-
-        const graduationElements: SVGTextElement[] = [];
-
-        for (let i = 0; i < amount; i++) {
-            const elementPosition = highestPosition - i * this.props.valueSpacing;
-            const offset = -elementPosition * this.props.distanceSpacing / this.props.valueSpacing;
-
-            let elementVal = highestValue - i * this.props.valueSpacing;
-            if (!this.showZero && elementVal === 0) {
-                elementVal = NaN;
-            }
-
-            const digitRef = FSComponent.createRef<SVGTextElement>();
-
-            if (this.props.type === 'hundreds') {
-                graduationElements.push(<text ref={digitRef} transform={`translate(0 ${offset})`} class={`FontLargest MiddleAlign ${this.color}`} x="11.631" y="7.1" />);
-            } else if (this.props.type === 'thousands') {
-                graduationElements.push(<text ref={digitRef} transform={`translate(0 ${offset})`} class={`FontLargest MiddleAlign ${this.color}`} x="7.18" y="7.1" />);
-            } else if (this.props.type === 'ten-thousands') {
-                graduationElements.push(<text ref={digitRef} transform={`translate(0 ${offset})`} class={`FontLargest MiddleAlign ${this.color}`} x="2.498" y="7.1" />);
-            } else if (this.props.type === 'tens') {
-                graduationElements.push(<text ref={digitRef} transform={`translate(0 ${offset})`} class={`FontSmallest MiddleAlign ${this.color}`} x="4.5894" y="8.9133" />);
-            }
-            this.digitRefElements.push(digitRef);
-        }
-
-        return graduationElements;
-    }
-
-    private getOffset(position: number) {
-        const className = `translate(0 ${position * this.props.distanceSpacing / this.props.valueSpacing})`;
-
-        this.gRef.instance.setAttribute('transform', className);
-    }
-
-    private updateValue() {
-        let highestPosition = Math.round((this.position + this.props.displayRange) / this.props.valueSpacing) * this.props.valueSpacing;
-        if (highestPosition > this.position + this.props.displayRange) {
-            highestPosition -= this.props.valueSpacing;
-        }
-
-        let highestValue = Math.round((this.value + this.props.displayRange) / this.props.valueSpacing) * this.props.valueSpacing;
-        if (highestValue > this.value + this.props.displayRange) {
-            highestValue -= this.props.valueSpacing;
-        }
-
-        for (let i = 0; i < this.props.amount; i++) {
-            let elementVal = highestValue - i * this.props.valueSpacing;
-            const elementPosition = highestPosition - i * this.props.valueSpacing;
-            const offset = -elementPosition * this.props.distanceSpacing / this.props.valueSpacing;
-            if (!this.showZero && elementVal === 0) {
-                elementVal = NaN;
-            }
-
-            const text = this.props.getText(elementVal);
-
-            this.digitRefElements[i].instance.setAttribute('transform', `translate(0 ${offset})`);
-            if (this.digitRefElements[i].instance.textContent !== text
-            ) {
-                this.digitRefElements[i].instance.textContent = text;
-            }
-            this.digitRefElements[i].instance.classList.replace('Green', this.color);
-            this.digitRefElements[i].instance.classList.replace('Amber', this.color);
-        }
-    }
-
-    private position = 0;
-
-    private value = 0;
-
-    private color = 'Green'
-
-    private showZero = true;
-
-    private gRef = FSComponent.createRef<SVGGElement>();
-
-    onAfterRender(node: VNode): void {
-        super.onAfterRender(node);
-
-        this.props.position.sub((p) => {
-            this.position = p;
-            this.getOffset(p);
-        }, true);
-        this.props.value.sub((p) => {
-            this.value = p;
-            this.updateValue();
-        }, true);
-        this.props.color.sub((p) => {
-            this.color = p;
-            this.updateValue();
-        });
-        this.props.showZero?.sub((p) => {
-            this.showZero = p;
-            this.updateValue();
-        }, true);
-    }
-
-    render(): VNode {
-        return (
-            <g ref={this.gRef}>
-                {this.buildElements(this.props.amount)}
             </g>
         );
     }
