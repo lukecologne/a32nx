@@ -72,7 +72,7 @@ export class DigitalAltitudeReadout extends DisplayComponent<DigitalAltitudeRead
             const round100 = Math.trunc(absalt / 100);
 
             const tenThousandsOffset = (absalt - round10000 * 10000) / 10000;
-            this.tenThousandsPosition.set(`translate(0 ${tenThousandsOffset * largeLetterSpacing})`);
+            this.tenThousandsPosition.set(`translate(0 ${Math.max(tenThousandsOffset - 0.998, 0) * 500 * largeLetterSpacing})`);
 
             const tenThousandsDigitHigh = round10000 + 1;
             const tenThousandsDigitLow = round10000;
@@ -80,7 +80,7 @@ export class DigitalAltitudeReadout extends DisplayComponent<DigitalAltitudeRead
             this.tenThousandsLowerValue.set(tenThousandsDigitLow.toString());
 
             const thousandsDigitOffset = (this.altitude - Math.trunc(this.altitude / 1000) * 1000) / 1000;
-            this.thousandsPosition.set(`translate(0 ${thousandsDigitOffset * largeLetterSpacing})`);
+            this.thousandsPosition.set(`translate(0 ${Math.max(thousandsDigitOffset - 0.98, 0) * 50 * largeLetterSpacing})`);
 
             const thousandsDigitHigh = round1000 - round10000 * 10;
             const thousandsDigitLow = thousandsDigitHigh + 1 - Math.trunc((thousandsDigitHigh + 1) / 10) * 10;
@@ -88,7 +88,7 @@ export class DigitalAltitudeReadout extends DisplayComponent<DigitalAltitudeRead
             this.thousandsLowerValue.set(thousandsDigitHigh.toString());
 
             const hundredsDigitOffset = (this.altitude - Math.trunc(this.altitude / 100) * 100) / 100;
-            this.hundredsPosition.set(`translate(0 ${hundredsDigitOffset * largeLetterSpacing})`);
+            this.hundredsPosition.set(`translate(0 ${Math.max(hundredsDigitOffset - 0.8, 0) * 5 * largeLetterSpacing})`);
 
             const hundredsDigitLow = round100 - 10 * round1000;
             const hundredsDigitHigh = hundredsDigitLow + 1 - Math.trunc((hundredsDigitLow + 1) / 10) * 10;
