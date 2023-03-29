@@ -1,3 +1,4 @@
+#pragma once
 #include "../model/FmgcComputer.h"
 
 class Fmgc {

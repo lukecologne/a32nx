@@ -8,19 +8,12 @@
             <BASE_NAME>LS</BASE_NAME>
         </DefaultTemplateParameters>
 
-        <UseTemplate Name="A32NX_GlassCockpit_Push_Template">
-            <PART_ID>LS_Button</PART_ID>
-            <BTN_ID>LS_#ID#</BTN_ID>
-            <BTN_TOOLTIP_ID>LS</BTN_TOOLTIP_ID>
-            <PLANE_PREFIX>A320_Neo</PLANE_PREFIX>
-        </UseTemplate>
-
         <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Button_Template">
             <INDICATOR_CODE type="rnp" return="boolean">
-                (L:BTN_LS_#ID#_FILTER_ACTIVE, boolean)
+                (L:A32NX_FCU_EFIS_#SIDE#_LS_LIGHT_ON, boolean)
             </INDICATOR_CODE>
-            <BUTTON_CODE type="rnp">
-                (H:A320_Neo_PFD_BTN_LS_#ID#, boolean) = true;
+            <BUTTON_CODE>
+                'A32NX.FCU_EFIS_#SIDE#_LS_PUSH' (&gt;F:KeyEvent)
             </BUTTON_CODE>
         </UseTemplate>
     </Template>
@@ -36,10 +29,10 @@
 
         <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Button_Template">
             <INDICATOR_CODE type="rnp" return="boolean">
-                (A:AUTOPILOT FLIGHT DIRECTOR ACTIVE:#ID#, boolean)
+                (L:A32NX_FCU_EFIS_#SIDE#_FD_LIGHT_ON, boolean)
             </INDICATOR_CODE>
-            <BUTTON_CODE type="rnp">
-                (K:TOGGLE_FLIGHT_DIRECTOR, number) = #ID, number#;
+            <BUTTON_CODE>
+                'A32NX.FCU_EFIS_#SIDE#_FD_PUSH' (&gt;F:KeyEvent)
             </BUTTON_CODE>
         </UseTemplate>
     </Template>
@@ -52,17 +45,10 @@
 
         <UseTemplate Name="FBW_AIRBUS_Push_EFIS_Button_Template">
             <INDICATOR_CODE type="rnp" return="boolean">
-                let optionId = #OPTION_ID, number#;
-                alias selectedOption = (L:A32NX_EFIS_#SIDE#_OPTION, enum);
-                optionId == selectedOption
+                (L:A32NX_FCU_EFIS_#SIDE#_#BASE_NAME#_LIGHT_ON, boolean)
             </INDICATOR_CODE>
-            <BUTTON_CODE type="rnp">
-                alias selectedOption = (L:A32NX_EFIS_#SIDE#_OPTION, enum);
-                if selectedOption == #OPTION_ID, number# {
-                    selectedOption = 0;
-                } else {
-                    selectedOption = #OPTION_ID, number#;
-                }
+            <BUTTON_CODE>
+                'A32NX.FCU_EFIS_#SIDE#_#BASE_NAME#_PUSH' (&gt;F:KeyEvent)
             </BUTTON_CODE>
         </UseTemplate>
     </Template>
@@ -121,6 +107,100 @@
                     </EMISSIVE_CODE>
                 </UseTemplate>
             </Component>
+        </Component>
+    </Template>
+
+    <Template Name="FBW_Airbus_FCU_Baro_Knob">
+        <DefaultTemplateParameters>
+            <ID>1</ID>
+            <ANIMREF_ID>-1</ANIMREF_ID>
+            <ANIMTIP_0>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_BARO_KNOB_INCREASE</ANIMTIP_0>
+            <ANIMTIP_0_ON_CURSOR>TurnRight</ANIMTIP_0_ON_CURSOR>
+            <ANIMTIP_1>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_BARO_KNOB_DECREASE</ANIMTIP_1>
+            <ANIMTIP_1_ON_CURSOR>TurnLeft</ANIMTIP_1_ON_CURSOR>
+            <ANIMTIP_2>TT:COCKPIT.TOOLTIPS.BARO_REF_SET_STD</ANIMTIP_2>
+            <ANIMTIP_2_ON_CURSOR>DownArrow</ANIMTIP_2_ON_CURSOR>
+            <ANIMTIP_3>TT:COCKPIT.TOOLTIPS.BARO_ENABLE_SELECTION</ANIMTIP_3>
+            <ANIMTIP_3_ON_CURSOR>UpArrow</ANIMTIP_3_ON_CURSOR>
+            <ANIMTIP_4>TT:COCKPIT.TOOLTIPS.BARO_REF_SET_STD</ANIMTIP_4>
+            <ANIMTIP_4_ON_CURSOR>Hand</ANIMTIP_4_ON_CURSOR>
+        </DefaultTemplateParameters>
+
+        <UseTemplate Name="ASOBO_GT_Helper_Suffix_ID_Appender">
+            <TEMPLATE_TO_CALL>FBW_Airbus_FCU_Baro_Knob_SubTemplate</TEMPLATE_TO_CALL>
+        </UseTemplate>
+    </Template>
+
+    <Template Name="FBW_Airbus_FCU_Baro_Knob_SubTemplate">
+        <DefaultTemplateParameters>
+            <ANIM_NAME>AUTOPILOT_Knob_Baro_#ID##SUFFIX_ID#</ANIM_NAME>
+            <ANIM_NAME_KNOB>#ANIM_NAME#</ANIM_NAME_KNOB>
+            <ANIM_NAME_PUSH>AUTOPILOT_Knob_Baro_#ID#_push#SUFFIX_ID#</ANIM_NAME_PUSH>
+            <ANIM_NAME_PUSHPULL>AUTOPILOT_Knob_Baro_#ID#_pushpull#SUFFIX_ID#</ANIM_NAME_PUSHPULL>
+            <ANIMREF_ID>-1</ANIMREF_ID>
+            <ANIMTIP_0>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_BARO_KNOB_INCREASE</ANIMTIP_0>
+            <ANIMTIP_0_ON_CURSOR>TurnRight</ANIMTIP_0_ON_CURSOR>
+            <ANIMTIP_1>TT:COCKPIT.TOOLTIPS.AUTOPILOT_PANEL_BARO_KNOB_DECREASE</ANIMTIP_1>
+            <ANIMTIP_1_ON_CURSOR>TurnLeft</ANIMTIP_1_ON_CURSOR>
+            <BARO_ID>#ID#</BARO_ID>
+            <SIDE>L</SIDE>
+            <NODE_ID>AUTOPILOT_Knob_Baro_#ID##SUFFIX_ID#</NODE_ID>
+            <PART_ID>AUTOPILOT_Knob_Baro</PART_ID>
+        </DefaultTemplateParameters>
+
+        <Component ID="#NODE_ID#" Node="#NODE_ID#">
+            <UseTemplate Name="ASOBO_GT_Knob_Infinite_PushPull">
+                <ANTICLOCKWISE_CODE>
+                    'A32NX.FCU_EFIS_#SIDE#_BARO_DEC' (&gt;F:KeyEvent)
+                </ANTICLOCKWISE_CODE>
+                <CLOCKWISE_CODE>
+                    'A32NX.FCU_EFIS_#SIDE#_BARO_INC' (&gt;F:KeyEvent)
+                </CLOCKWISE_CODE>
+                <PULL_CODE>
+                    'A32NX.FCU_EFIS_#SIDE#_BARO_PULL' (&gt;F:KeyEvent)
+                </PULL_CODE>
+                <PUSH_CODE>
+                    'A32NX.FCU_EFIS_#SIDE#_BARO_PUSH' (&gt;F:KeyEvent)
+                </PUSH_CODE>
+
+                <CENTER_RADIUS>0</CENTER_RADIUS>
+                <COUNT>36</COUNT>
+                <WWISE_EVENT>QNHknob</WWISE_EVENT>
+                <WWISE_EVENT_1>QNHknob</WWISE_EVENT_1>
+                <WWISE_EVENT_2>QNHknob</WWISE_EVENT_2>
+            </UseTemplate>
+            <!--Disables FCU baro knob emissive-->
+            <UseTemplate Name="ASOBO_GT_Emissive_Gauge">
+            </UseTemplate>
+        </Component>
+    </Template>
+
+    <Template Name="FBW_AIRLINER_Switch_Baro_Selector_Template">
+        <DefaultTemplateParameters>
+            <ID>1</ID>
+        </DefaultTemplateParameters>
+
+        <UseTemplate Name="FBW_AIRLINER_Switch_Baro_Selector_SubTemplate">
+        </UseTemplate>
+    </Template>
+
+    <Template Name="FBW_AIRLINER_Switch_Baro_Selector_SubTemplate">
+        <DefaultTemplateParameters>
+            <NODE_ID>AIRLINER_Switch_Baro_Selector_#ID#</NODE_ID>
+            <ANIM_NAME>AIRLINER_Switch_Baro_Selector_#ID#</ANIM_NAME>
+            <PART_ID>AIRLINER_Switch_Baro_Selector</PART_ID>
+            <ID>1</ID>
+            <WWISE_EVENT_1>lswitch</WWISE_EVENT_1>
+            <WWISE_EVENT_2>lswitch</WWISE_EVENT_2>
+            <ANIMTIP_0>TT:COCKPIT.TOOLTIPS.BARO_SET_UNIT_TO_HPA</ANIMTIP_0>
+            <ANIMTIP_1>TT:COCKPIT.TOOLTIPS.BARO_SET_UNIT_TO_HG</ANIMTIP_1>
+        </DefaultTemplateParameters>
+
+        <Component ID="#NODE_ID#" Node="#NODE_ID#">
+            <UseTemplate Name="ASOBO_GT_Switch_Code">
+                <LEFT_SINGLE_CODE>(L:XMLVAR_Baro_Selector_HPA_#ID#) ! (&gt;L:XMLVAR_Baro_Selector_HPA_#ID#)</LEFT_SINGLE_CODE>
+                <ANIM_CODE>(L:XMLVAR_Baro_Selector_HPA_#ID#) 100 *</ANIM_CODE>
+            </UseTemplate>
         </Component>
     </Template>
 </ModelBehaviors>

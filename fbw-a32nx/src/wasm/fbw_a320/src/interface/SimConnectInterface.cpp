@@ -285,7 +285,6 @@ bool SimConnectInterface::prepareSimInputSimConnectDataDefinitions() {
   result &= addInputDataDefinition(hSimConnect, 0, Events::AUTOPILOT_ON, "AUTOPILOT_ON", true);
   result &= addInputDataDefinition(hSimConnect, 0, Events::AUTOPILOT_DISENGAGE_SET, "AUTOPILOT_DISENGAGE_SET", true);
   result &= addInputDataDefinition(hSimConnect, 0, Events::AUTOPILOT_DISENGAGE_TOGGLE, "AUTOPILOT_DISENGAGE_TOGGLE", true);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::TOGGLE_FLIGHT_DIRECTOR, "TOGGLE_FLIGHT_DIRECTOR", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_AP_1_PUSH, "A32NX.FCU_AP_1_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_AP_2_PUSH, "A32NX.FCU_AP_2_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_AP_DISCONNECT_PUSH, "A32NX.FCU_AP_DISCONNECT_PUSH", false);
@@ -293,36 +292,49 @@ bool SimConnectInterface::prepareSimInputSimConnectDataDefinitions() {
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ATHR_DISCONNECT_PUSH, "A32NX.FCU_ATHR_DISCONNECT_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_SPD_INC, "A32NX.FCU_SPD_INC", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_SPD_DEC, "A32NX.FCU_SPD_DEC", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_SPD_SET, "A32NX.FCU_SPD_SET", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_SPD_PUSH, "A32NX.FCU_SPD_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_SPD_PULL, "A32NX.FCU_SPD_PULL", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_SPD_MACH_TOGGLE_PUSH, "A32NX.FCU_SPD_MACH_TOGGLE_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_HDG_INC, "A32NX.FCU_HDG_INC", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_HDG_DEC, "A32NX.FCU_HDG_DEC", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_HDG_SET, "A32NX.FCU_HDG_SET", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_HDG_PUSH, "A32NX.FCU_HDG_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_HDG_PULL, "A32NX.FCU_HDG_PULL", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_TRK_FPA_TOGGLE_PUSH, "A32NX.FCU_TRK_FPA_TOGGLE_PUSH", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_TO_AP_HDG_PUSH, "A32NX.FCU_TO_AP_HDG_PUSH", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_TO_AP_HDG_PULL, "A32NX.FCU_TO_AP_HDG_PULL", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ALT_INC, "A32NX.FCU_ALT_INC", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ALT_DEC, "A32NX.FCU_ALT_DEC", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ALT_SET, "A32NX.FCU_ALT_SET", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ALT_INCREMENT_TOGGLE, "A32NX.FCU_ALT_INCREMENT_TOGGLE", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ALT_INCREMENT_SET, "A32NX.FCU_ALT_INCREMENT_SET", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ALT_PUSH, "A32NX.FCU_ALT_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_ALT_PULL, "A32NX.FCU_ALT_PULL", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_METRIC_ALT_TOGGLE_PUSH, "A32NX.FCU_METRIC_ALT_TOGGLE_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_VS_INC, "A32NX.FCU_VS_INC", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_VS_DEC, "A32NX.FCU_VS_DEC", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_VS_SET, "A32NX.FCU_VS_SET", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_VS_PUSH, "A32NX.FCU_VS_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_VS_PULL, "A32NX.FCU_VS_PULL", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_TO_AP_VS_PUSH, "A32NX.FCU_TO_AP_VS_PUSH", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_TO_AP_VS_PULL, "A32NX.FCU_TO_AP_VS_PULL", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_LOC_PUSH, "A32NX.FCU_LOC_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_APPR_PUSH, "A32NX.FCU_APPR_PUSH", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EXPED_PUSH, "A32NX.FCU_EXPED_PUSH", false);
-  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FMGC_DIR_TO_TRIGGER, "A32NX.FMGC_DIR_TO_TRIGGER", false);
+
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_FD_PUSH, "A32NX.FCU_EFIS_L_FD_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_LS_PUSH, "A32NX.FCU_EFIS_L_LS_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_BARO_INC, "A32NX.FCU_EFIS_L_BARO_INC", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_BARO_DEC, "A32NX.FCU_EFIS_L_BARO_DEC", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_BARO_PUSH, "A32NX.FCU_EFIS_L_BARO_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_BARO_PULL, "A32NX.FCU_EFIS_L_BARO_PULL", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_CSTR_PUSH, "A32NX.FCU_EFIS_L_CSTR_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_WPT_PUSH, "A32NX.FCU_EFIS_L_WPT_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_VORD_PUSH, "A32NX.FCU_EFIS_L_VORD_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_NDB_PUSH, "A32NX.FCU_EFIS_L_NDB_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_L_ARPT_PUSH, "A32NX.FCU_EFIS_L_ARPT_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_FD_PUSH, "A32NX.FCU_EFIS_R_FD_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_LS_PUSH, "A32NX.FCU_EFIS_R_LS_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_BARO_INC, "A32NX.FCU_EFIS_R_BARO_INC", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_BARO_DEC, "A32NX.FCU_EFIS_R_BARO_DEC", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_BARO_PUSH, "A32NX.FCU_EFIS_R_BARO_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_BARO_PULL, "A32NX.FCU_EFIS_R_BARO_PULL", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_CSTR_PUSH, "A32NX.FCU_EFIS_R_CSTR_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_WPT_PUSH, "A32NX.FCU_EFIS_R_WPT_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_VORD_PUSH, "A32NX.FCU_EFIS_R_VORD_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_NDB_PUSH, "A32NX.FCU_EFIS_R_NDB_PUSH", false);
+  result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_FCU_EFIS_R_ARPT_PUSH, "A32NX.FCU_EFIS_R_ARPT_PUSH", false);
 
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_EFIS_L_CHRONO_PUSHED, "A32NX.EFIS_L_CHRONO_PUSHED", false);
   result &= addInputDataDefinition(hSimConnect, 0, Events::A32NX_EFIS_R_CHRONO_PUSHED, "A32NX.EFIS_R_CHRONO_PUSHED", false);
@@ -955,6 +967,10 @@ SimInputAutopilot SimConnectInterface::getSimInputAutopilot() {
   return simInputAutopilot;
 }
 
+FcuFrontPanelInputs SimConnectInterface::getFcuFrontPanelInputs() {
+  return fcuFrontPanelInputs;
+}
+
 SimInputRudderTrim SimConnectInterface::getSimInputRudderTrim() {
   return simInputRudderTrim;
 }
@@ -978,6 +994,47 @@ void SimConnectInterface::resetSimInputAutopilot() {
   simInputAutopilot.APPR_push = 0;
   simInputAutopilot.EXPED_push = 0;
   simInputAutopilot.DIR_TO_trigger = 0;
+}
+
+void SimConnectInterface::resetFcuFrontPanelInputs() {
+  fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobPulled = false;
+  fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobTurns = false;
+  fcuFrontPanelInputs.efisDiscreteIn[0].fdButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[0].lsButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[0].cstrButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[0].wptButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[0].vordButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[0].ndbButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[0].arptButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobPulled = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobTurns = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].fdButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].lsButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].cstrButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].wptButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].vordButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].ndbButtonPushed = false;
+  fcuFrontPanelInputs.efisDiscreteIn[1].arptButtonPushed = false;
+  fcuFrontPanelInputs.locButtonPressed = false;
+  fcuFrontPanelInputs.expedButtonPressed = false;
+  fcuFrontPanelInputs.apprButtonPressed = false;
+  fcuFrontPanelInputs.spdMachButtonPressed = false;
+  fcuFrontPanelInputs.trkFpaButtonPressed = false;
+  fcuFrontPanelInputs.metricAltButtonPressed = false;
+  fcuFrontPanelInputs.speedKnobPushed = false;
+  fcuFrontPanelInputs.speedKnobPulled = false;
+  fcuFrontPanelInputs.speedKnobTurns = false;
+  fcuFrontPanelInputs.hdgTrkKnobPushed = false;
+  fcuFrontPanelInputs.hdgTrkKnobPulled = false;
+  fcuFrontPanelInputs.hdgTrkKnobTurns = false;
+  fcuFrontPanelInputs.altKnobPushed = false;
+  fcuFrontPanelInputs.altKnobPulled = false;
+  fcuFrontPanelInputs.altKnobTurns = false;
+  fcuFrontPanelInputs.vsKnobPushed = false;
+  fcuFrontPanelInputs.vsKnobPulled = false;
+  fcuFrontPanelInputs.vsKnobTurns = false;
 }
 
 void SimConnectInterface::resetSimInputRudderTrim() {
@@ -1502,11 +1559,6 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
       break;
     }
 
-    case Events::TOGGLE_FLIGHT_DIRECTOR: {
-      std::cout << "WASM: event triggered: TOGGLE_FLIGHT_DIRECTOR:" << static_cast<long>(event->dwData) << std::endl;
-      break;
-    }
-
     case Events::AP_MASTER: {
       simInputAutopilot.AP_1_push = 1;
       std::cout << "WASM: event triggered: AP_MASTER" << std::endl;
@@ -1558,273 +1610,279 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
     }
 
     case Events::A32NX_FCU_SPD_INC: {
-      execute_calculator_code("(>H:A320_Neo_FCU_SPEED_INC)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.speedKnobTurns = 1;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_SPD_DEC: {
-      execute_calculator_code("(>H:A320_Neo_FCU_SPEED_DEC)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.speedKnobTurns = -1;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_DEC" << std::endl;
-      break;
-    }
-
-    case Events::A32NX_FCU_SPD_SET: {
-      idFcuEventSetSPEED->set(static_cast<long>(event->dwData));
-      execute_calculator_code("(>H:A320_Neo_FCU_SPEED_SET)", nullptr, nullptr, nullptr);
-      std::cout << "WASM: event triggered: A32NX_FCU_SPD_SET: " << static_cast<long>(event->dwData) << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_SPD_PUSH:
     case Events::AP_AIRSPEED_ON: {
-      execute_calculator_code("(>H:A320_Neo_FCU_SPEED_PUSH)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.speedKnobPushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_SPD_PULL:
     case Events::AP_AIRSPEED_OFF: {
-      execute_calculator_code("(>H:A320_Neo_FCU_SPEED_PULL)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.speedKnobPulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_PULL" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_SPD_MACH_TOGGLE_PUSH:
     case Events::AP_MACH_HOLD: {
-      execute_calculator_code("(>H:A320_Neo_FCU_SPEED_TOGGLE_SPEED_MACH)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.spdMachButtonPressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_MACH_TOGGLE_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_HDG_INC: {
-      execute_calculator_code(
-          "(L:A32NX_TRK_FPA_MODE_ACTIVE, bool) 1 == if{ (>H:A320_Neo_FCU_HDG_INC_TRACK) } els{ (>H:A320_Neo_FCU_HDG_INC_HEADING) }",
-          nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.hdgTrkKnobTurns = 1;
       std::cout << "WASM: event triggered: A32NX_FCU_HDG_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_HDG_DEC: {
-      execute_calculator_code(
-          "(L:A32NX_TRK_FPA_MODE_ACTIVE, bool) 1 == if{ (>H:A320_Neo_FCU_HDG_DEC_TRACK) } els{ (>H:A320_Neo_FCU_HDG_DEC_HEADING) }",
-          nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.hdgTrkKnobTurns = -1;
       std::cout << "WASM: event triggered: A32NX_FCU_HDG_DEC" << std::endl;
-      break;
-    }
-
-    case Events::A32NX_FCU_HDG_SET: {
-      idFcuEventSetHDG->set(static_cast<long>(event->dwData));
-      execute_calculator_code("(>H:A320_Neo_FCU_HDG_SET)", nullptr, nullptr, nullptr);
-      std::cout << "WASM: event triggered: A32NX_FCU_HDG_SET: " << static_cast<long>(event->dwData) << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_HDG_PUSH:
     case Events::AP_HDG_HOLD_ON: {
-      execute_calculator_code("(>H:A320_Neo_FCU_HDG_PUSH)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.hdgTrkKnobPushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_HDG_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_HDG_PULL:
     case Events::AP_HDG_HOLD_OFF: {
-      execute_calculator_code("(>H:A320_Neo_FCU_HDG_PULL)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.hdgTrkKnobPulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_HDG_PULL" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_TRK_FPA_TOGGLE_PUSH:
     case Events::AP_VS_HOLD: {
-      execute_calculator_code("(L:A32NX_TRK_FPA_MODE_ACTIVE) ! (>L:A32NX_TRK_FPA_MODE_ACTIVE)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.trkFpaButtonPressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_TRK_FPA_TOGGLE_PUSH" << std::endl;
       break;
     }
 
-    case Events::A32NX_FCU_TO_AP_HDG_PUSH: {
-      simInputAutopilot.HDG_push = 1;
-      std::cout << "WASM: event triggered: A32NX_FCU_TO_AP_HDG_PUSH" << std::endl;
-      break;
-    }
-
-    case Events::A32NX_FCU_TO_AP_HDG_PULL: {
-      simInputAutopilot.HDG_pull = 1;
-      std::cout << "WASM: event triggered: A32NX_FCU_TO_AP_HDG_PULL" << std::endl;
-      break;
-    }
-
     case Events::A32NX_FCU_ALT_INC: {
-      long increment = static_cast<long>(event->dwData);
-      if (increment == 100) {
-        execute_calculator_code(
-            "3 (A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) 100 + (A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) "
-            "100 % - 49000 min (>K:2:AP_ALT_VAR_SET_ENGLISH) (>H:AP_KNOB_Up) "
-            "(>H:A320_Neo_CDU_AP_INC_ALT)",
-            nullptr, nullptr, nullptr);
-      } else if (increment == 1000) {
-        execute_calculator_code(
-            "3 (A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) 1000 + (A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) "
-            "1000 % - 49000 min (>K:2:AP_ALT_VAR_SET_ENGLISH) (>H:AP_KNOB_Up) "
-            "(>H:A320_Neo_CDU_AP_INC_ALT)",
-            nullptr, nullptr, nullptr);
-      } else {
-        execute_calculator_code(
-            "3 (A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) (L:XMLVAR_Autopilot_Altitude_Increment) + (A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) "
-            "(L:XMLVAR_Autopilot_Altitude_Increment) % - 49000 min (>K:2:AP_ALT_VAR_SET_ENGLISH) (>H:AP_KNOB_Up) "
-            "(>H:A320_Neo_CDU_AP_INC_ALT)",
-            nullptr, nullptr, nullptr);
-      }
+      fcuFrontPanelInputs.altKnobTurns = 1;
+
       std::cout << "WASM: event triggered: A32NX_FCU_ALT_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_ALT_DEC: {
-      long increment = static_cast<long>(event->dwData);
-      if (increment == 100) {
-        execute_calculator_code(
-            "3 (A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) 100 - 100 "
-            "(A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) 100 % - 100 % "
-            "+ 100 max (>K:2:AP_ALT_VAR_SET_ENGLISH) (>H:AP_KNOB_Down) (>H:A320_Neo_CDU_AP_DEC_ALT)",
-            nullptr, nullptr, nullptr);
-      } else if (increment == 1000) {
-        execute_calculator_code(
-            "3 (A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) 1000 - 1000 "
-            "(A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) 1000 % - 1000 % "
-            "+ 100 max (>K:2:AP_ALT_VAR_SET_ENGLISH) (>H:AP_KNOB_Down) (>H:A320_Neo_CDU_AP_DEC_ALT)",
-            nullptr, nullptr, nullptr);
-      } else {
-        execute_calculator_code(
-            "3 (A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) (L:XMLVAR_Autopilot_Altitude_Increment) - (L:XMLVAR_Autopilot_Altitude_Increment) "
-            "(A:AUTOPILOT ALTITUDE LOCK VAR:3, feet) (L:XMLVAR_Autopilot_Altitude_Increment) % - (L:XMLVAR_Autopilot_Altitude_Increment) "
-            "% "
-            "+ 100 max (>K:2:AP_ALT_VAR_SET_ENGLISH) (>H:AP_KNOB_Down) (>H:A320_Neo_CDU_AP_DEC_ALT)",
-            nullptr, nullptr, nullptr);
-      }
+      fcuFrontPanelInputs.altKnobTurns = -1;
+
       std::cout << "WASM: event triggered: A32NX_FCU_ALT_DEC" << std::endl;
-      break;
-    }
-
-    case Events::A32NX_FCU_ALT_SET: {
-      long value = 100 * (static_cast<long>(event->dwData) / 100);
-      std::ostringstream stringStream;
-      stringStream << value;
-      stringStream << " (>K:3:AP_ALT_VAR_SET_ENGLISH)";
-      execute_calculator_code(stringStream.str().c_str(), nullptr, nullptr, nullptr);
-      std::cout << "WASM: event triggered: A32NX_FCU_ALT_SET: " << value << std::endl;
-      break;
-    }
-
-    case Events::A32NX_FCU_ALT_INCREMENT_TOGGLE:
-    case Events::AP_ALT_HOLD: {
-      execute_calculator_code(
-          "(L:XMLVAR_Autopilot_Altitude_Increment, number) 100 == "
-          "if{ 1000 (>L:XMLVAR_Autopilot_Altitude_Increment) } "
-          "els{ 100 (>L:XMLVAR_Autopilot_Altitude_Increment) }",
-          nullptr, nullptr, nullptr);
-      std::cout << "WASM: event triggered: A32NX_FCU_ALT_INCREMENT_TOGGLE" << std::endl;
-      break;
-    }
-
-    case Events::A32NX_FCU_ALT_INCREMENT_SET: {
-      long value = static_cast<long>(event->dwData);
-      if (value == 100 || value == 1000) {
-        std::ostringstream stringStream;
-        stringStream << value;
-        stringStream << " (>L:XMLVAR_Autopilot_Altitude_Increment)";
-        execute_calculator_code(stringStream.str().c_str(), nullptr, nullptr, nullptr);
-        std::cout << "WASM: event triggered: A32NX_FCU_ALT_INCREMENT_SET: " << value << std::endl;
-      }
       break;
     }
 
     case Events::A32NX_FCU_ALT_PUSH:
     case Events::AP_ALT_HOLD_ON: {
-      simInputAutopilot.ALT_push = 1;
-      execute_calculator_code("(>H:A320_Neo_CDU_MODE_MANAGED_ALTITUDE)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.altKnobPushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_ALT_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_ALT_PULL:
     case Events::AP_ALT_HOLD_OFF: {
-      simInputAutopilot.ALT_pull = 1;
-      execute_calculator_code("(>H:A320_Neo_CDU_MODE_SELECTED_ALTITUDE)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.altKnobPulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_ALT_PULL" << std::endl;
       break;
     }
 
+    case Events::A32NX_FCU_METRIC_ALT_TOGGLE_PUSH: {
+      fcuFrontPanelInputs.metricAltButtonPressed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_METRIC_ALT_TOGGLE_PUSH" << std::endl;
+      break;
+    }
+
     case Events::A32NX_FCU_VS_INC: {
-      execute_calculator_code(
-          "(L:A32NX_TRK_FPA_MODE_ACTIVE, bool) 1 == if{ (>H:A320_Neo_FCU_VS_INC_FPA) } els{ (>H:A320_Neo_FCU_VS_INC_VS) } "
-          "(>H:A320_Neo_CDU_VS)",
-          nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.vsKnobTurns = 1;
       std::cout << "WASM: event triggered: A32NX_FCU_VS_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_VS_DEC: {
-      execute_calculator_code(
-          "(L:A32NX_TRK_FPA_MODE_ACTIVE, bool) 1 == if{ (>H:A320_Neo_FCU_VS_DEC_FPA) } els{ (>H:A320_Neo_FCU_VS_DEC_VS) } "
-          "(>H:A320_Neo_CDU_VS)",
-          nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.vsKnobTurns = -1;
       std::cout << "WASM: event triggered: A32NX_FCU_VS_DEC" << std::endl;
-      break;
-    }
-
-    case Events::A32NX_FCU_VS_SET: {
-      idFcuEventSetVS->set(static_cast<long>(event->dwData));
-      execute_calculator_code("(>H:A320_Neo_FCU_VS_SET) (>H:A320_Neo_CDU_VS)", nullptr, nullptr, nullptr);
-      std::cout << "WASM: event triggered: A32NX_FCU_VS_SET: " << static_cast<long>(event->dwData) << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_VS_PUSH:
     case Events::AP_VS_ON: {
-      execute_calculator_code("(>H:A320_Neo_FCU_VS_PUSH) (>H:A320_Neo_CDU_VS)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.vsKnobPushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_VS_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_VS_PULL:
     case Events::AP_VS_OFF: {
-      execute_calculator_code("(>H:A320_Neo_FCU_VS_PULL) (>H:A320_Neo_CDU_VS)", nullptr, nullptr, nullptr);
+      fcuFrontPanelInputs.vsKnobPulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_VS_PULL" << std::endl;
       break;
     }
 
-    case Events::A32NX_FCU_TO_AP_VS_PUSH: {
-      simInputAutopilot.VS_push = 1;
-      std::cout << "WASM: event triggered: A32NX_FCU_TO_AP_VS_PUSH" << std::endl;
-      break;
-    }
-    case Events::A32NX_FCU_TO_AP_VS_PULL: {
-      simInputAutopilot.VS_pull = 1;
-      std::cout << "WASM: event triggered: A32NX_FCU_TO_AP_VS_PULL" << std::endl;
-      break;
-    }
-
     case Events::A32NX_FCU_LOC_PUSH: {
-      simInputAutopilot.LOC_push = 1;
+      fcuFrontPanelInputs.locButtonPressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_LOC_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_APPR_PUSH: {
-      simInputAutopilot.APPR_push = 1;
+      fcuFrontPanelInputs.apprButtonPressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_APPR_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EXPED_PUSH:
     case Events::AP_ATT_HOLD: {
-      simInputAutopilot.EXPED_push = 1;
+      fcuFrontPanelInputs.expedButtonPressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EXPED_PUSH" << std::endl;
       break;
     }
 
-    case Events::A32NX_FMGC_DIR_TO_TRIGGER: {
-      simInputAutopilot.DIR_TO_trigger = 1;
-      std::cout << "WASM: event triggered: A32NX_FMGC_DIR_TO_TRIGGER" << std::endl;
+    case Events::A32NX_FCU_EFIS_L_FD_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].fdButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_FD_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_LS_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].lsButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_LS_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_BARO_INC: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobTurns = 1;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_BARO_INC" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_BARO_DEC: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobTurns = -1;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_BARO_DEC" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_BARO_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_BARO_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_BARO_PULL: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobPulled = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_BARO_PULL" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_CSTR_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].cstrButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_CSTR_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_WPT_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].wptButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_WPT_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_VORD_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].vordButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_VORD_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_NDB_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].ndbButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_NDB_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_L_ARPT_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[0].arptButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_ARPT_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_FD_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].fdButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_FD_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_LS_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].lsButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_LS_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_BARO_INC: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobTurns = 1;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_BARO_INC" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_BARO_DEC: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobTurns = -1;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_BARO_DEC" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_BARO_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_BARO_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_BARO_PULL: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobPulled = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_BARO_PULL" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_CSTR_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].cstrButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_CSTR_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_WPT_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].wptButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_WPT_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_VORD_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].vordButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_VORD_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_NDB_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].ndbButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_NDB_PUSH" << std::endl;
+      break;
+    }
+
+    case Events::A32NX_FCU_EFIS_R_ARPT_PUSH: {
+      fcuFrontPanelInputs.efisDiscreteIn[1].arptButtonPushed = true;
+      std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_ARPT_PUSH" << std::endl;
       break;
     }
 

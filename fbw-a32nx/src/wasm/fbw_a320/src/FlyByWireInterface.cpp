@@ -101,6 +101,8 @@ bool FlyByWireInterface::update(double sampleTime) {
     result &= updateAdirs(i);
   }
 
+  result &= updateFcu(calculatedSampleTime);
+
   for (int i = 0; i < 2; i++) {
     result &= updateFmgc(calculatedSampleTime, i);
   }
@@ -131,9 +133,6 @@ bool FlyByWireInterface::update(double sampleTime) {
 
   // update spoilers
   result &= updateSpoilers(calculatedSampleTime);
-
-  // update FO side with FO Sync ON
-  result &= updateFoSide(calculatedSampleTime);
 
   // update flight data recorder
   flightDataRecorder.update(engineData, additionalData);
@@ -359,11 +358,6 @@ void FlyByWireInterface::setupLocalVariables() {
   idTcasTargetGreenMax = std::make_unique<LocalVariable>("A32NX_TCAS_VSPEED_GREEN:2");
   idTcasTargetRedMin = std::make_unique<LocalVariable>("A32NX_TCAS_VSPEED_RED:1");
   idTcasTargetRedMax = std::make_unique<LocalVariable>("A32NX_TCAS_VSPEED_RED:2");
-
-  idFcuTrkFpaModeActive = std::make_unique<LocalVariable>("A32NX_TRK_FPA_MODE_ACTIVE");
-  idFcuSelectedFpa = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_FPA_SELECTED");
-  idFcuSelectedVs = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_VS_SELECTED");
-  idFcuSelectedHeading = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_HEADING_SELECTED");
 
   idFcuLocModeActive = std::make_unique<LocalVariable>("A32NX_FCU_LOC_MODE_ACTIVE");
   idFcuApprModeActive = std::make_unique<LocalVariable>("A32NX_FCU_APPR_MODE_ACTIVE");
@@ -723,6 +717,45 @@ void FlyByWireInterface::setupLocalVariables() {
     idFmgcABusDiscreteWord2[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_2");
     idFmgcABusDiscreteWord6[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_6");
   }
+
+  idLightsTest = std::make_unique<LocalVariable>("A32NX_OVHD_INTLT_ANN");
+
+  idFcuSelectedHeading = std::make_unique<LocalVariable>("A32NX_FCU_SELECTED_HEADING");
+  idFcuSelectedAltitude = std::make_unique<LocalVariable>("A32NX_FCU_SELECTED_ALTITUDE");
+  idFcuSelectedAirspeed = std::make_unique<LocalVariable>("A32NX_FCU_SELECTED_AIRSPEED");
+  idFcuSelectedVerticalSpeed = std::make_unique<LocalVariable>("A32NX_FCU_SELECTED_VERTICAL_SPEED");
+  idFcuSelectedTrack = std::make_unique<LocalVariable>("A32NX_FCU_SELECTED_TRACK");
+  idFcuSelectedFpa = std::make_unique<LocalVariable>("A32NX_FCU_SELECTED_FPA");
+  idFcuAtsDiscreteWord = std::make_unique<LocalVariable>("A32NX_FCU_ATS_DISCRETE_WORD");
+  idFcuAtsFmaDiscreteWord = std::make_unique<LocalVariable>("A32NX_FCU_ATS_FMA_DISCRETE_WORD");
+  idFcuEisLeftDiscreteWord1 = std::make_unique<LocalVariable>("A32NX_FCU_LEFT_EIS_DISCRETE_WORD_1");
+  idFcuEisLeftDiscreteWord2 = std::make_unique<LocalVariable>("A32NX_FCU_LEFT_EIS_DISCRETE_WORD_2");
+  idFcuEisLeftBaro = std::make_unique<LocalVariable>("A32NX_FCU_LEFT_EIS_BARO");
+  idFcuEisLeftBaroHpa = std::make_unique<LocalVariable>("A32NX_FCU_LEFT_EIS_BARO_HPA");
+  idFcuEisRightDiscreteWord1 = std::make_unique<LocalVariable>("A32NX_FCU_RIGHT_EIS_DISCRETE_WORD_1");
+  idFcuEisRightDiscreteWord2 = std::make_unique<LocalVariable>("A32NX_FCU_RIGHT_EIS_DISCRETE_WORD_2");
+  idFcuEisRightBaro = std::make_unique<LocalVariable>("A32NX_FCU_RIGHT_EIS_BARO");
+  idFcuEisRightBaroHpa = std::make_unique<LocalVariable>("A32NX_FCU_RIGHT_EIS_BARO_HPA");
+  idFcuDiscreteWord1 = std::make_unique<LocalVariable>("A32NX_FCU_DISCRETE_WORD_1");
+  idFcuDiscreteWord2 = std::make_unique<LocalVariable>("A32NX_FCU_DISCRETE_WORD_2");
+
+  for (int i = 0; i < 2; i++) {
+    std::string idString = i == 0 ? "L" : "R";
+
+    idFcuEisPanelFdLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_FD_LIGHT_ON");
+    idFcuEisPanelLsLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_LS_LIGHT_ON");
+    idFcuEisPanelCstrLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_CSTR_LIGHT_ON");
+    idFcuEisPanelWptLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_WPT_LIGHT_ON");
+    idFcuEisPanelVordLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_VORD_LIGHT_ON");
+    idFcuEisPanelNdbLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_NDB_LIGHT_ON");
+    idFcuEisPanelArptLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_ARPT_LIGHT_ON");
+  }
+  idFcuAfsPanelAp1LightOn = std::make_unique<LocalVariable>("A32NX_FCU_AP_1_LIGHT_ON");
+  idFcuAfsPanelAp2LightOn = std::make_unique<LocalVariable>("A32NX_FCU_AP_2_LIGHT_ON");
+  idFcuAfsPanelAthrLightOn = std::make_unique<LocalVariable>("A32NX_FCU_ATHR_LIGHT_ON");
+  idFcuAfsPanelLocLightOn = std::make_unique<LocalVariable>("A32NX_FCU_LOC_LIGHT_ON");
+  idFcuAfsPanelExpedLightOn = std::make_unique<LocalVariable>("A32NX_FCU_EXPED_LIGHT_ON");
+  idFcuAfsPanelApprLightOn = std::make_unique<LocalVariable>("A32NX_FCU_APPR_LIGHT_ON");
 }
 
 bool FlyByWireInterface::handleFcuInitialization(double sampleTime) {
@@ -743,40 +776,40 @@ bool FlyByWireInterface::handleFcuInitialization(double sampleTime) {
   auto timeSinceReady = simData.simulationTime - simulationTimeReady;
 
   // determine if we need to run init code
-  if (idStartState->get() >= 5 && timeSinceReady > 6.0) {
-    // init FCU for in flight configuration
-    double targetAltitude = std::round(simData.H_ind_ft / 1000.0) * 1000.0;
-    double targetHeading = std::fmod(std::round(simData.Psi_magnetic_deg / 10.0) * 10.0, 360.0);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_PUSH);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_SET, targetHeading);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_PULL);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_ALT_SET, targetAltitude);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_VS_SET, simData.H_ind_ft < targetAltitude ? 1000 : -1000);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_VS_PULL);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_ATHR_PUSH);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_AP_1_PUSH);
-    idFcuHeadingSync->set(0);
-    idFcuModeReversionActive->set(0);
-    idFcuModeReversionTargetFpm->set(simData.H_ind_ft < targetAltitude ? 1000 : -1000);
-    wasFcuInitialized = true;
-  } else if (idStartState->get() == 4 && timeSinceReady > 1.0) {
-    // init FCU for on runway -> ready for take-off
-    double targetHeading = std::fmod(std::round(simData.Psi_magnetic_deg), 360.0);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_SET, 150);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_PULL);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_SET, targetHeading);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_PULL);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_ALT_SET, 15000);
-    wasFcuInitialized = true;
-  } else if (idStartState->get() < 4 && timeSinceReady > 1.0) {
-    // init FCU for on ground -> default FCU values after power-on
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_SET, 100);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_PULL);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_SET, 0);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_PULL);
-    simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_ALT_SET, 100);
-    wasFcuInitialized = true;
-  }
+  // if (idStartState->get() >= 5 && timeSinceReady > 6.0) {
+  //  // init FCU for in flight configuration
+  //  double targetAltitude = std::round(simData.H_ind_ft / 1000.0) * 1000.0;
+  //  double targetHeading = std::fmod(std::round(simData.Psi_magnetic_deg / 10.0) * 10.0, 360.0);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_PUSH);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_SET, targetHeading);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_PULL);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_ALT_SET, targetAltitude);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_VS_SET, simData.H_ind_ft < targetAltitude ? 1000 : -1000);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_VS_PULL);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_ATHR_PUSH);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_AP_1_PUSH);
+  //  idFcuHeadingSync->set(0);
+  //  idFcuModeReversionActive->set(0);
+  //  idFcuModeReversionTargetFpm->set(simData.H_ind_ft < targetAltitude ? 1000 : -1000);
+  //  wasFcuInitialized = true;
+  //} else if (idStartState->get() == 4 && timeSinceReady > 1.0) {
+  //  // init FCU for on runway -> ready for take-off
+  //  double targetHeading = std::fmod(std::round(simData.Psi_magnetic_deg), 360.0);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_SET, 150);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_PULL);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_SET, targetHeading);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_PULL);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_ALT_SET, 15000);
+  //  wasFcuInitialized = true;
+  //} else if (idStartState->get() < 4 && timeSinceReady > 1.0) {
+  //  // init FCU for on ground -> default FCU values after power-on
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_SET, 100);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_SPD_PULL);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_SET, 0);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_HDG_PULL);
+  //  simConnectInterface.sendEvent(SimConnectInterface::A32NX_FCU_ALT_SET, 100);
+  //  wasFcuInitialized = true;
+  //}
 
   // success
   return true;
@@ -1273,7 +1306,8 @@ bool FlyByWireInterface::updateElac(double sampleTime, int elacIndex) {
     if (elacIndex == 0) {
       powerSupplyAvailable =
           idElecDcEssBusPowered->get() ||
-          ((elacsDiscreteOutputs[0].batt_power_supply || secsDiscreteOutputs[0].batt_power_supply) ? idElecBat1HotBusPowered->get() : false);
+          ((elacsDiscreteOutputs[0].batt_power_supply || secsDiscreteOutputs[0].batt_power_supply) ? idElecBat1HotBusPowered->get()
+                                                                                                   : false);
     } else {
       bool elac1OrSec1PowersupplySwitched = elacsDiscreteOutputs[0].batt_power_supply || secsDiscreteOutputs[0].batt_power_supply;
       bool elac2NormalSupplyAvail = idElecDcBus2Powered->get();
@@ -1445,7 +1479,8 @@ bool FlyByWireInterface::updateSec(double sampleTime, int secIndex) {
     if (secIndex == 0) {
       powerSupplyAvailable =
           idElecDcEssBusPowered->get() ||
-          ((secsDiscreteOutputs[0].batt_power_supply || elacsDiscreteOutputs[0].batt_power_supply) ? idElecBat1HotBusPowered->get() : false);
+          ((secsDiscreteOutputs[0].batt_power_supply || elacsDiscreteOutputs[0].batt_power_supply) ? idElecBat1HotBusPowered->get()
+                                                                                                   : false);
     } else {
       powerSupplyAvailable = idElecDcBus2Powered->get();
     }
@@ -1544,7 +1579,7 @@ bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
   fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.fcu_athr_button = simConnectInterface.getSimInputThrottles().ATHR_push;
   fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.athr_instinctive_disc =
       simConnectInterface.getSimInputThrottles().ATHR_disconnect || idAutothrustDisconnect->get() == 1;
-  fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.fd_opp_engd = fmgcsDiscreteOutputs[oppFmgcIndex].fd_own_engaged;
+  fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.fd_opp_engaged = fmgcsDiscreteOutputs[oppFmgcIndex].fd_own_engaged;
   fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.ap_opp_engaged = fmgcsDiscreteOutputs[oppFmgcIndex].ap_own_engaged;
   fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.fcu_ap_button =
       fmgcIndex == 0 ? simInputAutopilot.AP_1_push : simInputAutopilot.AP_2_push;
@@ -1589,10 +1624,9 @@ bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.ra_opp_bus = raBusOutputs[oppFmgcIndex];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.ra_own_bus = raBusOutputs[fmgcIndex];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fmgc_opp_bus = fmgcsBusOutputs[oppFmgcIndex].fmgc_a_bus;
-  fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fcu_opp = {};
-  fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fcu_own = {};
+  fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fcu_bus = fcuBusOutputs;
 
-  if (fmgcIndex == facDisabled) {
+  if (fmgcIndex == fmgcDisabled) {
     simConnectInterface.setClientDataFmgcDiscretes(fmgcs[fmgcIndex].modelInputs.in.discrete_inputs);
 
     fmgcsDiscreteOutputs[fmgcIndex] = simConnectInterface.getClientDataFmgcDiscretesOutput();
@@ -1631,6 +1665,67 @@ bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
   idFmgcABusDiscreteWord1[fmgcIndex]->set(Arinc429Utils::toSimVar(fmgcsBusOutputs[fmgcIndex].fmgc_a_bus.discrete_word_1));
   idFmgcABusDiscreteWord2[fmgcIndex]->set(Arinc429Utils::toSimVar(fmgcsBusOutputs[fmgcIndex].fmgc_a_bus.discrete_word_2));
   idFmgcABusDiscreteWord6[fmgcIndex]->set(Arinc429Utils::toSimVar(fmgcsBusOutputs[fmgcIndex].fmgc_a_bus.discrete_word_6));
+
+  return true;
+}
+
+bool FlyByWireInterface::updateFcu(double sampleTime) {
+  SimData simData = simConnectInterface.getSimData();
+
+  fcu.discreteInputs.ap1Engaged = fmgcsDiscreteOutputs[0].ap_own_engaged;
+  fcu.discreteInputs.fd1Engaged = fmgcsDiscreteOutputs[0].fd_own_engaged;
+  fcu.discreteInputs.athr1Engaged = fmgcsDiscreteOutputs[0].athr_own_engaged;
+  fcu.discreteInputs.ap2Engaged = fmgcsDiscreteOutputs[1].ap_own_engaged;
+  fcu.discreteInputs.fd2Engaged = fmgcsDiscreteOutputs[1].fd_own_engaged;
+  fcu.discreteInputs.athr2Engaged = fmgcsDiscreteOutputs[1].athr_own_engaged;
+  fcu.discreteInputs.lightsTest = idLightsTest->get();
+
+  fcu.frontPanelInputs = simConnectInterface.getFcuFrontPanelInputs();
+
+  fcu.update(sampleTime, simData.simulationTime, failuresConsumer.isActive(Failures::Fcu1), failuresConsumer.isActive(Failures::Fcu2),
+             idElecDcEssBusPowered->get(), idElecDcBus2Powered->get());
+  fcuBusOutputs = fcu.getBusOutputs();
+
+  FcuFrontPanelOutputs frontPanelOutputs = fcu.getFrontPanelOutputs();
+
+  idFcuSelectedHeading->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_hdg_deg));
+  idFcuSelectedAltitude->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_alt_ft));
+  idFcuSelectedAirspeed->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_spd_kts));
+  idFcuSelectedVerticalSpeed->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_vz_ft_min));
+  idFcuSelectedTrack->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_trk_deg));
+  idFcuSelectedFpa->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_fpa_deg));
+  idFcuAtsDiscreteWord->set(Arinc429Utils::toSimVar(fcuBusOutputs.ats_discrete_word));
+  idFcuAtsFmaDiscreteWord->set(Arinc429Utils::toSimVar(fcuBusOutputs.ats_fma_discrete_word));
+  idFcuEisLeftDiscreteWord1->set(Arinc429Utils::toSimVar(fcuBusOutputs.eis_discrete_word_1_left));
+  idFcuEisLeftDiscreteWord2->set(Arinc429Utils::toSimVar(fcuBusOutputs.eis_discrete_word_2_left));
+  idFcuEisLeftBaro->set(Arinc429Utils::toSimVar(fcuBusOutputs.baro_setting_left_inhg));
+  idFcuEisLeftBaroHpa->set(Arinc429Utils::toSimVar(fcuBusOutputs.baro_setting_left_hpa));
+  idFcuEisRightDiscreteWord1->set(Arinc429Utils::toSimVar(fcuBusOutputs.eis_discrete_word_1_right));
+  idFcuEisRightDiscreteWord2->set(Arinc429Utils::toSimVar(fcuBusOutputs.eis_discrete_word_2_right));
+  idFcuEisRightBaro->set(Arinc429Utils::toSimVar(fcuBusOutputs.baro_setting_right_inhg));
+  idFcuEisRightBaroHpa->set(Arinc429Utils::toSimVar(fcuBusOutputs.baro_setting_right_hpa));
+  idFcuDiscreteWord1->set(Arinc429Utils::toSimVar(fcuBusOutputs.fcu_discrete_word_1));
+  idFcuDiscreteWord2->set(Arinc429Utils::toSimVar(fcuBusOutputs.fcu_discrete_word_2));
+
+  for (int i = 0; i < 2; i++) {
+    std::string idString = std::to_string(i + 1);
+
+    FcuEfisPanelOutputs efisPanelOutputs = frontPanelOutputs.efisDiscreteOut[i];
+
+    idFcuEisPanelFdLightOn[i]->set(efisPanelOutputs.fdLightOn);
+    idFcuEisPanelLsLightOn[i]->set(efisPanelOutputs.lsLightOn);
+    idFcuEisPanelCstrLightOn[i]->set(efisPanelOutputs.cstrLightOn);
+    idFcuEisPanelWptLightOn[i]->set(efisPanelOutputs.wptLightOn);
+    idFcuEisPanelVordLightOn[i]->set(efisPanelOutputs.vorDLightOn);
+    idFcuEisPanelNdbLightOn[i]->set(efisPanelOutputs.ndbLightOn);
+    idFcuEisPanelArptLightOn[i]->set(efisPanelOutputs.arptLightOn);
+  }
+  idFcuAfsPanelAp1LightOn->set(frontPanelOutputs.ap1LightOn);
+  idFcuAfsPanelAp2LightOn->set(frontPanelOutputs.ap2LightOn);
+  idFcuAfsPanelAthrLightOn->set(frontPanelOutputs.athrLightOn);
+  idFcuAfsPanelLocLightOn->set(frontPanelOutputs.locLightOn);
+  idFcuAfsPanelExpedLightOn->set(frontPanelOutputs.expedLightOn);
+  idFcuAfsPanelApprLightOn->set(frontPanelOutputs.apprLightOn);
 
   return true;
 }
@@ -1887,46 +1982,6 @@ bool FlyByWireInterface::updateAltimeterSetting(double sampleTime) {
     SimOutputAltimeter out = {true};
     simConnectInterface.sendData(out);
   }
-
-  // result
-  return true;
-}
-
-bool FlyByWireInterface::updateFoSide(double sampleTime) {
-  // get sim data
-  auto simData = simConnectInterface.getSimData();
-
-  // FD Button
-  if (additionalData.syncFoEfisEnabled && simData.ap_fd_1_active != simData.ap_fd_2_active) {
-    if (last_fd1_active != simData.ap_fd_1_active) {
-      simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 2);
-    }
-
-    if (last_fd2_active != simData.ap_fd_2_active) {
-      simConnectInterface.sendEvent(SimConnectInterface::Events::TOGGLE_FLIGHT_DIRECTOR, 1);
-    }
-  }
-  last_fd1_active = simData.ap_fd_1_active;
-  last_fd2_active = simData.ap_fd_2_active;
-
-  // LS Button
-  if (additionalData.syncFoEfisEnabled && additionalData.ls1Active != additionalData.ls2Active) {
-    if (last_ls1_active != additionalData.ls1Active) {
-      idLs2Active->set(additionalData.ls1Active);
-    }
-
-    if (last_ls2_active != additionalData.ls2Active) {
-      idLs1Active->set(additionalData.ls2Active);
-    }
-  }
-  last_ls1_active = additionalData.ls1Active;
-  last_ls2_active = additionalData.ls2Active;
-
-  // inHg/hPa switch
-  // Currently synced already
-
-  // STD Button
-  // Currently synced already
 
   // result
   return true;

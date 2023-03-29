@@ -189,35 +189,6 @@
         </Component>
     </Template>
 
-    <Template Name="FBW_AIRLINER_Switch_Baro_Selector_Template">
-        <DefaultTemplateParameters>
-            <ID>1</ID>
-        </DefaultTemplateParameters>
-
-        <UseTemplate Name="FBW_AIRLINER_Switch_Baro_Selector_SubTemplate">
-        </UseTemplate>
-    </Template>
-
-    <Template Name="FBW_AIRLINER_Switch_Baro_Selector_SubTemplate">
-        <DefaultTemplateParameters>
-            <NODE_ID>AIRLINER_Switch_Baro_Selector_#ID#</NODE_ID>
-            <ANIM_NAME>AIRLINER_Switch_Baro_Selector_#ID#</ANIM_NAME>
-            <PART_ID>AIRLINER_Switch_Baro_Selector</PART_ID>
-            <ID>1</ID>
-            <WWISE_EVENT_1>lswitch</WWISE_EVENT_1>
-            <WWISE_EVENT_2>lswitch</WWISE_EVENT_2>
-            <ANIMTIP_0>TT:COCKPIT.TOOLTIPS.BARO_SET_UNIT_TO_HPA</ANIMTIP_0>
-            <ANIMTIP_1>TT:COCKPIT.TOOLTIPS.BARO_SET_UNIT_TO_HG</ANIMTIP_1>
-        </DefaultTemplateParameters>
-
-        <Component ID="#NODE_ID#" Node="#NODE_ID#">
-            <UseTemplate Name="ASOBO_GT_Switch_Code">
-                <LEFT_SINGLE_CODE>(L:XMLVAR_Baro_Selector_HPA_#ID#) ! (&gt;L:XMLVAR_Baro_Selector_HPA_#ID#)</LEFT_SINGLE_CODE>
-                <ANIM_CODE>(L:XMLVAR_Baro_Selector_HPA_#ID#) 100 *</ANIM_CODE>
-            </UseTemplate>
-        </Component>
-    </Template>
-
     <Template Name="FBW_AIRLINER_Audio_Panel_Template">
         <DefaultTemplateParameters>
             <ID>1</ID>

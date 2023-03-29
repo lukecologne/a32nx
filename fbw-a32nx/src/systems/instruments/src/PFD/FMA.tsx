@@ -109,19 +109,19 @@ export class FMA extends DisplayComponent<{ bus: ArincEventBus, isAttExcessive: 
             this.handleFMABorders();
         });
 
-        sub.on('fmaVerticalArmed').whenChanged().handle((a) => {
-            this.armedVerticalModeSub.set(a);
-            this.handleFMABorders();
-        });
-
-        sub.on('activeLateralMode').whenChanged().handle((activeLateralMode) => {
-            this.activeLateralMode = activeLateralMode;
-            this.handleFMABorders();
-        });
+        // sub.on('fmaVerticalArmed').whenChanged().handle((a) => {
+        //    this.armedVerticalModeSub.set(a);
+        //    this.handleFMABorders();
+        // });
+        //
+        // sub.on('activeLateralMode').whenChanged().handle((activeLateralMode) => {
+        //    this.activeLateralMode = activeLateralMode;
+        //    this.handleFMABorders();
+        // });
 
         sub.on('fmgcDiscreteWord7').whenChanged().handle((word) => {
             this.tcasArmed = word.getBitValueOr(12, false);
-            this.fillBC3Cell();
+            this.handleFMABorders();
         });
 
         sub.on('speedPreselVal').whenChanged().handle((s) => {
@@ -291,14 +291,14 @@ class A2Cell extends DisplayComponent<{ bus: ArincEventBus }> {
             }
         });
 
-        sub.on('AThrMode').whenChanged().handle((athrMode) => {
-            // ATHR mode overrides BRK LO and MED memo
-            if (athrMode > 0 && athrMode <= 6) {
-                this.autoBrkRef.instance.style.visibility = 'hidden';
-            } else {
-                this.autoBrkRef.instance.style.visibility = 'visible';
-            }
-        });
+        // sub.on('AThrMode').whenChanged().handle((athrMode) => {
+        //     // ATHR mode overrides BRK LO and MED memo
+        //     if (athrMode > 0 && athrMode <= 6) {
+        //         this.autoBrkRef.instance.style.visibility = 'hidden';
+        //     } else {
+        //         this.autoBrkRef.instance.style.visibility = 'visible';
+        //     }
+        // });
     }
 
     render(): VNode {
@@ -628,10 +628,10 @@ class AB3Cell extends DisplayComponent<CellProps> {
             this.getText();
         });
 
-        sub.on('athrModeMessage').whenChanged().handle((m) => {
-            this.athrModeMessage = m;
-            this.getText();
-        });
+        // sub.on('athrModeMessage').whenChanged().handle((m) => {
+        //     this.athrModeMessage = m;
+        //     this.getText();
+        // });
     }
 
     render(): VNode {

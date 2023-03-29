@@ -15,6 +15,17 @@ enum class SignStatusMatrix
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
+#define DEFINED_TYPEDEF_FOR_base_arinc_429_
+
+struct base_arinc_429
+{
+  uint32_T SSM;
+  real32_T Data;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_time_
 #define DEFINED_TYPEDEF_FOR_base_time_
 
@@ -50,7 +61,7 @@ struct base_fmgc_discrete_inputs
   boolean_T athr_opp_engaged;
   boolean_T fcu_athr_button;
   boolean_T athr_instinctive_disc;
-  boolean_T fd_opp_engd;
+  boolean_T fd_opp_engaged;
   boolean_T ap_opp_engaged;
   boolean_T fcu_ap_button;
   boolean_T ap_instinctive_disc;
@@ -90,17 +101,6 @@ struct base_fmgc_discrete_inputs
 struct base_fms_inputs
 {
   boolean_T fm_valid;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
-#define DEFINED_TYPEDEF_FOR_base_arinc_429_
-
-struct base_arinc_429
-{
-  uint32_T SSM;
-  real32_T Data;
 };
 
 #endif
@@ -273,23 +273,27 @@ struct base_fmgc_a_bus
 
 struct base_fcu_bus
 {
-  real_T selected_hdg_deg;
-  real_T selected_alt_ft;
-  real_T selected_spd_kts;
-  real_T selected_vz_ft_min;
-  real_T selected_mach;
-  real_T selected_trk_deg;
-  real_T selected_fpa_deg;
-  real_T ats_fma_discrete_word;
-  real_T fcu_flex_to_temp_deg_c;
-  real_T ats_discrete_word;
-  real_T eis_discrete_word_1_left;
-  real_T eis_discrete_word_1_right;
-  real_T eis_discrete_word_2_left;
-  real_T eis_discrete_word_2_right;
-  real_T fcu_discrete_word_2;
-  real_T fcu_discrete_word_1;
-  real_T n1_cmd_percent;
+  base_arinc_429 selected_hdg_deg;
+  base_arinc_429 selected_alt_ft;
+  base_arinc_429 selected_spd_kts;
+  base_arinc_429 selected_vz_ft_min;
+  base_arinc_429 selected_mach;
+  base_arinc_429 selected_trk_deg;
+  base_arinc_429 selected_fpa_deg;
+  base_arinc_429 ats_fma_discrete_word;
+  base_arinc_429 fcu_flex_to_temp_deg_c;
+  base_arinc_429 ats_discrete_word;
+  base_arinc_429 eis_discrete_word_1_left;
+  base_arinc_429 eis_discrete_word_1_right;
+  base_arinc_429 eis_discrete_word_2_left;
+  base_arinc_429 eis_discrete_word_2_right;
+  base_arinc_429 baro_setting_left_hpa;
+  base_arinc_429 baro_setting_right_hpa;
+  base_arinc_429 baro_setting_left_inhg;
+  base_arinc_429 baro_setting_right_inhg;
+  base_arinc_429 fcu_discrete_word_2;
+  base_arinc_429 fcu_discrete_word_1;
+  base_arinc_429 n1_cmd_percent;
 };
 
 #endif
@@ -312,8 +316,7 @@ struct base_fmgc_bus_inputs
   base_ra_bus ra_opp_bus;
   base_ra_bus ra_own_bus;
   base_fmgc_a_bus fmgc_opp_bus;
-  base_fcu_bus fcu_opp;
-  base_fcu_bus fcu_own;
+  base_fcu_bus fcu_bus;
 };
 
 #endif
@@ -376,12 +379,76 @@ struct base_fmgc_logic_outputs
   boolean_T fd_own_engaged;
   boolean_T ap_own_engaged;
   boolean_T athr_own_engaged;
+  boolean_T athr_active;
+  boolean_T ap_inop;
+  boolean_T athr_inop;
+  boolean_T fmgc_opp_priority;
   boolean_T double_adr_failure;
   boolean_T double_ir_failure;
   base_fmgc_adr_computation_data adr_computation_data;
   base_fmgc_ir_computation_data ir_computation_data;
   real_T ra_computation_data_ft;
   boolean_T dual_ra_failure;
+  boolean_T fac_lg_data_failure;
+  boolean_T fac_speeds_failure;
+  boolean_T fac_weights_failure;
+  boolean_T fcu_failure;
+  boolean_T ils_failure;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_ap_fd_logic_outputs_
+#define DEFINED_TYPEDEF_FOR_base_fmgc_ap_fd_logic_outputs_
+
+struct base_fmgc_ap_fd_logic_outputs
+{
+  boolean_T clb_active;
+  boolean_T des_active;
+  boolean_T pitch_takeoff_active;
+  boolean_T pitch_goaround_active;
+  boolean_T vs_active;
+  boolean_T fpa_active;
+  boolean_T alt_active;
+  boolean_T trk_submode_active;
+  boolean_T capt_submode_active;
+  boolean_T gs_active;
+  boolean_T final_des_active;
+  boolean_T expedite_active;
+  boolean_T flare_active;
+  boolean_T cruise_active;
+  boolean_T tcas_active;
+  boolean_T rwy_active;
+  boolean_T nav_active;
+  boolean_T loc_cpt_active;
+  boolean_T loc_trk_active;
+  boolean_T roll_goaround_active;
+  boolean_T hdg_active;
+  boolean_T trk_active;
+  boolean_T rwy_loc_submode_active;
+  boolean_T rwy_trk_submode_active;
+  boolean_T align_submode_active;
+  boolean_T rollout_submode_active;
+  boolean_T alt_acq_armed;
+  boolean_T alt_acq_arm_possible;
+  boolean_T nav_armed;
+  boolean_T nav_arm_possible;
+  boolean_T loc_armed;
+  boolean_T land_armed;
+  boolean_T glide_armed;
+  boolean_T final_des_armed;
+  boolean_T clb_armed;
+  boolean_T des_armed;
+  boolean_T tcas_armed;
+  boolean_T land_active;
+  boolean_T ap_fd_mode_reversion;
+  boolean_T pitch_fd_bars_flashing;
+  boolean_T roll_fd_bars_flashing;
+  boolean_T loc_bc_selection;
+  boolean_T vs_target_not_held;
+  boolean_T tcas_ra_inhibited;
+  boolean_T trk_fpa_deselected;
+  boolean_T longi_large_box_tcas;
 };
 
 #endif
@@ -422,8 +489,6 @@ struct base_fmgc_b_bus
   base_arinc_429 delta_r_cmd_deg;
   base_arinc_429 delta_nose_wheel_cmd_deg;
   base_arinc_429 delta_q_cmd_deg;
-  base_arinc_429 n1_left_percent;
-  base_arinc_429 n1_right_percent;
 };
 
 #endif
@@ -446,6 +511,7 @@ struct fmgc_outputs
 {
   fmgc_inputs data;
   base_fmgc_logic_outputs logic;
+  base_fmgc_ap_fd_logic_outputs ap_fd_logic;
   base_fmgc_discrete_outputs discrete_outputs;
   base_fmgc_bus_outputs bus_outputs;
 };
@@ -488,10 +554,10 @@ struct struct_PU75bC6JQHPO0CCSfJRZYE
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_4xpe111mhgRDizxiF0fNDB_
-#define DEFINED_TYPEDEF_FOR_struct_4xpe111mhgRDizxiF0fNDB_
+#ifndef DEFINED_TYPEDEF_FOR_struct_W99WKMb6phKnoTzGO6R2HC_
+#define DEFINED_TYPEDEF_FOR_struct_W99WKMb6phKnoTzGO6R2HC_
 
-struct struct_4xpe111mhgRDizxiF0fNDB
+struct struct_W99WKMb6phKnoTzGO6R2HC
 {
   struct_2OohiAWrazWy5wDS5iisgF fac_weight_lbs;
   struct_2OohiAWrazWy5wDS5iisgF fm_weight_lbs;
@@ -509,19 +575,17 @@ struct struct_4xpe111mhgRDizxiF0fNDB
   struct_2OohiAWrazWy5wDS5iisgF delta_r_cmd_deg;
   struct_2OohiAWrazWy5wDS5iisgF delta_nose_wheel_cmd_deg;
   struct_2OohiAWrazWy5wDS5iisgF delta_q_cmd_deg;
-  struct_2OohiAWrazWy5wDS5iisgF n1_left_percent;
-  struct_2OohiAWrazWy5wDS5iisgF n1_right_percent;
 };
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_d0aybyYrGUAWb8eZSltKpB_
-#define DEFINED_TYPEDEF_FOR_struct_d0aybyYrGUAWb8eZSltKpB_
+#ifndef DEFINED_TYPEDEF_FOR_struct_kZpTGwDxfLgcffJ4b9p7V_
+#define DEFINED_TYPEDEF_FOR_struct_kZpTGwDxfLgcffJ4b9p7V_
 
-struct struct_d0aybyYrGUAWb8eZSltKpB
+struct struct_kZpTGwDxfLgcffJ4b9p7V
 {
   struct_PU75bC6JQHPO0CCSfJRZYE fmgc_a_bus;
-  struct_4xpe111mhgRDizxiF0fNDB fmgc_b_bus;
+  struct_W99WKMb6phKnoTzGO6R2HC fmgc_b_bus;
 };
 
 #endif

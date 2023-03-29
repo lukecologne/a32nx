@@ -10,6 +10,7 @@
 #include "../ThrottleAxisMapping.h"
 #include "SimConnectData.h"
 
+#include "../fcu/FcuIO.h"
 #include "../model/ElacComputer_types.h"
 #include "../model/FacComputer_types.h"
 #include "../model/FmgcComputer_types.h"
@@ -44,7 +45,6 @@ class SimConnectInterface {
     AUTOPILOT_ON,
     AUTOPILOT_DISENGAGE_SET,
     AUTOPILOT_DISENGAGE_TOGGLE,
-    TOGGLE_FLIGHT_DIRECTOR,
     A32NX_FCU_AP_1_PUSH,
     A32NX_FCU_AP_2_PUSH,
     A32NX_FCU_AP_DISCONNECT_PUSH,
@@ -52,36 +52,48 @@ class SimConnectInterface {
     A32NX_FCU_ATHR_DISCONNECT_PUSH,
     A32NX_FCU_SPD_INC,
     A32NX_FCU_SPD_DEC,
-    A32NX_FCU_SPD_SET,
     A32NX_FCU_SPD_PUSH,
     A32NX_FCU_SPD_PULL,
     A32NX_FCU_SPD_MACH_TOGGLE_PUSH,
     A32NX_FCU_HDG_INC,
     A32NX_FCU_HDG_DEC,
-    A32NX_FCU_HDG_SET,
     A32NX_FCU_HDG_PUSH,
     A32NX_FCU_HDG_PULL,
     A32NX_FCU_TRK_FPA_TOGGLE_PUSH,
-    A32NX_FCU_TO_AP_HDG_PUSH,
-    A32NX_FCU_TO_AP_HDG_PULL,
     A32NX_FCU_ALT_INC,
     A32NX_FCU_ALT_DEC,
-    A32NX_FCU_ALT_SET,
     A32NX_FCU_ALT_PUSH,
     A32NX_FCU_ALT_PULL,
-    A32NX_FCU_ALT_INCREMENT_TOGGLE,
-    A32NX_FCU_ALT_INCREMENT_SET,
+    A32NX_FCU_METRIC_ALT_TOGGLE_PUSH,
     A32NX_FCU_VS_INC,
     A32NX_FCU_VS_DEC,
-    A32NX_FCU_VS_SET,
     A32NX_FCU_VS_PUSH,
     A32NX_FCU_VS_PULL,
-    A32NX_FCU_TO_AP_VS_PUSH,
-    A32NX_FCU_TO_AP_VS_PULL,
     A32NX_FCU_LOC_PUSH,
     A32NX_FCU_APPR_PUSH,
     A32NX_FCU_EXPED_PUSH,
-    A32NX_FMGC_DIR_TO_TRIGGER,
+    A32NX_FCU_EFIS_L_FD_PUSH,
+    A32NX_FCU_EFIS_L_LS_PUSH,
+    A32NX_FCU_EFIS_L_BARO_INC,
+    A32NX_FCU_EFIS_L_BARO_DEC,
+    A32NX_FCU_EFIS_L_BARO_PUSH,
+    A32NX_FCU_EFIS_L_BARO_PULL,
+    A32NX_FCU_EFIS_L_CSTR_PUSH,
+    A32NX_FCU_EFIS_L_WPT_PUSH,
+    A32NX_FCU_EFIS_L_VORD_PUSH,
+    A32NX_FCU_EFIS_L_NDB_PUSH,
+    A32NX_FCU_EFIS_L_ARPT_PUSH,
+    A32NX_FCU_EFIS_R_FD_PUSH,
+    A32NX_FCU_EFIS_R_LS_PUSH,
+    A32NX_FCU_EFIS_R_BARO_INC,
+    A32NX_FCU_EFIS_R_BARO_DEC,
+    A32NX_FCU_EFIS_R_BARO_PUSH,
+    A32NX_FCU_EFIS_R_BARO_PULL,
+    A32NX_FCU_EFIS_R_CSTR_PUSH,
+    A32NX_FCU_EFIS_R_WPT_PUSH,
+    A32NX_FCU_EFIS_R_VORD_PUSH,
+    A32NX_FCU_EFIS_R_NDB_PUSH,
+    A32NX_FCU_EFIS_R_ARPT_PUSH,
     A32NX_EFIS_L_CHRONO_PUSHED,
     A32NX_EFIS_R_CHRONO_PUSHED,
     AP_AIRSPEED_ON,
@@ -226,6 +238,8 @@ class SimConnectInterface {
 
   void resetSimInputRudderTrim();
 
+  void resetFcuFrontPanelInputs();
+
   void resetSimInputAutopilot();
 
   void resetSimInputThrottles();
@@ -235,6 +249,8 @@ class SimConnectInterface {
   SimInput getSimInput();
 
   SimInputAutopilot getSimInputAutopilot();
+
+  FcuFrontPanelInputs getFcuFrontPanelInputs();
 
   SimInputRudderTrim getSimInputRudderTrim();
 
@@ -352,6 +368,7 @@ class SimConnectInterface {
   static SimInput simInput;
   SimInputRudderTrim simInputRudderTrim = {};
   SimInputAutopilot simInputAutopilot = {};
+  FcuFrontPanelInputs fcuFrontPanelInputs = {};
 
   SimInputThrottles simInputThrottles = {};
   std::vector<std::shared_ptr<ThrottleAxisMapping>> throttleAxis;

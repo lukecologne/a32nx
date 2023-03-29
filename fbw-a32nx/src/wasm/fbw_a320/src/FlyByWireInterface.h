@@ -18,6 +18,7 @@
 #include "fac/Fac.h"
 #include "failures/FailuresConsumer.h"
 #include "fcdc/Fcdc.h"
+#include "fcu/Fcu.h"
 #include "fmgc/Fmgc.h"
 #include "sec/Sec.h"
 
@@ -138,6 +139,9 @@ class FlyByWireInterface {
   base_fmgc_discrete_outputs fmgcsDiscreteOutputs[2] = {};
   base_fmgc_bus_outputs fmgcsBusOutputs[2] = {};
 
+  Fcu fcu = Fcu();
+  base_fcu_bus fcuBusOutputs = {};
+
   Fac facs[2] = {Fac(true), Fac(false)};
   base_fac_discrete_outputs facsDiscreteOutputs[2] = {};
   base_fac_analog_outputs facsAnalogOutputs[2] = {};
@@ -209,11 +213,6 @@ class FlyByWireInterface {
   std::unique_ptr<LocalVariable> idAutopilotAutothrustMode;
 
   std::unique_ptr<LocalVariable> idAutopilot_H_dot_radio;
-
-  std::unique_ptr<LocalVariable> idFcuTrkFpaModeActive;
-  std::unique_ptr<LocalVariable> idFcuSelectedFpa;
-  std::unique_ptr<LocalVariable> idFcuSelectedVs;
-  std::unique_ptr<LocalVariable> idFcuSelectedHeading;
 
   std::unique_ptr<LocalVariable> idFcuLocModeActive;
   std::unique_ptr<LocalVariable> idFcuApprModeActive;
@@ -576,6 +575,41 @@ class FlyByWireInterface {
   std::unique_ptr<LocalVariable> idFmgcABusDiscreteWord2[2];
   std::unique_ptr<LocalVariable> idFmgcABusDiscreteWord6[2];
 
+  std::unique_ptr<LocalVariable> idLightsTest;
+
+  std::unique_ptr<LocalVariable> idFcuSelectedHeading;
+  std::unique_ptr<LocalVariable> idFcuSelectedAltitude;
+  std::unique_ptr<LocalVariable> idFcuSelectedAirspeed;
+  std::unique_ptr<LocalVariable> idFcuSelectedVerticalSpeed;
+  std::unique_ptr<LocalVariable> idFcuSelectedTrack;
+  std::unique_ptr<LocalVariable> idFcuSelectedFpa;
+  std::unique_ptr<LocalVariable> idFcuAtsDiscreteWord;
+  std::unique_ptr<LocalVariable> idFcuAtsFmaDiscreteWord;
+  std::unique_ptr<LocalVariable> idFcuEisLeftDiscreteWord1;
+  std::unique_ptr<LocalVariable> idFcuEisLeftDiscreteWord2;
+  std::unique_ptr<LocalVariable> idFcuEisLeftBaro;
+  std::unique_ptr<LocalVariable> idFcuEisLeftBaroHpa;
+  std::unique_ptr<LocalVariable> idFcuEisRightDiscreteWord1;
+  std::unique_ptr<LocalVariable> idFcuEisRightDiscreteWord2;
+  std::unique_ptr<LocalVariable> idFcuEisRightBaro;
+  std::unique_ptr<LocalVariable> idFcuEisRightBaroHpa;
+  std::unique_ptr<LocalVariable> idFcuDiscreteWord1;
+  std::unique_ptr<LocalVariable> idFcuDiscreteWord2;
+
+  std::unique_ptr<LocalVariable> idFcuEisPanelFdLightOn[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelLsLightOn[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelCstrLightOn[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelWptLightOn[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelVordLightOn[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelNdbLightOn[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelArptLightOn[2];
+  std::unique_ptr<LocalVariable> idFcuAfsPanelAp1LightOn;
+  std::unique_ptr<LocalVariable> idFcuAfsPanelAp2LightOn;
+  std::unique_ptr<LocalVariable> idFcuAfsPanelAthrLightOn;
+  std::unique_ptr<LocalVariable> idFcuAfsPanelLocLightOn;
+  std::unique_ptr<LocalVariable> idFcuAfsPanelExpedLightOn;
+  std::unique_ptr<LocalVariable> idFcuAfsPanelApprLightOn;
+
   void loadConfiguration();
   void setupLocalVariables();
 
@@ -610,13 +644,13 @@ class FlyByWireInterface {
 
   bool updateFmgc(double sampleTime, int fmgcIndex);
 
+  bool updateFcu(double sampleTime);
+
   bool updateFac(double sampleTime, int facIndex);
 
   bool updateServoSolenoidStatus();
 
   bool updateSpoilers(double sampleTime);
-
-  bool updateFoSide(double sampleTime);
 
   bool updateAltimeterSetting(double sampleTime);
 
