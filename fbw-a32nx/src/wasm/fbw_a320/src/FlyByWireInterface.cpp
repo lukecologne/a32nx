@@ -1684,7 +1684,7 @@ bool FlyByWireInterface::updateFcu(double sampleTime) {
 
   fcu.update(sampleTime, simData.simulationTime, failuresConsumer.isActive(Failures::Fcu1), failuresConsumer.isActive(Failures::Fcu2),
              idElecDcEssBusPowered->get(), idElecDcBus2Powered->get());
-  fcuBusOutputs = fcu.getBusOutputs();
+  fcuBusOutputs = {};  // fcu.getBusOutputs();
 
   FcuFrontPanelOutputs frontPanelOutputs = fcu.getFrontPanelOutputs();
 

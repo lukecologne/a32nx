@@ -1,6 +1,5 @@
 #pragma once
 
-#include "../model/FmgcComputer_types.h"
 #include "FcuIO.h"
 
 class Fcu {
@@ -9,7 +8,7 @@ class Fcu {
 
   void update(double deltaTime, double simulationTime, bool fcu1FaultActive, bool fcu2FaultActive, bool fcu1IsPowered, bool fcu2IsPowered);
 
-  base_fcu_bus getBusOutputs();
+  // base_fcu_bus getBusOutputs();
 
   FcuFrontPanelOutputs getFrontPanelOutputs();
 

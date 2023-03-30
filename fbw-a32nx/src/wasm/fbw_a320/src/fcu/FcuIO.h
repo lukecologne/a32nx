@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../model/FmgcComputer_types.h"
+// #include "../model/FmgcComputer_types.h"
 
 struct FcuDiscreteInputs {
   bool ap1Engaged;
@@ -15,9 +15,9 @@ struct FcuDiscreteInputs {
 };
 
 struct FcuBusInputs {
-  base_fmgc_a_bus fmgc1BusInputs;
-
-  base_fmgc_a_bus fmgc2BusInputs;
+  // base_fmgc_a_bus fmgc1BusInputs;
+  //
+  // base_fmgc_a_bus fmgc2BusInputs;
 };
 
 enum class EfisModeSelection { ROSE_ILS, ROSE_VOR, ROSE_NAV, ARC, PLAN };

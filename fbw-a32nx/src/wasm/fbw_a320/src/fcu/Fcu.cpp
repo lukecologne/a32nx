@@ -10,11 +10,11 @@ void Fcu::update(double deltaTime,
                  bool fcu1IsPowered,
                  bool fcu2IsPowered) {}
 
-base_fcu_bus Fcu::getBusOutputs() {
-  base_fcu_bus output = {};
-
-  return output;
-}
+// base_fcu_bus Fcu::getBusOutputs() {
+//   base_fcu_bus output = {};
+//
+//   return output;
+// }
 
 FcuFrontPanelOutputs Fcu::getFrontPanelOutputs() {
   FcuFrontPanelOutputs output = {};
