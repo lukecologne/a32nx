@@ -718,6 +718,7 @@ void FlyByWireInterface::setupLocalVariables() {
     idFmgcABusDiscreteWord6[i] = std::make_unique<LocalVariable>("A32NX_FMGC_" + idString + "_DISCRETE_WORD_6");
   }
 
+  // FCU Lvars
   idLightsTest = std::make_unique<LocalVariable>("A32NX_OVHD_INTLT_ANN");
 
   idFcuSelectedHeading = std::make_unique<LocalVariable>("A32NX_FCU_SELECTED_HEADING");
@@ -742,6 +743,12 @@ void FlyByWireInterface::setupLocalVariables() {
   for (int i = 0; i < 2; i++) {
     std::string idString = i == 0 ? "L" : "R";
 
+    idFcuEisPanelEfisMode[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_EFIS_MODE");
+    idFcuEisPanelEfisRange[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_EFIS_RANGE");
+    idFcuEisPanelNavaid1Mode[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_NAVAID_1_MODE");
+    idFcuEisPanelNavaid2Mode[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_NAVAID_2_MODE");
+    idFcuEisPanelBaroIsInhg[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_BARO_IS_INHG");
+
     idFcuEisPanelFdLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_FD_LIGHT_ON");
     idFcuEisPanelLsLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_LS_LIGHT_ON");
     idFcuEisPanelCstrLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_CSTR_LIGHT_ON");
@@ -750,6 +757,8 @@ void FlyByWireInterface::setupLocalVariables() {
     idFcuEisPanelNdbLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_NDB_LIGHT_ON");
     idFcuEisPanelArptLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_ARPT_LIGHT_ON");
   }
+  idFcuAfsPanelAltIncrement1000 = std::make_unique<LocalVariable>("A32NX_FCU_ALT_INCREMENT_1000");
+
   idFcuAfsPanelAp1LightOn = std::make_unique<LocalVariable>("A32NX_FCU_AP_1_LIGHT_ON");
   idFcuAfsPanelAp2LightOn = std::make_unique<LocalVariable>("A32NX_FCU_AP_2_LIGHT_ON");
   idFcuAfsPanelAthrLightOn = std::make_unique<LocalVariable>("A32NX_FCU_ATHR_LIGHT_ON");
@@ -823,6 +832,8 @@ bool FlyByWireInterface::readDataAndLocalVariables(double sampleTime) {
   simConnectInterface.resetSimInputAutopilot();
 
   simConnectInterface.resetSimInputRudderTrim();
+
+  simConnectInterface.resetFcuFrontPanelInputs();
 
   // set logging options
   simConnectInterface.setLoggingFlightControlsEnabled(idLoggingFlightControlsEnabled->get() == 1);
@@ -1672,21 +1683,39 @@ bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
 bool FlyByWireInterface::updateFcu(double sampleTime) {
   SimData simData = simConnectInterface.getSimData();
 
-  fcu.discreteInputs.ap1Engaged = fmgcsDiscreteOutputs[0].ap_own_engaged;
-  fcu.discreteInputs.fd1Engaged = fmgcsDiscreteOutputs[0].fd_own_engaged;
-  fcu.discreteInputs.athr1Engaged = fmgcsDiscreteOutputs[0].athr_own_engaged;
-  fcu.discreteInputs.ap2Engaged = fmgcsDiscreteOutputs[1].ap_own_engaged;
-  fcu.discreteInputs.fd2Engaged = fmgcsDiscreteOutputs[1].fd_own_engaged;
-  fcu.discreteInputs.athr2Engaged = fmgcsDiscreteOutputs[1].athr_own_engaged;
-  fcu.discreteInputs.lightsTest = idLightsTest->get();
+  fcu.modelInputs.in.discrete_inputs.ap_1_engaged = fmgcsDiscreteOutputs[0].ap_own_engaged;
+  fcu.modelInputs.in.discrete_inputs.fd_1_engaged = fmgcsDiscreteOutputs[0].fd_own_engaged;
+  fcu.modelInputs.in.discrete_inputs.athr_1_engaged = fmgcsDiscreteOutputs[0].athr_own_engaged;
+  fcu.modelInputs.in.discrete_inputs.ap_2_engaged = fmgcsDiscreteOutputs[1].ap_own_engaged;
+  fcu.modelInputs.in.discrete_inputs.fd_2_engaged = fmgcsDiscreteOutputs[1].fd_own_engaged;
+  fcu.modelInputs.in.discrete_inputs.athr_2_engaged = fmgcsDiscreteOutputs[1].athr_own_engaged;
+  fcu.modelInputs.in.discrete_inputs.lights_test = idLightsTest->get();
 
-  fcu.frontPanelInputs = simConnectInterface.getFcuFrontPanelInputs();
+  fcu.modelInputs.in.discrete_inputs.capt_efis_inputs = simConnectInterface.getFcuEfisPanelInputs(0);
+  fcu.modelInputs.in.discrete_inputs.capt_efis_inputs.efis_mode = static_cast<efis_mode_selection>(idFcuEisPanelEfisMode[0]->get());
+  fcu.modelInputs.in.discrete_inputs.capt_efis_inputs.efis_range = static_cast<efis_range_selection>(idFcuEisPanelEfisRange[0]->get());
+  fcu.modelInputs.in.discrete_inputs.capt_efis_inputs.efis_navaid_1 =
+      static_cast<efis_navaid_selection>(idFcuEisPanelNavaid1Mode[0]->get());
+  fcu.modelInputs.in.discrete_inputs.capt_efis_inputs.efis_navaid_2 =
+      static_cast<efis_navaid_selection>(idFcuEisPanelNavaid2Mode[0]->get());
+  fcu.modelInputs.in.discrete_inputs.capt_efis_inputs.baro_is_inhg = idFcuEisPanelBaroIsInhg[0]->get();
+
+  fcu.modelInputs.in.discrete_inputs.fo_efis_inputs = simConnectInterface.getFcuEfisPanelInputs(1);
+  fcu.modelInputs.in.discrete_inputs.fo_efis_inputs.efis_mode = static_cast<efis_mode_selection>(idFcuEisPanelEfisMode[1]->get());
+  fcu.modelInputs.in.discrete_inputs.fo_efis_inputs.efis_range = static_cast<efis_range_selection>(idFcuEisPanelEfisRange[1]->get());
+  fcu.modelInputs.in.discrete_inputs.fo_efis_inputs.efis_navaid_1 = static_cast<efis_navaid_selection>(idFcuEisPanelNavaid1Mode[1]->get());
+  fcu.modelInputs.in.discrete_inputs.fo_efis_inputs.efis_navaid_2 = static_cast<efis_navaid_selection>(idFcuEisPanelNavaid2Mode[1]->get());
+  fcu.modelInputs.in.discrete_inputs.fo_efis_inputs.baro_is_inhg = idFcuEisPanelBaroIsInhg[1]->get();
+
+  fcu.modelInputs.in.discrete_inputs.afs_inputs = simConnectInterface.getFcuAfsPanelInputs();
+  fcu.modelInputs.in.discrete_inputs.afs_inputs.alt_increment_1000 = idFcuAfsPanelAltIncrement1000->get();
+
+  fcu.modelInputs.in.bus_inputs.fmgc_1_bus = fmgcsBusOutputs[0].fmgc_a_bus;
+  fcu.modelInputs.in.bus_inputs.fmgc_2_bus = fmgcsBusOutputs[1].fmgc_a_bus;
 
   fcu.update(sampleTime, simData.simulationTime, failuresConsumer.isActive(Failures::Fcu1), failuresConsumer.isActive(Failures::Fcu2),
              idElecDcEssBusPowered->get(), idElecDcBus2Powered->get());
-  fcuBusOutputs = {};  // fcu.getBusOutputs();
-
-  FcuFrontPanelOutputs frontPanelOutputs = fcu.getFrontPanelOutputs();
+  fcuBusOutputs = fcu.getBusOutputs();
 
   idFcuSelectedHeading->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_hdg_deg));
   idFcuSelectedAltitude->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_alt_ft));
@@ -1707,25 +1736,27 @@ bool FlyByWireInterface::updateFcu(double sampleTime) {
   idFcuDiscreteWord1->set(Arinc429Utils::toSimVar(fcuBusOutputs.fcu_discrete_word_1));
   idFcuDiscreteWord2->set(Arinc429Utils::toSimVar(fcuBusOutputs.fcu_discrete_word_2));
 
+  base_fcu_discrete_outputs discreteOutputs = fcu.getDiscreteOutputs();
+
   for (int i = 0; i < 2; i++) {
     std::string idString = std::to_string(i + 1);
 
-    FcuEfisPanelOutputs efisPanelOutputs = frontPanelOutputs.efisDiscreteOut[i];
+    base_fcu_efis_panel_outputs efisPanelOutputs = (i == 0) ? discreteOutputs.capt_efis_outputs : discreteOutputs.fo_efis_outputs;
 
-    idFcuEisPanelFdLightOn[i]->set(efisPanelOutputs.fdLightOn);
-    idFcuEisPanelLsLightOn[i]->set(efisPanelOutputs.lsLightOn);
-    idFcuEisPanelCstrLightOn[i]->set(efisPanelOutputs.cstrLightOn);
-    idFcuEisPanelWptLightOn[i]->set(efisPanelOutputs.wptLightOn);
-    idFcuEisPanelVordLightOn[i]->set(efisPanelOutputs.vorDLightOn);
-    idFcuEisPanelNdbLightOn[i]->set(efisPanelOutputs.ndbLightOn);
-    idFcuEisPanelArptLightOn[i]->set(efisPanelOutputs.arptLightOn);
+    idFcuEisPanelFdLightOn[i]->set(efisPanelOutputs.fd_light_on);
+    idFcuEisPanelLsLightOn[i]->set(efisPanelOutputs.ls_light_on);
+    idFcuEisPanelCstrLightOn[i]->set(efisPanelOutputs.cstr_light_on);
+    idFcuEisPanelWptLightOn[i]->set(efisPanelOutputs.wpt_light_on);
+    idFcuEisPanelVordLightOn[i]->set(efisPanelOutputs.vord_light_on);
+    idFcuEisPanelNdbLightOn[i]->set(efisPanelOutputs.ndb_light_on);
+    idFcuEisPanelArptLightOn[i]->set(efisPanelOutputs.arpt_light_on);
   }
-  idFcuAfsPanelAp1LightOn->set(frontPanelOutputs.ap1LightOn);
-  idFcuAfsPanelAp2LightOn->set(frontPanelOutputs.ap2LightOn);
-  idFcuAfsPanelAthrLightOn->set(frontPanelOutputs.athrLightOn);
-  idFcuAfsPanelLocLightOn->set(frontPanelOutputs.locLightOn);
-  idFcuAfsPanelExpedLightOn->set(frontPanelOutputs.expedLightOn);
-  idFcuAfsPanelApprLightOn->set(frontPanelOutputs.apprLightOn);
+  idFcuAfsPanelAp1LightOn->set(discreteOutputs.afs_outputs.ap_1_light_on);
+  idFcuAfsPanelAp2LightOn->set(discreteOutputs.afs_outputs.ap_2_light_on);
+  idFcuAfsPanelAthrLightOn->set(discreteOutputs.afs_outputs.athr_light_on);
+  idFcuAfsPanelLocLightOn->set(discreteOutputs.afs_outputs.loc_light_on);
+  idFcuAfsPanelExpedLightOn->set(discreteOutputs.afs_outputs.exped_light_on);
+  idFcuAfsPanelApprLightOn->set(discreteOutputs.afs_outputs.appr_light_on);
 
   return true;
 }

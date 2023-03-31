@@ -967,8 +967,12 @@ SimInputAutopilot SimConnectInterface::getSimInputAutopilot() {
   return simInputAutopilot;
 }
 
-FcuFrontPanelInputs SimConnectInterface::getFcuFrontPanelInputs() {
-  return fcuFrontPanelInputs;
+base_fcu_afs_panel_inputs SimConnectInterface::getFcuAfsPanelInputs() {
+  return fcuAfsPanelInputs;
+}
+
+base_fcu_efis_panel_inputs SimConnectInterface::getFcuEfisPanelInputs(int side) {
+  return fcuEfisPanelInputs[side];
 }
 
 SimInputRudderTrim SimConnectInterface::getSimInputRudderTrim() {
@@ -997,44 +1001,45 @@ void SimConnectInterface::resetSimInputAutopilot() {
 }
 
 void SimConnectInterface::resetFcuFrontPanelInputs() {
-  fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobPulled = false;
-  fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobTurns = false;
-  fcuFrontPanelInputs.efisDiscreteIn[0].fdButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[0].lsButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[0].cstrButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[0].wptButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[0].vordButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[0].ndbButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[0].arptButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobPulled = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobTurns = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].fdButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].lsButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].cstrButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].wptButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].vordButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].ndbButtonPushed = false;
-  fcuFrontPanelInputs.efisDiscreteIn[1].arptButtonPushed = false;
-  fcuFrontPanelInputs.locButtonPressed = false;
-  fcuFrontPanelInputs.expedButtonPressed = false;
-  fcuFrontPanelInputs.apprButtonPressed = false;
-  fcuFrontPanelInputs.spdMachButtonPressed = false;
-  fcuFrontPanelInputs.trkFpaButtonPressed = false;
-  fcuFrontPanelInputs.metricAltButtonPressed = false;
-  fcuFrontPanelInputs.speedKnobPushed = false;
-  fcuFrontPanelInputs.speedKnobPulled = false;
-  fcuFrontPanelInputs.speedKnobTurns = false;
-  fcuFrontPanelInputs.hdgTrkKnobPushed = false;
-  fcuFrontPanelInputs.hdgTrkKnobPulled = false;
-  fcuFrontPanelInputs.hdgTrkKnobTurns = false;
-  fcuFrontPanelInputs.altKnobPushed = false;
-  fcuFrontPanelInputs.altKnobPulled = false;
-  fcuFrontPanelInputs.altKnobTurns = false;
-  fcuFrontPanelInputs.vsKnobPushed = false;
-  fcuFrontPanelInputs.vsKnobPulled = false;
-  fcuFrontPanelInputs.vsKnobTurns = false;
+  fcuEfisPanelInputs[0].baro_knob.pushed = false;
+  fcuEfisPanelInputs[0].baro_knob.pulled = false;
+  fcuEfisPanelInputs[0].baro_knob.turns = 0;
+  fcuEfisPanelInputs[0].fd_button_pushed = false;
+  fcuEfisPanelInputs[0].ls_button_pushed = false;
+  fcuEfisPanelInputs[0].cstr_button_pushed = false;
+  fcuEfisPanelInputs[0].wpt_button_pushed = false;
+  fcuEfisPanelInputs[0].vord_button_pushed = false;
+  fcuEfisPanelInputs[0].ndb_button_pushed = false;
+  fcuEfisPanelInputs[0].arpt_button_pushed = false;
+  fcuEfisPanelInputs[1].baro_knob.pushed = false;
+  fcuEfisPanelInputs[1].baro_knob.pulled = false;
+  fcuEfisPanelInputs[1].baro_knob.turns = 0;
+  fcuEfisPanelInputs[1].fd_button_pushed = false;
+  fcuEfisPanelInputs[1].ls_button_pushed = false;
+  fcuEfisPanelInputs[1].cstr_button_pushed = false;
+  fcuEfisPanelInputs[1].wpt_button_pushed = false;
+  fcuEfisPanelInputs[1].vord_button_pushed = false;
+  fcuEfisPanelInputs[1].ndb_button_pushed = false;
+  fcuEfisPanelInputs[1].arpt_button_pushed = false;
+  fcuAfsPanelInputs.loc_button_pressed = false;
+  fcuAfsPanelInputs.exped_button_pressed = false;
+  fcuAfsPanelInputs.appr_button_pressed = false;
+  fcuAfsPanelInputs.spd_mach_button_pressed = false;
+  fcuAfsPanelInputs.trk_fpa_button_pressed = false;
+  fcuAfsPanelInputs.metric_alt_button_pressed = false;
+  fcuAfsPanelInputs.spd_knob.pushed = false;
+  fcuAfsPanelInputs.spd_knob.pulled = false;
+  fcuAfsPanelInputs.spd_knob.turns = 0;
+  fcuAfsPanelInputs.hdg_trk_knob.pushed = false;
+  fcuAfsPanelInputs.hdg_trk_knob.pulled = false;
+  fcuAfsPanelInputs.hdg_trk_knob.turns = 0;
+  fcuAfsPanelInputs.alt_knob.pushed = false;
+  fcuAfsPanelInputs.alt_knob.pulled = false;
+  fcuAfsPanelInputs.alt_knob.turns = 0;
+  fcuAfsPanelInputs.alt_increment_1000 = false;
+  fcuAfsPanelInputs.vs_fpa_knob.pushed = false;
+  fcuAfsPanelInputs.vs_fpa_knob.pulled = false;
+  fcuAfsPanelInputs.vs_fpa_knob.turns = 0;
 }
 
 void SimConnectInterface::resetSimInputRudderTrim() {
@@ -1610,80 +1615,80 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
     }
 
     case Events::A32NX_FCU_SPD_INC: {
-      fcuFrontPanelInputs.speedKnobTurns = 1;
+      fcuAfsPanelInputs.spd_knob.turns = 1;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_SPD_DEC: {
-      fcuFrontPanelInputs.speedKnobTurns = -1;
+      fcuAfsPanelInputs.spd_knob.turns = -1;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_DEC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_SPD_PUSH:
     case Events::AP_AIRSPEED_ON: {
-      fcuFrontPanelInputs.speedKnobPushed = true;
+      fcuAfsPanelInputs.spd_knob.pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_SPD_PULL:
     case Events::AP_AIRSPEED_OFF: {
-      fcuFrontPanelInputs.speedKnobPulled = true;
+      fcuAfsPanelInputs.spd_knob.pulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_PULL" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_SPD_MACH_TOGGLE_PUSH:
     case Events::AP_MACH_HOLD: {
-      fcuFrontPanelInputs.spdMachButtonPressed = true;
+      fcuAfsPanelInputs.spd_mach_button_pressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_SPD_MACH_TOGGLE_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_HDG_INC: {
-      fcuFrontPanelInputs.hdgTrkKnobTurns = 1;
+      fcuAfsPanelInputs.hdg_trk_knob.turns = 1;
       std::cout << "WASM: event triggered: A32NX_FCU_HDG_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_HDG_DEC: {
-      fcuFrontPanelInputs.hdgTrkKnobTurns = -1;
+      fcuAfsPanelInputs.hdg_trk_knob.turns = -1;
       std::cout << "WASM: event triggered: A32NX_FCU_HDG_DEC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_HDG_PUSH:
     case Events::AP_HDG_HOLD_ON: {
-      fcuFrontPanelInputs.hdgTrkKnobPushed = true;
+      fcuAfsPanelInputs.hdg_trk_knob.pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_HDG_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_HDG_PULL:
     case Events::AP_HDG_HOLD_OFF: {
-      fcuFrontPanelInputs.hdgTrkKnobPulled = true;
+      fcuAfsPanelInputs.hdg_trk_knob.pulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_HDG_PULL" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_TRK_FPA_TOGGLE_PUSH:
     case Events::AP_VS_HOLD: {
-      fcuFrontPanelInputs.trkFpaButtonPressed = true;
+      fcuAfsPanelInputs.trk_fpa_button_pressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_TRK_FPA_TOGGLE_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_ALT_INC: {
-      fcuFrontPanelInputs.altKnobTurns = 1;
+      fcuAfsPanelInputs.alt_knob.turns = 1;
 
       std::cout << "WASM: event triggered: A32NX_FCU_ALT_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_ALT_DEC: {
-      fcuFrontPanelInputs.altKnobTurns = -1;
+      fcuAfsPanelInputs.alt_knob.turns = -1;
 
       std::cout << "WASM: event triggered: A32NX_FCU_ALT_DEC" << std::endl;
       break;
@@ -1691,197 +1696,197 @@ void SimConnectInterface::simConnectProcessEvent(const SIMCONNECT_RECV_EVENT* ev
 
     case Events::A32NX_FCU_ALT_PUSH:
     case Events::AP_ALT_HOLD_ON: {
-      fcuFrontPanelInputs.altKnobPushed = true;
+      fcuAfsPanelInputs.alt_knob.pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_ALT_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_ALT_PULL:
     case Events::AP_ALT_HOLD_OFF: {
-      fcuFrontPanelInputs.altKnobPulled = true;
+      fcuAfsPanelInputs.alt_knob.pulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_ALT_PULL" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_METRIC_ALT_TOGGLE_PUSH: {
-      fcuFrontPanelInputs.metricAltButtonPressed = true;
+      fcuAfsPanelInputs.metric_alt_button_pressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_METRIC_ALT_TOGGLE_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_VS_INC: {
-      fcuFrontPanelInputs.vsKnobTurns = 1;
+      fcuAfsPanelInputs.vs_fpa_knob.turns = 1;
       std::cout << "WASM: event triggered: A32NX_FCU_VS_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_VS_DEC: {
-      fcuFrontPanelInputs.vsKnobTurns = -1;
+      fcuAfsPanelInputs.vs_fpa_knob.turns = -1;
       std::cout << "WASM: event triggered: A32NX_FCU_VS_DEC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_VS_PUSH:
     case Events::AP_VS_ON: {
-      fcuFrontPanelInputs.vsKnobPushed = true;
+      fcuAfsPanelInputs.vs_fpa_knob.pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_VS_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_VS_PULL:
     case Events::AP_VS_OFF: {
-      fcuFrontPanelInputs.vsKnobPulled = true;
+      fcuAfsPanelInputs.vs_fpa_knob.pulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_VS_PULL" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_LOC_PUSH: {
-      fcuFrontPanelInputs.locButtonPressed = true;
+      fcuAfsPanelInputs.loc_button_pressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_LOC_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_APPR_PUSH: {
-      fcuFrontPanelInputs.apprButtonPressed = true;
+      fcuAfsPanelInputs.appr_button_pressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_APPR_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EXPED_PUSH:
     case Events::AP_ATT_HOLD: {
-      fcuFrontPanelInputs.expedButtonPressed = true;
+      fcuAfsPanelInputs.exped_button_pressed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EXPED_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_FD_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].fdButtonPushed = true;
+      fcuEfisPanelInputs[0].fd_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_FD_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_LS_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].lsButtonPushed = true;
+      fcuEfisPanelInputs[0].ls_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_LS_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_BARO_INC: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobTurns = 1;
+      fcuEfisPanelInputs[0].baro_knob.turns = 1;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_BARO_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_BARO_DEC: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobTurns = -1;
+      fcuEfisPanelInputs[0].baro_knob.turns = -1;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_BARO_DEC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_BARO_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobPushed = true;
+      fcuEfisPanelInputs[0].baro_knob.pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_BARO_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_BARO_PULL: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].baroKnobPulled = true;
+      fcuEfisPanelInputs[0].baro_knob.pulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_BARO_PULL" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_CSTR_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].cstrButtonPushed = true;
+      fcuEfisPanelInputs[0].cstr_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_CSTR_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_WPT_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].wptButtonPushed = true;
+      fcuEfisPanelInputs[0].wpt_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_WPT_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_VORD_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].vordButtonPushed = true;
+      fcuEfisPanelInputs[0].vord_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_VORD_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_NDB_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].ndbButtonPushed = true;
+      fcuEfisPanelInputs[0].ndb_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_NDB_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_L_ARPT_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[0].arptButtonPushed = true;
+      fcuEfisPanelInputs[0].arpt_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_L_ARPT_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_FD_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].fdButtonPushed = true;
+      fcuEfisPanelInputs[1].fd_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_FD_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_LS_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].lsButtonPushed = true;
+      fcuEfisPanelInputs[1].ls_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_LS_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_BARO_INC: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobTurns = 1;
+      fcuEfisPanelInputs[1].baro_knob.turns = 1;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_BARO_INC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_BARO_DEC: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobTurns = -1;
+      fcuEfisPanelInputs[1].baro_knob.turns = -1;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_BARO_DEC" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_BARO_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobPushed = true;
+      fcuEfisPanelInputs[1].baro_knob.pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_BARO_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_BARO_PULL: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].baroKnobPulled = true;
+      fcuEfisPanelInputs[1].baro_knob.pulled = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_BARO_PULL" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_CSTR_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].cstrButtonPushed = true;
+      fcuEfisPanelInputs[1].cstr_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_CSTR_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_WPT_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].wptButtonPushed = true;
+      fcuEfisPanelInputs[1].wpt_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_WPT_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_VORD_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].vordButtonPushed = true;
+      fcuEfisPanelInputs[1].vord_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_VORD_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_NDB_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].ndbButtonPushed = true;
+      fcuEfisPanelInputs[1].ndb_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_NDB_PUSH" << std::endl;
       break;
     }
 
     case Events::A32NX_FCU_EFIS_R_ARPT_PUSH: {
-      fcuFrontPanelInputs.efisDiscreteIn[1].arptButtonPushed = true;
+      fcuEfisPanelInputs[1].arpt_button_pushed = true;
       std::cout << "WASM: event triggered: A32NX_FCU_EFIS_R_ARPT_PUSH" << std::endl;
       break;
     }

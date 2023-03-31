@@ -1,0 +1,789 @@
+#include "FcuComputer.h"
+
+FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
+
+  {
+    {
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    },
+
+    {
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    },
+
+    {
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    },
+    false
+  },
+
+  SignStatusMatrix::NormalOperation,
+
+  efis_filter_selection::CSTR,
+
+  efis_filter_selection::WPT,
+
+  efis_filter_selection::VORD,
+
+  efis_filter_selection::NDB,
+
+  efis_filter_selection::ARPT,
+
+  efis_filter_selection::CSTR,
+
+  efis_filter_selection::WPT,
+
+  efis_filter_selection::VORD,
+
+  efis_filter_selection::NDB,
+
+  efis_filter_selection::ARPT,
+
+  efis_filter_selection::CSTR,
+
+  efis_filter_selection::WPT,
+
+  efis_filter_selection::VORD,
+
+  efis_filter_selection::NDB,
+
+  efis_filter_selection::ARPT,
+
+  efis_filter_selection::CSTR,
+
+  efis_filter_selection::WPT,
+
+  efis_filter_selection::VORD,
+
+  efis_filter_selection::NDB,
+
+  efis_filter_selection::ARPT,
+
+  efis_mode_selection::PLAN,
+
+  efis_mode_selection::ARC,
+
+  efis_mode_selection::ROSE_NAV,
+
+  efis_mode_selection::ROSE_VOR,
+
+  efis_mode_selection::ROSE_ILS,
+
+  efis_mode_selection::PLAN,
+
+  efis_mode_selection::ARC,
+
+  efis_mode_selection::ROSE_NAV,
+
+  efis_mode_selection::ROSE_VOR,
+
+  efis_mode_selection::ROSE_ILS,
+
+  efis_navaid_selection::ADF,
+
+  efis_navaid_selection::VOR,
+
+  efis_navaid_selection::ADF,
+
+  efis_navaid_selection::VOR,
+
+  efis_range_selection::RANGE_10,
+
+  efis_range_selection::RANGE_20,
+
+  efis_range_selection::RANGE_40,
+
+  efis_range_selection::RANGE_80,
+
+  efis_range_selection::RANGE_160,
+
+  efis_range_selection::RANGE_10,
+
+  efis_range_selection::RANGE_20,
+
+  efis_range_selection::RANGE_40,
+
+  efis_range_selection::RANGE_80,
+
+  efis_range_selection::RANGE_160,
+
+  true,
+
+  false,
+
+  true,
+
+  false,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+  true,
+
+
+  {
+    {
+      {
+        0.0,
+        0.0,
+        0.0
+      },
+
+      {
+        false,
+        false,
+        false,
+        false,
+        false
+      },
+
+      {
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+
+        {
+          efis_range_selection::RANGE_10,
+          efis_mode_selection::ROSE_ILS,
+          efis_navaid_selection::NONE,
+          efis_navaid_selection::NONE,
+          false,
+
+          {
+            false,
+            false,
+            0
+          },
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        },
+
+        {
+          efis_range_selection::RANGE_10,
+          efis_mode_selection::ROSE_ILS,
+          efis_navaid_selection::NONE,
+          efis_navaid_selection::NONE,
+          false,
+
+          {
+            false,
+            false,
+            0
+          },
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        },
+
+        {
+          false,
+          false,
+          false,
+          false,
+          false,
+          0.0,
+
+          {
+            false,
+            false,
+            0
+          },
+
+          {
+            false,
+            false,
+            0
+          },
+
+          {
+            false,
+            false,
+            0
+          },
+          false,
+
+          {
+            false,
+            false,
+            0
+          }
+        }
+      },
+
+      {
+        {
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          }
+        },
+
+        {
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          }
+        }
+      }
+    },
+
+    {
+      false,
+
+      {
+        false,
+        false,
+        efis_filter_selection::NONE,
+        false,
+        false,
+        false,
+        0.0F,
+        0.0F
+      },
+
+      {
+        false,
+        false,
+        efis_filter_selection::NONE,
+        false,
+        false,
+        false,
+        0.0F,
+        0.0F
+      }
+    },
+
+    {
+      {
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      },
+
+      {
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      },
+
+      {
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      },
+      false
+    },
+
+    {
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      }
+    }
+  },
+
+
+  {
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    },
+
+    {
+      0U,
+      0.0F
+    }
+  },
+
+
+  {
+    false,
+
+    {
+      false,
+      false,
+      efis_filter_selection::NONE,
+      false,
+      false,
+      false,
+      0.0F,
+      0.0F
+    },
+
+    {
+      false,
+      false,
+      efis_filter_selection::NONE,
+      false,
+      false,
+      false,
+      0.0F,
+      0.0F
+    }
+  },
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  false,
+
+  false,
+
+  false,
+
+  false,
+
+  false,
+
+  false,
+
+  true,
+
+  false,
+
+  false,
+
+  false,
+
+  false,
+
+  false,
+
+  false
+};

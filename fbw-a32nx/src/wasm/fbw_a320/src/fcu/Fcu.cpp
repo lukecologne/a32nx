@@ -1,23 +1,39 @@
 #include "Fcu.h"
 #include "../Arinc429Utils.h"
 
-Fcu::Fcu() {}
+Fcu::Fcu() {
+  fcuComputer.initialize();
+}
 
 void Fcu::update(double deltaTime,
                  double simulationTime,
                  bool fcu1FaultActive,
                  bool fcu2FaultActive,
                  bool fcu1IsPowered,
-                 bool fcu2IsPowered) {}
+                 bool fcu2IsPowered) {
+  modelInputs.in.sim_data.computer_running = true;
+  fcuHealthy = true;
 
-// base_fcu_bus Fcu::getBusOutputs() {
-//   base_fcu_bus output = {};
-//
-//   return output;
-// }
+  fcuComputer.setExternalInputs(&modelInputs);
+  fcuComputer.step();
+  modelOutputs = fcuComputer.getExternalOutputs().out;
+}
 
-FcuFrontPanelOutputs Fcu::getFrontPanelOutputs() {
-  FcuFrontPanelOutputs output = {};
+base_fcu_bus Fcu::getBusOutputs() {
+  if (!fcuHealthy) {
+    return {};
+  }
 
-  return output;
+  return modelOutputs.bus_outputs;
+}
+
+base_fcu_discrete_outputs Fcu::getDiscreteOutputs() {
+  base_fcu_discrete_outputs output = {};
+
+  output.fcu_healthy = fcuHealthy;
+  if (!fcuHealthy) {
+    return output;
+  } else {
+    return modelOutputs.discrete_outputs;
+  }
 }

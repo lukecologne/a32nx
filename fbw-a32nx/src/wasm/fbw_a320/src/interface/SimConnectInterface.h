@@ -10,9 +10,9 @@
 #include "../ThrottleAxisMapping.h"
 #include "SimConnectData.h"
 
-#include "../fcu/FcuIO.h"
 #include "../model/ElacComputer_types.h"
 #include "../model/FacComputer_types.h"
+#include "../model/FcuComputer_types.h"
 #include "../model/FmgcComputer_types.h"
 #include "../model/SecComputer_types.h"
 
@@ -250,7 +250,9 @@ class SimConnectInterface {
 
   SimInputAutopilot getSimInputAutopilot();
 
-  FcuFrontPanelInputs getFcuFrontPanelInputs();
+  base_fcu_afs_panel_inputs getFcuAfsPanelInputs();
+
+  base_fcu_efis_panel_inputs getFcuEfisPanelInputs(int side);
 
   SimInputRudderTrim getSimInputRudderTrim();
 
@@ -368,7 +370,8 @@ class SimConnectInterface {
   static SimInput simInput;
   SimInputRudderTrim simInputRudderTrim = {};
   SimInputAutopilot simInputAutopilot = {};
-  FcuFrontPanelInputs fcuFrontPanelInputs = {};
+  base_fcu_afs_panel_inputs fcuAfsPanelInputs = {};
+  base_fcu_efis_panel_inputs fcuEfisPanelInputs[2] = {};
 
   SimInputThrottles simInputThrottles = {};
   std::vector<std::shared_ptr<ThrottleAxisMapping>> throttleAxis;

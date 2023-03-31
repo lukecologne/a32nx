@@ -596,6 +596,12 @@ class FlyByWireInterface {
   std::unique_ptr<LocalVariable> idFcuDiscreteWord1;
   std::unique_ptr<LocalVariable> idFcuDiscreteWord2;
 
+  std::unique_ptr<LocalVariable> idFcuEisPanelEfisMode[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelEfisRange[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelNavaid1Mode[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelNavaid2Mode[2];
+  std::unique_ptr<LocalVariable> idFcuEisPanelBaroIsInhg[2];
+
   std::unique_ptr<LocalVariable> idFcuEisPanelFdLightOn[2];
   std::unique_ptr<LocalVariable> idFcuEisPanelLsLightOn[2];
   std::unique_ptr<LocalVariable> idFcuEisPanelCstrLightOn[2];
@@ -603,6 +609,9 @@ class FlyByWireInterface {
   std::unique_ptr<LocalVariable> idFcuEisPanelVordLightOn[2];
   std::unique_ptr<LocalVariable> idFcuEisPanelNdbLightOn[2];
   std::unique_ptr<LocalVariable> idFcuEisPanelArptLightOn[2];
+
+  std::unique_ptr<LocalVariable> idFcuAfsPanelAltIncrement1000;
+
   std::unique_ptr<LocalVariable> idFcuAfsPanelAp1LightOn;
   std::unique_ptr<LocalVariable> idFcuAfsPanelAp2LightOn;
   std::unique_ptr<LocalVariable> idFcuAfsPanelAthrLightOn;

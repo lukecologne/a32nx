@@ -1,6 +1,5 @@
 #pragma once
-
-#include "FcuIO.h"
+#include "../model/FcuComputer.h"
 
 class Fcu {
  public:
@@ -8,29 +7,19 @@ class Fcu {
 
   void update(double deltaTime, double simulationTime, bool fcu1FaultActive, bool fcu2FaultActive, bool fcu1IsPowered, bool fcu2IsPowered);
 
-  // base_fcu_bus getBusOutputs();
+  base_fcu_bus getBusOutputs();
 
-  FcuFrontPanelOutputs getFrontPanelOutputs();
+  base_fcu_discrete_outputs getDiscreteOutputs();
 
-  FcuBusInputs busInputs;
-
-  FcuDiscreteInputs discreteInputs;
-
-  FcuFrontPanelInputs frontPanelInputs;
+  FcuComputer::ExternalInputs_FcuComputer_T modelInputs = {};
 
  private:
-  void initSelfTests();
-
-  void clearMemory();
-
-  void monitorPowerSupply(double deltaTime, bool isPowered);
-
-  void monitorSelf(bool faultActive);
-
-  void updateSelfTest(double deltaTime);
+  // Model
+  FcuComputer fcuComputer;
+  fcu_outputs modelOutputs;
 
   // Computer Self-monitoring vars
-  bool facHealthy;
+  bool fcuHealthy;
 
   // Power Supply monitoring
   double powerSupplyOutageTime;
