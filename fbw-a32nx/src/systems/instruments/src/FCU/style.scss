@@ -1,0 +1,62 @@
+@font-face {
+  font-family: "Poppins-SemiBold";
+  src: url("/Fonts/fbw-a32nx/Poppins-SemiBold.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Digital";
+  src: url("/Fonts/fbw-a32nx/AirbusFCU.ttf") format("truetype");
+  font-weight: 900;
+  font-style: normal;
+}
+
+$display-background: hsl(53, 82%, 2%);
+$display-colour: hsl(30, 100%, 45%);
+$display-colour-inactive: hsl(53, 82%, 1%);
+
+.fcu-svg {
+  position: absolute;
+  width: 1280px;
+  height: 1280px;
+  background: $display-background;
+}
+
+.afs-background {
+  box-shadow: inset 0px 0px 110px -20px rgba(255,98,0,0.5);
+}
+
+.efis-background {
+  box-shadow: inset 0px 0px 110px -40px rgba(255,98,0,0.5);
+}
+
+text.Active {
+  font-family: "Poppins-SemiBold";
+  font-size: 28px;
+  fill: $display-colour;
+}
+
+text.Inactive {
+  font-family: "Poppins-SemiBold";
+  font-size: 28px;
+  fill: $display-colour-inactive;
+  opacity: 0.1;
+}
+
+text.Value {
+  font-family: Digital;
+  font-size: 55px;
+  text-anchor: start;
+  fill: $display-colour;
+  letter-spacing: 0px;
+}
+
+line {
+  stroke: $display-colour;
+  stroke-width: 5;
+}
+
+circle {
+  fill: $display-colour;
+}
