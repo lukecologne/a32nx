@@ -1253,9 +1253,9 @@ These variables are the interface between the 3D model and the systems/code.
 
 ## EIS Display System
 
-- A32NX_EFIS_{side}_NAVAID_{1|2}_MODE
+- A32NX_FCU_EFIS_{side}_NAVAID_{1|2}_MODE
     - Enum
-    - Provides the selected NAVAIDs for display on the EFIS
+    - Provides the selected NAVAID knob posiiton. For use systems, use the FCU discrete words instead.
       Value | Meaning
       --- | ---
       0 | Off
@@ -1265,9 +1265,9 @@ These variables are the interface between the 3D model and the systems/code.
         - L
         - R
 
-- A32NX_EFIS_{side}_ND_MODE
+- A32NX_FCU_EFIS_{side}_EFIS_MODE
     - Enum
-    - Provides the selected navigation display mode for the EFIS
+    - Provides the navigation display mode knob position. For use systems, use the FCU discrete words instead.
       Value | Meaning
       --- | ---
       0 | ROSE ILS
@@ -1279,9 +1279,9 @@ These variables are the interface between the 3D model and the systems/code.
         - L
         - R
 
-- A32NX_EFIS_{side}_ND_RANGE
+- A32NX_FCU_EFIS_{side}_EFIS_RANGE
     - Enum
-    - Provides the selected navigation display range for the EFIS
+    - Provides the selected navigation display range knob position. For use systems, use the FCU discrete words instead.
       Value | Meaning
       --- | ---
       0 | 10
@@ -1294,17 +1294,16 @@ These variables are the interface between the 3D model and the systems/code.
         - L
         - R
 
-- A32NX_EFIS_{side}_OPTION
-    - Enum
-    - Provides the selected EFIS option/overlay
-      Value | Meaning
-      --- | ---
-      0 | None
-      1 | Constraints
-      2 | VOR/DMEs
-      3 | Waypoints
-      4 | NDBs
-      5 | Airports
+- A32NX_FCU_EFIS_{side}_{FILTER}_LIGHT_ON
+    - Bool
+    - If the related EFIS filter is selected, this Lvar is true. For use systems, use the FCU discrete words instead.
+    - {FILTER}
+      - None
+      - Constraints
+      - VOR/DMEs
+      - Waypoints
+      - NDBs
+      - Airports
     - {side}
         - L
         - R
