@@ -46,6 +46,10 @@
         "maxLod": 0
       },
       {
+        "gltf": "./fcu/fcu.gltf",
+        "bin": "./fcu/fcu.bin"
+      },
+      {
         "gltf": "./onbat/onbat.gltf",
         "bin": "./onbat/onbat.bin"
       },

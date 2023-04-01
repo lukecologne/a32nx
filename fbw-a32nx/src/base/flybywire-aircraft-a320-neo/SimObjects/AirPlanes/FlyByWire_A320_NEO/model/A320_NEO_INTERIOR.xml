@@ -232,7 +232,7 @@
             </UseTemplate>
 
             <UseTemplate Name="ASOBO_LIGHTING_Potentiometer_Emissive_Template">
-                <NODE_ID>SCREEN_AUTOPILOT</NODE_ID>
+                <NODE_ID>SCREEN_FCU</NODE_ID>
                 <POTENTIOMETER>87</POTENTIOMETER>
                 <!-- ref FBW-22-06 C/B 5LF -->
                 <EMISSIVE_CODE>(L:A32NX_ELEC_AC_1_BUS_IS_POWERED, Bool)</EMISSIVE_CODE>
@@ -4807,6 +4807,11 @@
                     </UseTemplate>
                 </Component>
                 <Component ID="LEVER_ELEVATORTRIM" Node="LEVER_ELEVATORTRIM">
+                    <UseTemplate Name="ASOBO_GT_Visibility_Code">
+                        <VISIBILITY_CODE>0</VISIBILITY_CODE>
+                    </UseTemplate>
+                </Component>
+                <Component ID="SCREEN_AUTOPILOT" Node="SCREEN_AUTOPILOT">
                     <UseTemplate Name="ASOBO_GT_Visibility_Code">
                         <VISIBILITY_CODE>0</VISIBILITY_CODE>
                     </UseTemplate>
