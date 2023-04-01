@@ -20,7 +20,7 @@ interface FlightPathVectorData {
     rollFdCommand: Arinc429Word;
     pitchFdCommand: Arinc429Word;
     fdEngaged: boolean;
-    fdActive: boolean;
+    fdOff: boolean;
 }
 
 export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, isAttExcessive: Subscribable<boolean>}> {
@@ -32,7 +32,7 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
         rollFdCommand: new Arinc429Word(0),
         pitchFdCommand: new Arinc429Word(0),
         fdEngaged: false,
-        fdActive: false,
+        fdOff: false,
     }
 
     private fcuDiscreteWord1 = new Arinc429Word(0);
@@ -57,6 +57,11 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
 
         sub.on('fcuDiscreteWord1').whenChanged().handle((a) => {
             this.fcuDiscreteWord1 = a;
+            this.needsUpdate = true;
+        });
+
+        sub.on('fcuEisDiscreteWord2').whenChanged().handle((tr) => {
+            this.data.fdOff = tr.getBitValueOr(23, false);
             this.needsUpdate = true;
         });
 
@@ -108,7 +113,7 @@ export class FlightPathDirector extends DisplayComponent<{bus: ArincEventBus, is
         const daAndFpaValid = this.data.fpa.isNormalOperation() && this.data.da.isNormalOperation();
         const trkFpaActive = this.fcuDiscreteWord1.getBitValueOr(25, false);
 
-        if (rollFdInvalid || pitchFdInvalid || !daAndFpaValid || !this.data.fdEngaged || !trkFpaActive || !this.data.fdActive || this.props.isAttExcessive.get()) {
+        if (rollFdInvalid || pitchFdInvalid || !daAndFpaValid || !this.data.fdEngaged || !trkFpaActive || this.data.fdOff || this.props.isAttExcessive.get()) {
             this.birdPath.instance.style.visibility = 'hidden';
             this.isVisible = false;
         } else {

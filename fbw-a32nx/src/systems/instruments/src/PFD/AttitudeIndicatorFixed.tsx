@@ -255,8 +255,8 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
     private fdFlagVisibleSub = Subject.create('hidden');
 
     private handleFdState() {
-        const fdActive = this.fcuEisDiscreteWord2.getBitValueOr(23, false);
-        const showFd = this.fdEngaged && fdActive;
+        const fdOff = this.fcuEisDiscreteWord2.getBitValueOr(23, false);
+        const showFd = this.fdEngaged && !fdOff;
 
         const trkFpaActive = this.fcuDiscreteWord1.getBitValueOr(25, false);
 
@@ -283,7 +283,7 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
         }
 
         const onGround = this.leftMainGearCompressed || this.rightMainGearCompressed;
-        if (fdActive && (!this.fdEngaged || this.fdRollCommand.isFailureWarning()
+        if (!fdOff && (!this.fdEngaged || this.fdRollCommand.isFailureWarning()
         || this.fdPitchCommand.isFailureWarning() || (this.fdYawCommand.isFailureWarning() && onGround))) {
             this.fdFlagVisibleSub.set('visible');
         } else {

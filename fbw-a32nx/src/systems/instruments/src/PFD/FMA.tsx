@@ -1530,13 +1530,13 @@ class E2Cell extends ShowForSecondsComponent<CellProps> {
         const fd1Engaged = this.fmgc1DiscreteWord4.getBitValueOr(13, false);
         const fd2Engaged = this.fmgc2DiscreteWord4.getBitValueOr(13, false);
 
-        const fdLeftActive = this.fcuDiscreteWord2.getBitValueOr(26, false);
-        const fdRightActive = this.fcuDiscreteWord2.getBitValueOr(27, false);
+        const fdLeftOff = this.fcuDiscreteWord2.getBitValueOr(26, false);
+        const fdRightOff = this.fcuDiscreteWord2.getBitValueOr(27, false);
 
-        const fd1EngagedOnLeft = fdLeftActive && fd1Engaged;
-        const fd2EngagedOnRight = fdRightActive && fd2Engaged;
-        const fd1EngagedOnRight = fdRightActive && fd1Engaged;
-        const fd2EngagedOnLeft = fdLeftActive && fd2Engaged;
+        const fd1EngagedOnLeft = !fdLeftOff && fd1Engaged;
+        const fd2EngagedOnRight = !fdRightOff && fd2Engaged;
+        const fd1EngagedOnRight = !fdRightOff && fd1Engaged;
+        const fd2EngagedOnLeft = !fdLeftOff && fd2Engaged;
 
         const anyFdOrApEngaged = ap1Engaged || ap2Engaged || fd1Engaged || fd2Engaged;
 
