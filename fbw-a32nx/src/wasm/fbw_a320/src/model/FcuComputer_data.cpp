@@ -2,38 +2,6 @@
 
 FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
 
-  {
-    {
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
-    },
-
-    {
-      false,
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
-    },
-
-    {
-      false,
-      false,
-      false,
-      false,
-      false,
-      false
-    },
-    false
-  },
-
   SignStatusMatrix::NormalOperation,
 
   efis_filter_selection::CSTR,
@@ -472,7 +440,10 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
         false,
         false,
         false,
-        false
+        false,
+        0,
+        0.0F,
+        0
       },
 
       {
@@ -482,7 +453,10 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
         false,
         false,
         false,
-        false
+        false,
+        0,
+        0.0F,
+        0
       },
 
       {
@@ -491,7 +465,16 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
         false,
         false,
         false,
-        false
+        false,
+        false,
+        false,
+        0.0,
+        false,
+        0.0,
+        false,
+        0.0,
+        false,
+        0.0
       },
       false
     },
@@ -714,6 +697,54 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
 
 
   {
+    {
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      0,
+      0.0F,
+      0
+    },
+
+    {
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      0,
+      0.0F,
+      0
+    },
+
+    {
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      0.0,
+      false,
+      0.0,
+      false,
+      0.0,
+      false,
+      0.0
+    },
+    false
+  },
+
+
+  {
     false,
 
     {
@@ -739,7 +770,13 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
     }
   },
 
-  0.0F,
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
 
   0.0F,
 
@@ -760,6 +797,18 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
   0.0F,
 
   0.0F,
+
+  0.0F,
+
+  false,
+
+  false,
+
+  false,
+
+  false,
+
+  false,
 
   false,
 

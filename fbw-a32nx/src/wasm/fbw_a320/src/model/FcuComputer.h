@@ -72,18 +72,17 @@ class FcuComputer final
   };
 
   struct Parameters_FcuComputer_T {
-    base_fcu_discrete_outputs fcu_discrete_output_MATLABStruct;
     SignStatusMatrix EnumeratedConstant1_Value;
     efis_filter_selection EnumeratedConstant7_Value;
     efis_filter_selection EnumeratedConstant6_Value;
     efis_filter_selection EnumeratedConstant8_Value;
     efis_filter_selection EnumeratedConstant9_Value;
     efis_filter_selection EnumeratedConstant10_Value;
-    efis_filter_selection EnumeratedConstant7_Value_l;
-    efis_filter_selection EnumeratedConstant6_Value_j;
-    efis_filter_selection EnumeratedConstant8_Value_p;
-    efis_filter_selection EnumeratedConstant9_Value_f;
-    efis_filter_selection EnumeratedConstant10_Value_i;
+    efis_filter_selection EnumeratedConstant7_Value_b;
+    efis_filter_selection EnumeratedConstant6_Value_m;
+    efis_filter_selection EnumeratedConstant8_Value_g;
+    efis_filter_selection EnumeratedConstant9_Value_c;
+    efis_filter_selection EnumeratedConstant10_Value_m;
     efis_filter_selection EnumeratedConstant7_Value_k;
     efis_filter_selection EnumeratedConstant6_Value_l;
     efis_filter_selection EnumeratedConstant8_Value_a;
@@ -91,7 +90,7 @@ class FcuComputer final
     efis_filter_selection EnumeratedConstant10_Value_b;
     efis_filter_selection EnumeratedConstant7_Value_a;
     efis_filter_selection EnumeratedConstant6_Value_l4;
-    efis_filter_selection EnumeratedConstant8_Value_pn;
+    efis_filter_selection EnumeratedConstant8_Value_p;
     efis_filter_selection EnumeratedConstant9_Value_o;
     efis_filter_selection EnumeratedConstant10_Value_e;
     efis_mode_selection EnumeratedConstant2_Value;
@@ -142,16 +141,21 @@ class FcuComputer final
     boolean_T PulseNode1_isRisingEdge_f;
     fcu_outputs out_Y0;
     base_fcu_bus Constant2_Value;
+    base_fcu_discrete_outputs Constant3_Value;
     base_fcu_logic_outputs Constant1_Value;
+    real_T Constant8_Value;
+    real_T Constant10_Value;
+    real_T Constant12_Value;
+    real_T Constant14_Value;
     real32_T Constant16_Value;
     real32_T Constant1_Value_g;
     real32_T Constant2_Value_l;
-    real32_T Constant3_Value;
+    real32_T Constant3_Value_b;
     real32_T Constant4_Value;
     real32_T Constant5_Value;
     real32_T Constant6_Value;
     real32_T Constant7_Value;
-    real32_T Constant8_Value;
+    real32_T Constant8_Value_i;
     real32_T Constant9_Value;
     real32_T Constant21_Value;
     boolean_T Constant2_Value_i;
@@ -160,8 +164,13 @@ class FcuComputer final
     boolean_T Constant5_Value_a;
     boolean_T Constant6_Value_f;
     boolean_T Constant7_Value_p;
+    boolean_T Constant1_Value_f;
+    boolean_T Constant15_Value;
+    boolean_T Constant9_Value_g;
+    boolean_T Constant11_Value;
+    boolean_T Constant13_Value;
     boolean_T Constant1_Value_i;
-    boolean_T Constant10_Value;
+    boolean_T Constant10_Value_f;
     boolean_T Constant10_Value_a;
     boolean_T Constant10_Value_p;
     boolean_T Constant10_Value_e;
@@ -211,6 +220,8 @@ class FcuComputer final
   static void FcuComputer_MATLABFunction_m(boolean_T rtu_u, boolean_T *rty_y, boolean_T rtp_init,
     rtDW_MATLABFunction_FcuComputer_l_T *localDW);
   static void FcuComputer_MATLABFunction_e(const boolean_T rtu_u[19], real32_T *rty_y);
+  static void FcuComputer_MATLABFunction_n(const base_fcu_efis_logic_outputs *rtu_logic, const
+    base_fcu_efis_panel_inputs *rtu_data, int8_T *rty_baroValueMode, real32_T *rty_baroValue, int8_T *rty_baroMode);
 };
 
 #endif

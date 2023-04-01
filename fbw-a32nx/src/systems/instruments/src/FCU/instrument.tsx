@@ -20,6 +20,23 @@ class A32NX_FCU extends BaseInstrument {
         super();
         this.bus = new EventBus();
         this.simVarPublisher = new FCUSimvarPublisher(this.bus);
+
+        this.simVarPublisher.subscribe('eisDisplayLeftBaroValueMode');
+        this.simVarPublisher.subscribe('eisDisplayLeftBaroValue');
+        this.simVarPublisher.subscribe('eisDisplayLeftBaroMode');
+        this.simVarPublisher.subscribe('eisDisplayRightBaroValueMode');
+        this.simVarPublisher.subscribe('eisDisplayRightBaroValue');
+        this.simVarPublisher.subscribe('eisDisplayRightBaroMode');
+
+        this.simVarPublisher.subscribe('afsDisplayTrkFpaMode');
+        this.simVarPublisher.subscribe('afsDisplayMachMode');
+        this.simVarPublisher.subscribe('afsDisplaySpdMachValue');
+        this.simVarPublisher.subscribe('afsDisplaySpdMachManaged');
+        this.simVarPublisher.subscribe('afsDisplayHdgTrkValue');
+        this.simVarPublisher.subscribe('afsDisplayHdgTrkManaged');
+        this.simVarPublisher.subscribe('afsDisplayAltValue');
+        this.simVarPublisher.subscribe('afsDisplayLvlChManaged');
+        this.simVarPublisher.subscribe('afsDisplayVsFpaValue');
     }
 
     get templateID(): string {

@@ -271,6 +271,9 @@ struct base_fcu_efis_panel_outputs
   boolean_T vord_light_on;
   boolean_T ndb_light_on;
   boolean_T arpt_light_on;
+  int8_T baro_value_mode;
+  real32_T baro_value;
+  int8_T baro_mode;
 };
 
 #endif
@@ -286,6 +289,15 @@ struct base_fcu_afs_panel_outputs
   boolean_T ap_1_light_on;
   boolean_T ap_2_light_on;
   boolean_T athr_light_on;
+  boolean_T trk_fpa_mode;
+  boolean_T mach_mode;
+  real_T spd_mach_value;
+  boolean_T spd_mach_managed;
+  real_T hdg_trk_value;
+  boolean_T hdg_trk_managed;
+  real_T alt_value;
+  boolean_T lvl_ch_managed;
+  real_T vs_fpa_value;
 };
 
 #endif
@@ -412,6 +424,38 @@ struct struct_jKPQGsPwrNwDJirnuGEHpB
   struct_2OohiAWrazWy5wDS5iisgF fcu_discrete_word_2;
   struct_2OohiAWrazWy5wDS5iisgF fcu_discrete_word_1;
   struct_2OohiAWrazWy5wDS5iisgF n1_cmd_percent;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_struct_Y6Zb6GuNhPISOIVdelTYXD_
+#define DEFINED_TYPEDEF_FOR_struct_Y6Zb6GuNhPISOIVdelTYXD_
+
+struct struct_Y6Zb6GuNhPISOIVdelTYXD
+{
+  boolean_T fd_light_on;
+  boolean_T ls_light_on;
+  boolean_T cstr_light_on;
+  boolean_T wpt_light_on;
+  boolean_T vord_light_on;
+  boolean_T ndb_light_on;
+  boolean_T arpt_light_on;
+  real_T baro_value_mode;
+  real_T baro_value;
+  real_T baro_mode;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_struct_1c7GZ5uUtLiP9xvp8VmhWE_
+#define DEFINED_TYPEDEF_FOR_struct_1c7GZ5uUtLiP9xvp8VmhWE_
+
+struct struct_1c7GZ5uUtLiP9xvp8VmhWE
+{
+  struct_Y6Zb6GuNhPISOIVdelTYXD capt_efis_outputs;
+  struct_Y6Zb6GuNhPISOIVdelTYXD fo_efis_outputs;
+  base_fcu_afs_panel_outputs afs_outputs;
+  boolean_T fcu_healthy;
 };
 
 #endif

@@ -609,6 +609,9 @@ class FlyByWireInterface {
   std::unique_ptr<LocalVariable> idFcuEisPanelVordLightOn[2];
   std::unique_ptr<LocalVariable> idFcuEisPanelNdbLightOn[2];
   std::unique_ptr<LocalVariable> idFcuEisPanelArptLightOn[2];
+  std::unique_ptr<LocalVariable> idFcuEisDisplayBaroValueMode[2];
+  std::unique_ptr<LocalVariable> idFcuEisDisplayBaroValue[2];
+  std::unique_ptr<LocalVariable> idFcuEisDisplayBaroMode[2];
 
   std::unique_ptr<LocalVariable> idFcuAfsPanelAltIncrement1000;
 
@@ -618,6 +621,15 @@ class FlyByWireInterface {
   std::unique_ptr<LocalVariable> idFcuAfsPanelLocLightOn;
   std::unique_ptr<LocalVariable> idFcuAfsPanelExpedLightOn;
   std::unique_ptr<LocalVariable> idFcuAfsPanelApprLightOn;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplayTrkFpaMode;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplayMachMode;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplaySpdMachValue;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplaySpdMachManaged;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplayHdgTrkValue;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplayHdgTrkManaged;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplayAltValue;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplayLvlChManaged;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplayVsFpaValue;
 
   void loadConfiguration();
   void setupLocalVariables();

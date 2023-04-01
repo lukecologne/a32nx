@@ -748,6 +748,9 @@ void FlyByWireInterface::setupLocalVariables() {
     idFcuEisPanelNavaid1Mode[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_NAVAID_1_MODE");
     idFcuEisPanelNavaid2Mode[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_NAVAID_2_MODE");
     idFcuEisPanelBaroIsInhg[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_BARO_IS_INHG");
+    idFcuEisDisplayBaroValueMode[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_DISPLAY_BARO_VALUE_MODE");
+    idFcuEisDisplayBaroValue[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_DISPLAY_BARO_VALUE");
+    idFcuEisDisplayBaroMode[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_DISPLAY_BARO_MODE");
 
     idFcuEisPanelFdLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_FD_LIGHT_ON");
     idFcuEisPanelLsLightOn[i] = std::make_unique<LocalVariable>("A32NX_FCU_EFIS_" + idString + "_LS_LIGHT_ON");
@@ -765,6 +768,15 @@ void FlyByWireInterface::setupLocalVariables() {
   idFcuAfsPanelLocLightOn = std::make_unique<LocalVariable>("A32NX_FCU_LOC_LIGHT_ON");
   idFcuAfsPanelExpedLightOn = std::make_unique<LocalVariable>("A32NX_FCU_EXPED_LIGHT_ON");
   idFcuAfsPanelApprLightOn = std::make_unique<LocalVariable>("A32NX_FCU_APPR_LIGHT_ON");
+  idFcuAfsDisplayTrkFpaMode = std::make_unique<LocalVariable>("A32NX_FCU_AFS_DISPLAY_TRK_FPA_MODE");
+  idFcuAfsDisplayMachMode = std::make_unique<LocalVariable>("A32NX_FCU_AFS_DISPLAY_MACH_MODE");
+  idFcuAfsDisplaySpdMachValue = std::make_unique<LocalVariable>("A32NX_FCU_AFS_DISPLAY_SPD_MACH_VALUE");
+  idFcuAfsDisplaySpdMachManaged = std::make_unique<LocalVariable>("A32NX_FCU_AFS_DISPLAY_SPD_MACH_MANAGED");
+  idFcuAfsDisplayHdgTrkValue = std::make_unique<LocalVariable>("A32NX_FCU_AFS_DISPLAY_HDG_TRK_VALUE");
+  idFcuAfsDisplayHdgTrkManaged = std::make_unique<LocalVariable>("A32NX_FCU_AFS_DISPLAY_HDG_TRK_MANAGED");
+  idFcuAfsDisplayAltValue = std::make_unique<LocalVariable>("A32NX_FCU_AFS_DISPLAY_ALT_VALUE");
+  idFcuAfsDisplayLvlChManaged = std::make_unique<LocalVariable>("A32NX_FCU_AFS_DISPLAY_LVL_CH_MANAGED");
+  idFcuAfsDisplayVsFpaValue = std::make_unique<LocalVariable>("A32NX_FCU_AFS_DISPLAY_VS_FPA_VALUE");
 }
 
 bool FlyByWireInterface::handleFcuInitialization(double sampleTime) {
@@ -1750,6 +1762,10 @@ bool FlyByWireInterface::updateFcu(double sampleTime) {
     idFcuEisPanelVordLightOn[i]->set(efisPanelOutputs.vord_light_on);
     idFcuEisPanelNdbLightOn[i]->set(efisPanelOutputs.ndb_light_on);
     idFcuEisPanelArptLightOn[i]->set(efisPanelOutputs.arpt_light_on);
+
+    idFcuEisDisplayBaroValueMode[i]->set(efisPanelOutputs.baro_value_mode);
+    idFcuEisDisplayBaroValue[i]->set(efisPanelOutputs.baro_value);
+    idFcuEisDisplayBaroMode[i]->set(efisPanelOutputs.baro_mode);
   }
   idFcuAfsPanelAp1LightOn->set(discreteOutputs.afs_outputs.ap_1_light_on);
   idFcuAfsPanelAp2LightOn->set(discreteOutputs.afs_outputs.ap_2_light_on);
@@ -1757,6 +1773,16 @@ bool FlyByWireInterface::updateFcu(double sampleTime) {
   idFcuAfsPanelLocLightOn->set(discreteOutputs.afs_outputs.loc_light_on);
   idFcuAfsPanelExpedLightOn->set(discreteOutputs.afs_outputs.exped_light_on);
   idFcuAfsPanelApprLightOn->set(discreteOutputs.afs_outputs.appr_light_on);
+
+  idFcuAfsDisplayTrkFpaMode->set(discreteOutputs.afs_outputs.trk_fpa_mode);
+  idFcuAfsDisplayMachMode->set(discreteOutputs.afs_outputs.mach_mode);
+  idFcuAfsDisplaySpdMachValue->set(discreteOutputs.afs_outputs.spd_mach_value);
+  idFcuAfsDisplaySpdMachManaged->set(discreteOutputs.afs_outputs.spd_mach_managed);
+  idFcuAfsDisplayHdgTrkValue->set(discreteOutputs.afs_outputs.hdg_trk_value);
+  idFcuAfsDisplayHdgTrkManaged->set(discreteOutputs.afs_outputs.hdg_trk_managed);
+  idFcuAfsDisplayAltValue->set(discreteOutputs.afs_outputs.alt_value);
+  idFcuAfsDisplayLvlChManaged->set(discreteOutputs.afs_outputs.lvl_ch_managed);
+  idFcuAfsDisplayVsFpaValue->set(discreteOutputs.afs_outputs.vs_fpa_value);
 
   return true;
 }
