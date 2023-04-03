@@ -623,12 +623,15 @@ class FlyByWireInterface {
   std::unique_ptr<LocalVariable> idFcuAfsDisplayTrkFpaMode;
   std::unique_ptr<LocalVariable> idFcuAfsDisplayMachMode;
   std::unique_ptr<LocalVariable> idFcuAfsDisplaySpdMachValue;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplaySpdMachDashes;
   std::unique_ptr<LocalVariable> idFcuAfsDisplaySpdMachManaged;
   std::unique_ptr<LocalVariable> idFcuAfsDisplayHdgTrkValue;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplayHdgTrkDashes;
   std::unique_ptr<LocalVariable> idFcuAfsDisplayHdgTrkManaged;
   std::unique_ptr<LocalVariable> idFcuAfsDisplayAltValue;
   std::unique_ptr<LocalVariable> idFcuAfsDisplayLvlChManaged;
   std::unique_ptr<LocalVariable> idFcuAfsDisplayVsFpaValue;
+  std::unique_ptr<LocalVariable> idFcuAfsDisplayVsFpaDashes;
 
   void loadConfiguration();
   void setupLocalVariables();

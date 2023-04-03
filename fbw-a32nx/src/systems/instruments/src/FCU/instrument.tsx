@@ -31,12 +31,15 @@ class A32NX_FCU extends BaseInstrument {
         this.simVarPublisher.subscribe('afsDisplayTrkFpaMode');
         this.simVarPublisher.subscribe('afsDisplayMachMode');
         this.simVarPublisher.subscribe('afsDisplaySpdMachValue');
+        this.simVarPublisher.subscribe('afsDisplaySpdMachDashes');
         this.simVarPublisher.subscribe('afsDisplaySpdMachManaged');
         this.simVarPublisher.subscribe('afsDisplayHdgTrkValue');
+        this.simVarPublisher.subscribe('afsDisplayHdgTrkDashes');
         this.simVarPublisher.subscribe('afsDisplayHdgTrkManaged');
         this.simVarPublisher.subscribe('afsDisplayAltValue');
         this.simVarPublisher.subscribe('afsDisplayLvlChManaged');
         this.simVarPublisher.subscribe('afsDisplayVsFpaValue');
+        this.simVarPublisher.subscribe('afsDisplayVsFpaDashes');
     }
 
     get templateID(): string {

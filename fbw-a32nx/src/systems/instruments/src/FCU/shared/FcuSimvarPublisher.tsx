@@ -11,12 +11,15 @@ export interface FcuSimvars {
     afsDisplayTrkFpaMode: boolean;
     afsDisplayMachMode: boolean;
     afsDisplaySpdMachValue: number;
+    afsDisplaySpdMachDashes: boolean;
     afsDisplaySpdMachManaged: boolean;
     afsDisplayHdgTrkValue: number;
+    afsDisplayHdgTrkDashes: boolean;
     afsDisplayHdgTrkManaged: boolean;
     afsDisplayAltValue: number;
     afsDisplayLvlChManaged: boolean;
     afsDisplayVsFpaValue: number;
+    afsDisplayVsFpaDashes: boolean;
 }
 
 export enum FcuVars {
@@ -30,12 +33,15 @@ export enum FcuVars {
     afsDisplayTrkFpaMode = 'L:A32NX_FCU_AFS_DISPLAY_TRK_FPA_MODE',
     afsDisplayMachMode = 'L:A32NX_FCU_AFS_DISPLAY_MACH_MODE',
     afsDisplaySpdMachValue = 'L:A32NX_FCU_AFS_DISPLAY_SPD_MACH_VALUE',
+    afsDisplaySpdMachDashes = 'L:A32NX_FCU_AFS_DISPLAY_SPD_MACH_DASHES',
     afsDisplaySpdMachManaged = 'L:A32NX_FCU_AFS_DISPLAY_SPD_MACH_MANAGED',
     afsDisplayHdgTrkValue = 'L:A32NX_FCU_AFS_DISPLAY_HDG_TRK_VALUE',
+    afsDisplayHdgTrkDashes = 'L:A32NX_FCU_AFS_DISPLAY_HDG_TRK_DASHES',
     afsDisplayHdgTrkManaged = 'L:A32NX_FCU_AFS_DISPLAY_HDG_TRK_MANAGED',
     afsDisplayAltValue = 'L:A32NX_FCU_AFS_DISPLAY_ALT_VALUE',
     afsDisplayLvlChManaged = 'L:A32NX_FCU_AFS_DISPLAY_LVL_CH_MANAGED',
     afsDisplayVsFpaValue = 'L:A32NX_FCU_AFS_DISPLAY_VS_FPA_VALUE',
+    afsDisplayVsFpaDashes = 'L:A32NX_FCU_AFS_DISPLAY_VS_FPA_DASHES',
 }
 
 export class FCUSimvarPublisher extends SimVarPublisher<FcuSimvars> {
@@ -50,12 +56,15 @@ export class FCUSimvarPublisher extends SimVarPublisher<FcuSimvars> {
         ['afsDisplayTrkFpaMode', { name: FcuVars.afsDisplayTrkFpaMode, type: SimVarValueType.Bool }],
         ['afsDisplayMachMode', { name: FcuVars.afsDisplayMachMode, type: SimVarValueType.Bool }],
         ['afsDisplaySpdMachValue', { name: FcuVars.afsDisplaySpdMachValue, type: SimVarValueType.Number }],
+        ['afsDisplaySpdMachDashes', { name: FcuVars.afsDisplaySpdMachDashes, type: SimVarValueType.Bool }],
         ['afsDisplaySpdMachManaged', { name: FcuVars.afsDisplaySpdMachManaged, type: SimVarValueType.Bool }],
         ['afsDisplayHdgTrkValue', { name: FcuVars.afsDisplayHdgTrkValue, type: SimVarValueType.Number }],
+        ['afsDisplayHdgTrkDashes', { name: FcuVars.afsDisplayHdgTrkDashes, type: SimVarValueType.Bool }],
         ['afsDisplayHdgTrkManaged', { name: FcuVars.afsDisplayHdgTrkManaged, type: SimVarValueType.Bool }],
         ['afsDisplayAltValue', { name: FcuVars.afsDisplayAltValue, type: SimVarValueType.Number }],
         ['afsDisplayLvlChManaged', { name: FcuVars.afsDisplayLvlChManaged, type: SimVarValueType.Bool }],
         ['afsDisplayVsFpaValue', { name: FcuVars.afsDisplayVsFpaValue, type: SimVarValueType.Number }],
+        ['afsDisplayVsFpaDashes', { name: FcuVars.afsDisplayVsFpaDashes, type: SimVarValueType.Bool }],
     ])
 
     public constructor(bus: EventBus) {
