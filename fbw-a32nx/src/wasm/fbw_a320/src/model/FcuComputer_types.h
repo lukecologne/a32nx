@@ -71,6 +71,17 @@ enum class SignStatusMatrix
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
+#define DEFINED_TYPEDEF_FOR_base_arinc_429_
+
+struct base_arinc_429
+{
+  uint32_T SSM;
+  real32_T Data;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_time_
 #define DEFINED_TYPEDEF_FOR_base_time_
 
@@ -170,38 +181,44 @@ struct base_fcu_discrete_inputs
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
-#define DEFINED_TYPEDEF_FOR_base_arinc_429_
-
-struct base_arinc_429
-{
-  uint32_T SSM;
-  real32_T Data;
-};
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
 #define DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
 
 struct base_fmgc_a_bus
 {
+  base_arinc_429 pfd_sel_spd_kts;
+  base_arinc_429 runway_hdg_memorized_deg;
+  base_arinc_429 preset_mach_from_mcdu;
+  base_arinc_429 preset_speed_from_mcdu_kts;
   base_arinc_429 roll_fd_command;
   base_arinc_429 pitch_fd_command;
   base_arinc_429 yaw_fd_command;
   base_arinc_429 discrete_word_5;
   base_arinc_429 discrete_word_4;
+  base_arinc_429 fm_alt_constraint_ft;
+  base_arinc_429 altitude_ft;
+  base_arinc_429 mach;
+  base_arinc_429 cas_kts;
+  base_arinc_429 flx_to_temp_deg_c;
   base_arinc_429 ats_discrete_word;
   base_arinc_429 ats_fma_discrete_word;
   base_arinc_429 discrete_word_3;
   base_arinc_429 discrete_word_1;
   base_arinc_429 discrete_word_2;
   base_arinc_429 discrete_word_6;
+  base_arinc_429 synchro_spd_mach_value;
+  base_arinc_429 low_target_speed_margin_kts;
+  base_arinc_429 high_target_speed_margin_kts;
   base_arinc_429 delta_p_ail_voted_cmd_deg;
   base_arinc_429 delta_p_splr_voted_cmd_deg;
   base_arinc_429 delta_r_voted_cmd_deg;
   base_arinc_429 delta_nosewheel_voted_cmd_deg;
   base_arinc_429 delta_q_voted_cmd_deg;
+  base_arinc_429 track_deg;
+  base_arinc_429 heading_deg;
+  base_arinc_429 fpa_deg;
+  base_arinc_429 n1_command_percent;
+  base_arinc_429 vertical_speed_ft_min;
 };
 
 #endif
@@ -230,6 +247,33 @@ struct fcu_inputs
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_base_afs_logic_outputs_
+#define DEFINED_TYPEDEF_FOR_base_afs_logic_outputs_
+
+struct base_afs_logic_outputs
+{
+  boolean_T fmgc_1_has_priority;
+  boolean_T trk_fpa_active;
+  boolean_T auto_speed_control;
+  boolean_T selected_speed_control;
+  real_T spd_mach_display_value;
+  boolean_T spd_mach_dashes;
+  boolean_T hdg_trk_managed;
+  boolean_T hdg_trk_selected;
+  real_T hdg_trk_display_value;
+  boolean_T hdg_trk_dashes;
+  real_T alt_display_value;
+  boolean_T lvl_ch_managed;
+  boolean_T lvl_ch_selected;
+  real_T vs_fpa_display_value;
+  boolean_T vs_fpa_dashes;
+  boolean_T exped_active;
+  boolean_T loc_only_active;
+  boolean_T appr_active;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_fcu_efis_logic_outputs_
 #define DEFINED_TYPEDEF_FOR_base_fcu_efis_logic_outputs_
 
@@ -252,7 +296,7 @@ struct base_fcu_efis_logic_outputs
 
 struct base_fcu_logic_outputs
 {
-  boolean_T fmgc_1_has_priority;
+  base_afs_logic_outputs afs;
   base_fcu_efis_logic_outputs capt_efis;
   base_fcu_efis_logic_outputs fo_efis;
 };
@@ -292,12 +336,15 @@ struct base_fcu_afs_panel_outputs
   boolean_T trk_fpa_mode;
   boolean_T mach_mode;
   real_T spd_mach_value;
+  boolean_T spd_mach_dashes;
   boolean_T spd_mach_managed;
   real_T hdg_trk_value;
+  boolean_T hdg_trk_dashes;
   boolean_T hdg_trk_managed;
   real_T alt_value;
   boolean_T lvl_ch_managed;
   real_T vs_fpa_value;
+  boolean_T vs_fpa_dashes;
 };
 
 #endif
@@ -375,12 +422,12 @@ struct struct_bqjSWtmatK4obwyFIPQOyC
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_XLWtyCEKE4tFdVYBl9lDvC_
-#define DEFINED_TYPEDEF_FOR_struct_XLWtyCEKE4tFdVYBl9lDvC_
+#ifndef DEFINED_TYPEDEF_FOR_struct_ul2f9Ar6X0jOQvBrxsWlw_
+#define DEFINED_TYPEDEF_FOR_struct_ul2f9Ar6X0jOQvBrxsWlw_
 
-struct struct_XLWtyCEKE4tFdVYBl9lDvC
+struct struct_ul2f9Ar6X0jOQvBrxsWlw
 {
-  boolean_T fmgc_1_has_priority;
+  base_afs_logic_outputs afs;
   struct_bqjSWtmatK4obwyFIPQOyC capt_efis;
   struct_bqjSWtmatK4obwyFIPQOyC fo_efis;
 };
@@ -447,10 +494,10 @@ struct struct_Y6Zb6GuNhPISOIVdelTYXD
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_1c7GZ5uUtLiP9xvp8VmhWE_
-#define DEFINED_TYPEDEF_FOR_struct_1c7GZ5uUtLiP9xvp8VmhWE_
+#ifndef DEFINED_TYPEDEF_FOR_struct_Ix96w8VELgZuPzNijTBYLB_
+#define DEFINED_TYPEDEF_FOR_struct_Ix96w8VELgZuPzNijTBYLB_
 
-struct struct_1c7GZ5uUtLiP9xvp8VmhWE
+struct struct_Ix96w8VELgZuPzNijTBYLB
 {
   struct_Y6Zb6GuNhPISOIVdelTYXD capt_efis_outputs;
   struct_Y6Zb6GuNhPISOIVdelTYXD fo_efis_outputs;

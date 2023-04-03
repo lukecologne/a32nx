@@ -1,6 +1,7 @@
 #include "FmgcComputer.h"
 #include "rtwtypes.h"
 #include "FmgcComputer_types.h"
+#include <cmath>
 
 void FmgcComputer::FmgcComputer_MATLABFunction_Reset(rtDW_MATLABFunction_FmgcComputer_T *localDW)
 {
@@ -48,6 +49,36 @@ void FmgcComputer::FmgcComputer_RAMonitoring(const fmgc_outputs *rtu_in, real32_
   *rty_dualRaFailure = (raOwnInvalid && raOppInvalid);
 }
 
+void FmgcComputer::FmgcComputer_MATLABFunction_c(const base_arinc_429 *rtu_u, real_T rtu_bit, uint32_T *rty_y)
+{
+  real32_T tmp;
+  uint32_T a;
+  tmp = std::round(rtu_u->Data);
+  if (tmp < 4.2949673E+9F) {
+    if (tmp >= 0.0F) {
+      a = static_cast<uint32_T>(tmp);
+    } else {
+      a = 0U;
+    }
+  } else {
+    a = MAX_uint32_T;
+  }
+
+  if (-(rtu_bit - 1.0) >= 0.0) {
+    if (-(rtu_bit - 1.0) <= 31.0) {
+      a <<= static_cast<uint8_T>(-(rtu_bit - 1.0));
+    } else {
+      a = 0U;
+    }
+  } else if (-(rtu_bit - 1.0) >= -31.0) {
+    a >>= static_cast<uint8_T>(rtu_bit - 1.0);
+  } else {
+    a = 0U;
+  }
+
+  *rty_y = a & 1U;
+}
+
 void FmgcComputer::FmgcComputer_MATLABFunction_g(const boolean_T rtu_u[19], real32_T *rty_y)
 {
   uint32_T out;
@@ -66,10 +97,12 @@ void FmgcComputer::step()
   real32_T rtb_V_tas;
   real32_T rtb_alpha;
   real32_T rtb_alt;
-  real32_T rtb_mach;
+  real32_T rtb_mach_i;
   real32_T rtb_p_s_c;
   real32_T rtb_phi;
   real32_T rtb_theta;
+  uint32_T rtb_DataTypeConversion1;
+  uint32_T rtb_y;
   boolean_T rtb_VectorConcatenate[19];
   boolean_T raOppInvalid;
   if (FmgcComputer_U.in.sim_data.computer_running) {
@@ -126,21 +159,21 @@ void FmgcComputer::step()
     if (!rtb_adrOwnInvalid) {
       rtb_V_ias = FmgcComputer_U.in.bus_inputs.adr_own_bus.airspeed_computed_kn.Data;
       rtb_V_tas = FmgcComputer_U.in.bus_inputs.adr_own_bus.airspeed_true_kn.Data;
-      rtb_mach = FmgcComputer_U.in.bus_inputs.adr_own_bus.mach.Data;
+      rtb_mach_i = FmgcComputer_U.in.bus_inputs.adr_own_bus.mach.Data;
       rtb_alpha = FmgcComputer_U.in.bus_inputs.adr_own_bus.aoa_corrected_deg.Data;
       rtb_p_s_c = FmgcComputer_U.in.bus_inputs.adr_own_bus.corrected_average_static_pressure.Data;
       rtb_alt = FmgcComputer_U.in.bus_inputs.adr_own_bus.altitude_corrected_ft.Data;
     } else if (!rtb_adr3Invalid) {
       rtb_V_ias = FmgcComputer_U.in.bus_inputs.adr_3_bus.airspeed_computed_kn.Data;
       rtb_V_tas = FmgcComputer_U.in.bus_inputs.adr_3_bus.airspeed_true_kn.Data;
-      rtb_mach = FmgcComputer_U.in.bus_inputs.adr_3_bus.mach.Data;
+      rtb_mach_i = FmgcComputer_U.in.bus_inputs.adr_3_bus.mach.Data;
       rtb_alpha = FmgcComputer_U.in.bus_inputs.adr_3_bus.aoa_corrected_deg.Data;
       rtb_p_s_c = FmgcComputer_U.in.bus_inputs.adr_3_bus.corrected_average_static_pressure.Data;
       rtb_alt = FmgcComputer_U.in.bus_inputs.adr_own_bus.altitude_corrected_ft.Data;
     } else {
       rtb_V_ias = 0.0F;
       rtb_V_tas = 0.0F;
-      rtb_mach = 0.0F;
+      rtb_mach_i = 0.0F;
       rtb_alpha = 0.0F;
       rtb_p_s_c = 0.0F;
       rtb_alt = 0.0F;
@@ -201,7 +234,7 @@ void FmgcComputer::step()
       rtb_ir3Invalid) || (rtb_irOppInvalid && rtb_ir3Invalid));
     rtb_BusAssignment_ey.logic.adr_computation_data.V_ias_kn = rtb_V_ias;
     rtb_BusAssignment_ey.logic.adr_computation_data.V_tas_kn = rtb_V_tas;
-    rtb_BusAssignment_ey.logic.adr_computation_data.mach = rtb_mach;
+    rtb_BusAssignment_ey.logic.adr_computation_data.mach = rtb_mach_i;
     rtb_BusAssignment_ey.logic.adr_computation_data.alpha_deg = rtb_alpha;
     rtb_BusAssignment_ey.logic.adr_computation_data.p_s_c_hpa = rtb_p_s_c;
     rtb_BusAssignment_ey.logic.adr_computation_data.altitude_corrected_ft = rtb_alt;
@@ -251,7 +284,20 @@ void FmgcComputer::step()
                          ((!FmgcComputer_P.fmgc_logic_output_MATLABStruct.fac_speeds_failure) ||
                           FmgcComputer_DWork.Delay_DSTATE.land_active));
     FmgcComputer_Y.out.logic.dual_ra_failure = raOppInvalid;
-    FmgcComputer_MATLABFunction(rtb_adrOwnInvalid && rtb_adrOppInvalid, FmgcComputer_U.in.time.dt,
+    FmgcComputer_MATLABFunction_c(&FmgcComputer_U.in.bus_inputs.fcu_bus.fcu_discrete_word_2,
+      FmgcComputer_P.BitfromLabel_bit, &rtb_y);
+    FmgcComputer_MATLABFunction_c(&FmgcComputer_U.in.bus_inputs.fcu_bus.fcu_discrete_word_2,
+      FmgcComputer_P.BitfromLabel1_bit, &rtb_DataTypeConversion1);
+    if (FmgcComputer_U.in.discrete_inputs.is_unit_1) {
+      raOwnInvalid = (rtb_y != 0U);
+      rtb_adr3Invalid = (rtb_DataTypeConversion1 != 0U);
+    } else {
+      raOwnInvalid = (rtb_DataTypeConversion1 != 0U);
+      rtb_adr3Invalid = (rtb_y != 0U);
+    }
+
+    FmgcComputer_MATLABFunction(rtb_adrOwnInvalid && rtb_adrOppInvalid && ((!raOwnInvalid) || ((!rtb_adr3Invalid) &&
+      (!FmgcComputer_U.in.discrete_inputs.fd_opp_engaged))), FmgcComputer_U.in.time.dt,
       FmgcComputer_P.ConfirmNode_isRisingEdge, FmgcComputer_P.ConfirmNode_timeDelay, &raOppInvalid,
       &FmgcComputer_DWork.sf_MATLABFunction_m);
     raOwnInvalid = raOppInvalid;
@@ -340,7 +386,7 @@ void FmgcComputer::step()
     rtb_VectorConcatenate[16] = FmgcComputer_P.Constant4_Value_g;
     rtb_VectorConcatenate[17] = FmgcComputer_P.Constant4_Value_g;
     rtb_VectorConcatenate[18] = FmgcComputer_P.Constant4_Value_g;
-    FmgcComputer_MATLABFunction_g(rtb_VectorConcatenate, &rtb_mach);
+    FmgcComputer_MATLABFunction_g(rtb_VectorConcatenate, &rtb_mach_i);
     rtb_VectorConcatenate[0] = FmgcComputer_P.Constant5_Value;
     rtb_VectorConcatenate[1] = FmgcComputer_P.Constant5_Value;
     rtb_VectorConcatenate[2] = FmgcComputer_P.Constant5_Value;
@@ -479,6 +525,18 @@ void FmgcComputer::step()
     FmgcComputer_Y.out.discrete_outputs.fcu_own_fail = FmgcComputer_P.Constant_Value;
     FmgcComputer_Y.out.discrete_outputs.fmgc_healthy = FmgcComputer_P.Constant1_Value_i;
     FmgcComputer_Y.out.discrete_outputs.ils_test_inhibit = FmgcComputer_P.Constant_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.pfd_sel_spd_kts.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.pfd_sel_spd_kts.Data = FmgcComputer_P.Constant17_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.runway_hdg_memorized_deg.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.runway_hdg_memorized_deg.Data = FmgcComputer_P.Constant18_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.preset_mach_from_mcdu.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.preset_mach_from_mcdu.Data = FmgcComputer_P.Constant19_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.preset_speed_from_mcdu_kts.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.preset_speed_from_mcdu_kts.Data = FmgcComputer_P.Constant20_Value;
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.roll_fd_command.SSM = static_cast<uint32_T>
       (FmgcComputer_P.EnumeratedConstant1_Value);
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.roll_fd_command.Data = FmgcComputer_P.Constant16_Value;
@@ -494,9 +552,23 @@ void FmgcComputer::step()
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.discrete_word_4.SSM = static_cast<uint32_T>
       (FmgcComputer_P.EnumeratedConstant1_Value);
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.discrete_word_4.Data = rtb_V_tas;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.fm_alt_constraint_ft.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.fm_alt_constraint_ft.Data = FmgcComputer_P.Constant21_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.altitude_ft.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.altitude_ft.Data = FmgcComputer_P.Constant22_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.mach.SSM = static_cast<uint32_T>(FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.mach.Data = FmgcComputer_P.Constant23_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.cas_kts.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.cas_kts.Data = FmgcComputer_P.Constant24_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.flx_to_temp_deg_c.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.flx_to_temp_deg_c.Data = FmgcComputer_P.Constant25_Value;
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.ats_discrete_word.SSM = static_cast<uint32_T>
       (FmgcComputer_P.EnumeratedConstant1_Value);
-    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.ats_discrete_word.Data = rtb_mach;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.ats_discrete_word.Data = rtb_mach_i;
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.ats_fma_discrete_word.SSM = static_cast<uint32_T>
       (FmgcComputer_P.EnumeratedConstant1_Value);
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.ats_fma_discrete_word.Data = rtb_alpha;
@@ -512,6 +584,15 @@ void FmgcComputer::step()
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.discrete_word_6.SSM = static_cast<uint32_T>
       (FmgcComputer_P.EnumeratedConstant1_Value);
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.discrete_word_6.Data = rtb_phi;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.synchro_spd_mach_value.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.synchro_spd_mach_value.Data = FmgcComputer_P.Constant26_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.low_target_speed_margin_kts.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.low_target_speed_margin_kts.Data = FmgcComputer_P.Constant27_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.high_target_speed_margin_kts.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.high_target_speed_margin_kts.Data = FmgcComputer_P.Constant28_Value;
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.delta_p_ail_voted_cmd_deg.SSM = static_cast<uint32_T>
       (FmgcComputer_P.EnumeratedConstant1_Value);
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.delta_p_ail_voted_cmd_deg.Data = FmgcComputer_P.Constant11_Value;
@@ -527,6 +608,21 @@ void FmgcComputer::step()
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.delta_q_voted_cmd_deg.SSM = static_cast<uint32_T>
       (FmgcComputer_P.EnumeratedConstant1_Value);
     FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.delta_q_voted_cmd_deg.Data = FmgcComputer_P.Constant15_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.track_deg.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.track_deg.Data = FmgcComputer_P.Constant29_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.heading_deg.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.heading_deg.Data = FmgcComputer_P.Constant30_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.fpa_deg.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.fpa_deg.Data = FmgcComputer_P.Constant31_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.n1_command_percent.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.n1_command_percent.Data = FmgcComputer_P.Constant32_Value;
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.vertical_speed_ft_min.SSM = static_cast<uint32_T>
+      (FmgcComputer_P.EnumeratedConstant1_Value);
+    FmgcComputer_Y.out.bus_outputs.fmgc_a_bus.vertical_speed_ft_min.Data = FmgcComputer_P.Constant33_Value;
     FmgcComputer_DWork.Delay_DSTATE = FmgcComputer_P.fmgc_ap_fd_logic_output_MATLABStruct;
     FmgcComputer_DWork.Memory_PreviousInput_g = FmgcComputer_DWork.Delay_DSTATE_p;
   } else {

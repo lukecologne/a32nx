@@ -105,6 +105,10 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
     false
   },
 
+  26.0,
+
+  27.0,
+
   0.2,
 
   0.2,
@@ -1410,6 +1414,91 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
           {
             0U,
             0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
           }
         },
 
@@ -1703,6 +1792,91 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
         {
           0U,
           0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
+        },
+
+        {
+          0U,
+          0.0F
         }
       },
 
@@ -1793,6 +1967,91 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
 
   {
     {
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
+      {
+        0U,
+        0.0F
+      },
+
       {
         0U,
         0.0F
@@ -2006,6 +2265,40 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
     false,
     false
   },
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
 
   0.0F,
 

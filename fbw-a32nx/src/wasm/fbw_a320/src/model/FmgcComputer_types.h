@@ -26,6 +26,63 @@ struct base_arinc_429
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
+#define DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
+
+struct base_fmgc_a_bus
+{
+  base_arinc_429 pfd_sel_spd_kts;
+  base_arinc_429 runway_hdg_memorized_deg;
+  base_arinc_429 preset_mach_from_mcdu;
+  base_arinc_429 preset_speed_from_mcdu_kts;
+  base_arinc_429 roll_fd_command;
+  base_arinc_429 pitch_fd_command;
+  base_arinc_429 yaw_fd_command;
+  base_arinc_429 discrete_word_5;
+  base_arinc_429 discrete_word_4;
+  base_arinc_429 fm_alt_constraint_ft;
+  base_arinc_429 altitude_ft;
+  base_arinc_429 mach;
+  base_arinc_429 cas_kts;
+  base_arinc_429 flx_to_temp_deg_c;
+  base_arinc_429 ats_discrete_word;
+  base_arinc_429 ats_fma_discrete_word;
+  base_arinc_429 discrete_word_3;
+  base_arinc_429 discrete_word_1;
+  base_arinc_429 discrete_word_2;
+  base_arinc_429 discrete_word_6;
+  base_arinc_429 synchro_spd_mach_value;
+  base_arinc_429 low_target_speed_margin_kts;
+  base_arinc_429 high_target_speed_margin_kts;
+  base_arinc_429 delta_p_ail_voted_cmd_deg;
+  base_arinc_429 delta_p_splr_voted_cmd_deg;
+  base_arinc_429 delta_r_voted_cmd_deg;
+  base_arinc_429 delta_nosewheel_voted_cmd_deg;
+  base_arinc_429 delta_q_voted_cmd_deg;
+  base_arinc_429 track_deg;
+  base_arinc_429 heading_deg;
+  base_arinc_429 fpa_deg;
+  base_arinc_429 n1_command_percent;
+  base_arinc_429 vertical_speed_ft_min;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_discrete_outputs_
+#define DEFINED_TYPEDEF_FOR_base_fmgc_discrete_outputs_
+
+struct base_fmgc_discrete_outputs
+{
+  boolean_T athr_own_engaged;
+  boolean_T fd_own_engaged;
+  boolean_T ap_own_engaged;
+  boolean_T fcu_own_fail;
+  boolean_T fmgc_healthy;
+  boolean_T ils_test_inhibit;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_time_
 #define DEFINED_TYPEDEF_FOR_base_time_
 
@@ -243,31 +300,6 @@ struct base_ra_bus
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
-#define DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
-
-struct base_fmgc_a_bus
-{
-  base_arinc_429 roll_fd_command;
-  base_arinc_429 pitch_fd_command;
-  base_arinc_429 yaw_fd_command;
-  base_arinc_429 discrete_word_5;
-  base_arinc_429 discrete_word_4;
-  base_arinc_429 ats_discrete_word;
-  base_arinc_429 ats_fma_discrete_word;
-  base_arinc_429 discrete_word_3;
-  base_arinc_429 discrete_word_1;
-  base_arinc_429 discrete_word_2;
-  base_arinc_429 discrete_word_6;
-  base_arinc_429 delta_p_ail_voted_cmd_deg;
-  base_arinc_429 delta_p_splr_voted_cmd_deg;
-  base_arinc_429 delta_r_voted_cmd_deg;
-  base_arinc_429 delta_nosewheel_voted_cmd_deg;
-  base_arinc_429 delta_q_voted_cmd_deg;
-};
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_base_fcu_bus_
 #define DEFINED_TYPEDEF_FOR_base_fcu_bus_
 
@@ -453,21 +485,6 @@ struct base_fmgc_ap_fd_logic_outputs
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_discrete_outputs_
-#define DEFINED_TYPEDEF_FOR_base_fmgc_discrete_outputs_
-
-struct base_fmgc_discrete_outputs
-{
-  boolean_T athr_own_engaged;
-  boolean_T fd_own_engaged;
-  boolean_T ap_own_engaged;
-  boolean_T fcu_own_fail;
-  boolean_T fmgc_healthy;
-  boolean_T ils_test_inhibit;
-};
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_base_fmgc_b_bus_
 #define DEFINED_TYPEDEF_FOR_base_fmgc_b_bus_
 
@@ -529,27 +546,44 @@ struct struct_2OohiAWrazWy5wDS5iisgF
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_PU75bC6JQHPO0CCSfJRZYE_
-#define DEFINED_TYPEDEF_FOR_struct_PU75bC6JQHPO0CCSfJRZYE_
+#ifndef DEFINED_TYPEDEF_FOR_struct_AZzDN1joaTge1y2GmVvuYD_
+#define DEFINED_TYPEDEF_FOR_struct_AZzDN1joaTge1y2GmVvuYD_
 
-struct struct_PU75bC6JQHPO0CCSfJRZYE
+struct struct_AZzDN1joaTge1y2GmVvuYD
 {
+  struct_2OohiAWrazWy5wDS5iisgF pfd_sel_spd_kts;
+  struct_2OohiAWrazWy5wDS5iisgF runway_hdg_memorized_deg;
+  struct_2OohiAWrazWy5wDS5iisgF preset_mach_from_mcdu;
+  struct_2OohiAWrazWy5wDS5iisgF preset_speed_from_mcdu_kts;
   struct_2OohiAWrazWy5wDS5iisgF roll_fd_command;
   struct_2OohiAWrazWy5wDS5iisgF pitch_fd_command;
   struct_2OohiAWrazWy5wDS5iisgF yaw_fd_command;
   struct_2OohiAWrazWy5wDS5iisgF discrete_word_5;
   struct_2OohiAWrazWy5wDS5iisgF discrete_word_4;
+  struct_2OohiAWrazWy5wDS5iisgF fm_alt_constraint_ft;
+  struct_2OohiAWrazWy5wDS5iisgF altitude_ft;
+  struct_2OohiAWrazWy5wDS5iisgF mach;
+  struct_2OohiAWrazWy5wDS5iisgF cas_kts;
+  struct_2OohiAWrazWy5wDS5iisgF flx_to_temp_deg_c;
   struct_2OohiAWrazWy5wDS5iisgF ats_discrete_word;
   struct_2OohiAWrazWy5wDS5iisgF ats_fma_discrete_word;
   struct_2OohiAWrazWy5wDS5iisgF discrete_word_3;
   struct_2OohiAWrazWy5wDS5iisgF discrete_word_1;
   struct_2OohiAWrazWy5wDS5iisgF discrete_word_2;
   struct_2OohiAWrazWy5wDS5iisgF discrete_word_6;
+  struct_2OohiAWrazWy5wDS5iisgF synchro_spd_mach_value;
+  struct_2OohiAWrazWy5wDS5iisgF low_target_speed_margin_kts;
+  struct_2OohiAWrazWy5wDS5iisgF high_target_speed_margin_kts;
   struct_2OohiAWrazWy5wDS5iisgF delta_p_ail_voted_cmd_deg;
   struct_2OohiAWrazWy5wDS5iisgF delta_p_splr_voted_cmd_deg;
   struct_2OohiAWrazWy5wDS5iisgF delta_r_voted_cmd_deg;
   struct_2OohiAWrazWy5wDS5iisgF delta_nosewheel_voted_cmd_deg;
   struct_2OohiAWrazWy5wDS5iisgF delta_q_voted_cmd_deg;
+  struct_2OohiAWrazWy5wDS5iisgF track_deg;
+  struct_2OohiAWrazWy5wDS5iisgF heading_deg;
+  struct_2OohiAWrazWy5wDS5iisgF fpa_deg;
+  struct_2OohiAWrazWy5wDS5iisgF n1_command_percent;
+  struct_2OohiAWrazWy5wDS5iisgF vertical_speed_ft_min;
 };
 
 #endif
@@ -579,12 +613,12 @@ struct struct_W99WKMb6phKnoTzGO6R2HC
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_kZpTGwDxfLgcffJ4b9p7V_
-#define DEFINED_TYPEDEF_FOR_struct_kZpTGwDxfLgcffJ4b9p7V_
+#ifndef DEFINED_TYPEDEF_FOR_struct_QHc6Y8sxgJwIygrE998LkH_
+#define DEFINED_TYPEDEF_FOR_struct_QHc6Y8sxgJwIygrE998LkH_
 
-struct struct_kZpTGwDxfLgcffJ4b9p7V
+struct struct_QHc6Y8sxgJwIygrE998LkH
 {
-  struct_PU75bC6JQHPO0CCSfJRZYE fmgc_a_bus;
+  struct_AZzDN1joaTge1y2GmVvuYD fmgc_a_bus;
   struct_W99WKMb6phKnoTzGO6R2HC fmgc_b_bus;
 };
 

@@ -1,7 +1,59 @@
 #include "FcuComputer.h"
-#include "rtwtypes.h"
 #include "FcuComputer_types.h"
+#include "rtwtypes.h"
 #include <cmath>
+
+void FcuComputer::FcuComputer_MATLABFunction(const base_arinc_429 *rtu_u, real_T rtu_bit, uint32_T *rty_y)
+{
+  real32_T tmp;
+  uint32_T a;
+  tmp = std::round(rtu_u->Data);
+  if (tmp < 4.2949673E+9F) {
+    if (tmp >= 0.0F) {
+      a = static_cast<uint32_T>(tmp);
+    } else {
+      a = 0U;
+    }
+  } else {
+    a = MAX_uint32_T;
+  }
+
+  if (-(rtu_bit - 1.0) >= 0.0) {
+    if (-(rtu_bit - 1.0) <= 31.0) {
+      a <<= static_cast<uint8_T>(-(rtu_bit - 1.0));
+    } else {
+      a = 0U;
+    }
+  } else if (-(rtu_bit - 1.0) >= -31.0) {
+    a >>= static_cast<uint8_T>(rtu_bit - 1.0);
+  } else {
+    a = 0U;
+  }
+
+  *rty_y = a & 1U;
+}
+
+void FcuComputer::FcuComputer_MATLABFunction_f_Reset(rtDW_MATLABFunction_FcuComputer_c_T *localDW)
+{
+  localDW->previousInput_not_empty = false;
+}
+
+void FcuComputer::FcuComputer_MATLABFunction_a(boolean_T rtu_u, boolean_T rtu_isRisingEdge, boolean_T *rty_y,
+  rtDW_MATLABFunction_FcuComputer_c_T *localDW)
+{
+  if (!localDW->previousInput_not_empty) {
+    localDW->previousInput = rtu_isRisingEdge;
+    localDW->previousInput_not_empty = true;
+  }
+
+  if (rtu_isRisingEdge) {
+    *rty_y = (rtu_u && (!localDW->previousInput));
+  } else {
+    *rty_y = ((!rtu_u) && localDW->previousInput);
+  }
+
+  localDW->previousInput = rtu_u;
+}
 
 void FcuComputer::FcuComputer_EFISFilterLogic_Reset(rtDW_EFISFilterLogic_FcuComputer_T *localDW)
 {
@@ -29,28 +81,6 @@ void FcuComputer::FcuComputer_EFISFilterLogic(boolean_T rtu_cstr, boolean_T rtu_
   }
 
   *rty_efisFilter = localDW->pEfisFilter;
-}
-
-void FcuComputer::FcuComputer_MATLABFunction_Reset(rtDW_MATLABFunction_FcuComputer_T *localDW)
-{
-  localDW->previousInput_not_empty = false;
-}
-
-void FcuComputer::FcuComputer_MATLABFunction(boolean_T rtu_u, boolean_T rtu_isRisingEdge, boolean_T *rty_y,
-  rtDW_MATLABFunction_FcuComputer_T *localDW)
-{
-  if (!localDW->previousInput_not_empty) {
-    localDW->previousInput = rtu_isRisingEdge;
-    localDW->previousInput_not_empty = true;
-  }
-
-  if (rtu_isRisingEdge) {
-    *rty_y = (rtu_u && (!localDW->previousInput));
-  } else {
-    *rty_y = ((!rtu_u) && localDW->previousInput);
-  }
-
-  localDW->previousInput = rtu_u;
 }
 
 void FcuComputer::FcuComputer_MATLABFunction_j_Init(rtDW_MATLABFunction_FcuComputer_b_T *localDW)
@@ -182,26 +212,28 @@ void FcuComputer::FcuComputer_MATLABFunction_n(const base_fcu_efis_logic_outputs
 
 void FcuComputer::step()
 {
-  base_fcu_efis_logic_outputs rtb_BusAssignment_e_logic_capt_efis;
-  base_fcu_efis_logic_outputs rtb_BusAssignment_e_logic_fo_efis;
+  const base_arinc_429 *rtb_Switch_0;
+  base_fcu_efis_logic_outputs rtb_BusAssignment_a_logic_capt_efis;
+  base_fcu_efis_logic_outputs rtb_BusAssignment_a_logic_fo_efis;
   real_T rtb_value_hpa;
   real_T rtb_value_inhg;
   real32_T rtb_y;
   real32_T rtb_y_b;
-  real32_T rtb_y_e;
-  real32_T rtb_y_h;
-  real32_T rtb_y_k;
+  real32_T rtb_y_ea;
+  real32_T rtb_y_g;
+  real32_T rtb_y_i;
   real32_T rtb_y_l;
+  uint32_T rtb_DataTypeConversion1;
   int8_T rtb_baroMode;
   int8_T rtb_baroValueMode;
   boolean_T rtb_VectorConcatenate[19];
-  boolean_T rtb_Equal5;
   boolean_T rtb_Equal6;
   boolean_T rtb_Equal7;
   boolean_T rtb_Equal8;
   boolean_T rtb_Equal9;
-  boolean_T rtb_qfe;
+  boolean_T rtb_OR;
   boolean_T rtb_qnh;
+  boolean_T rtb_y_pv;
   efis_filter_selection rtb_efisFilter;
   if (FcuComputer_U.in.sim_data.computer_running) {
     real32_T rtb_BusAssignment_o_baro_value_hpa;
@@ -216,128 +248,150 @@ void FcuComputer::step()
     boolean_T rtb_BusAssignment_o_ls_on;
     efis_filter_selection rtb_BusAssignment_o_efis_filter;
     if (!FcuComputer_DWork.Runtime_MODE) {
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_n);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_i);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_g);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_b);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_h);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_n);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_id);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_g);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_bp);
       FcuComputer_EFISFilterLogic_Reset(&FcuComputer_DWork.sf_EFISFilterLogic);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_ik);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_ik);
       FcuComputer_MATLABFunction_g_Reset(&FcuComputer_DWork.sf_MATLABFunction_m);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_j);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_j);
       FcuComputer_MATLABFunction_g_Reset(&FcuComputer_DWork.sf_MATLABFunction_k);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_h);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_b3);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_hc);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_b3);
       FcuComputer_MATLABFunction_a_Reset(&FcuComputer_DWork.sf_MATLABFunction_p);
       FcuComputer_MATLABFunction1_Reset(&FcuComputer_DWork.sf_MATLABFunction1);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_f);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_e);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_hl);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_d);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_c);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_f);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_e);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_hl);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_d);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_cb);
       FcuComputer_EFISFilterLogic_Reset(&FcuComputer_DWork.sf_EFISFilterLogic_h);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_ja0);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_ja0);
       FcuComputer_MATLABFunction_g_Reset(&FcuComputer_DWork.sf_MATLABFunction_ja);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_je);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_je);
       FcuComputer_MATLABFunction_g_Reset(&FcuComputer_DWork.sf_MATLABFunction_hk);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_ng);
-      FcuComputer_MATLABFunction_Reset(&FcuComputer_DWork.sf_MATLABFunction_gx);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_ng);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_gx);
       FcuComputer_MATLABFunction_a_Reset(&FcuComputer_DWork.sf_MATLABFunction_jp);
       FcuComputer_MATLABFunction1_Reset(&FcuComputer_DWork.sf_MATLABFunction1_e);
+      FcuComputer_MATLABFunction_f_Reset(&FcuComputer_DWork.sf_MATLABFunction_a4);
+      FcuComputer_DWork.p_trk_fpa_active = false;
       FcuComputer_DWork.Runtime_MODE = true;
     }
 
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.cstr_button_pushed,
-      FcuComputer_P.PulseNode_isRisingEdge, &rtb_Equal7, &FcuComputer_DWork.sf_MATLABFunction);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.wpt_button_pushed,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.cstr_button_pushed,
+      FcuComputer_P.PulseNode_isRisingEdge, &rtb_Equal7, &FcuComputer_DWork.sf_MATLABFunction_h);
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.wpt_button_pushed,
       FcuComputer_P.PulseNode1_isRisingEdge, &rtb_Equal6, &FcuComputer_DWork.sf_MATLABFunction_n);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.vord_button_pushed,
-      FcuComputer_P.PulseNode2_isRisingEdge, &rtb_Equal5, &FcuComputer_DWork.sf_MATLABFunction_i);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.ndb_button_pushed,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.vord_button_pushed,
+      FcuComputer_P.PulseNode2_isRisingEdge, &rtb_OR, &FcuComputer_DWork.sf_MATLABFunction_id);
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.ndb_button_pushed,
       FcuComputer_P.PulseNode3_isRisingEdge, &rtb_qnh, &FcuComputer_DWork.sf_MATLABFunction_g);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.arpt_button_pushed,
-      FcuComputer_P.PulseNode4_isRisingEdge, &rtb_qfe, &FcuComputer_DWork.sf_MATLABFunction_b);
-    FcuComputer_EFISFilterLogic(rtb_Equal7, rtb_Equal6, rtb_Equal5, rtb_qnh, rtb_qfe, &rtb_efisFilter,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.arpt_button_pushed,
+      FcuComputer_P.PulseNode4_isRisingEdge, &rtb_y_pv, &FcuComputer_DWork.sf_MATLABFunction_bp);
+    FcuComputer_EFISFilterLogic(rtb_Equal7, rtb_Equal6, rtb_OR, rtb_qnh, rtb_y_pv, &rtb_efisFilter,
       &FcuComputer_DWork.sf_EFISFilterLogic);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.fd_button_pushed,
-      FcuComputer_P.PulseNode_isRisingEdge_n, &rtb_qfe, &FcuComputer_DWork.sf_MATLABFunction_ik);
-    FcuComputer_MATLABFunction_m(rtb_qfe, &rtb_Equal5, FcuComputer_P.TFlipFlop_init,
-      &FcuComputer_DWork.sf_MATLABFunction_m);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.ls_button_pushed,
-      FcuComputer_P.PulseNode_isRisingEdge_nj, &rtb_qfe, &FcuComputer_DWork.sf_MATLABFunction_j);
-    FcuComputer_MATLABFunction_m(rtb_qfe, &rtb_qnh, FcuComputer_P.TFlipFlop1_init,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.fd_button_pushed,
+      FcuComputer_P.PulseNode_isRisingEdge_n, &rtb_y_pv, &FcuComputer_DWork.sf_MATLABFunction_ik);
+    FcuComputer_MATLABFunction_m(rtb_y_pv, &rtb_OR, FcuComputer_P.TFlipFlop_init, &FcuComputer_DWork.sf_MATLABFunction_m);
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.ls_button_pushed,
+      FcuComputer_P.PulseNode_isRisingEdge_nj, &rtb_y_pv, &FcuComputer_DWork.sf_MATLABFunction_j);
+    FcuComputer_MATLABFunction_m(rtb_y_pv, &rtb_qnh, FcuComputer_P.TFlipFlop1_init,
       &FcuComputer_DWork.sf_MATLABFunction_k);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.baro_knob.pushed,
-      FcuComputer_P.PulseNode_isRisingEdge_a, &rtb_Equal6, &FcuComputer_DWork.sf_MATLABFunction_h);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.baro_knob.pulled,
-      FcuComputer_P.PulseNode1_isRisingEdge_h, &rtb_qfe, &FcuComputer_DWork.sf_MATLABFunction_b3);
-    FcuComputer_MATLABFunction_p(rtb_Equal6, rtb_qfe, &rtb_Equal7, &rtb_Equal8, &rtb_Equal9,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.baro_knob.pushed,
+      FcuComputer_P.PulseNode_isRisingEdge_a, &rtb_Equal6, &FcuComputer_DWork.sf_MATLABFunction_hc);
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.baro_knob.pulled,
+      FcuComputer_P.PulseNode1_isRisingEdge_h, &rtb_y_pv, &FcuComputer_DWork.sf_MATLABFunction_b3);
+    FcuComputer_MATLABFunction_p(rtb_Equal6, rtb_y_pv, &rtb_Equal7, &rtb_Equal8, &rtb_Equal9,
       &FcuComputer_DWork.sf_MATLABFunction_p);
     FcuComputer_MATLABFunction1(rtb_Equal7, FcuComputer_U.in.discrete_inputs.capt_efis_inputs.baro_is_inhg, static_cast<
       real_T>(FcuComputer_U.in.discrete_inputs.capt_efis_inputs.baro_knob.turns), &rtb_value_inhg, &rtb_value_hpa,
       &FcuComputer_DWork.sf_MATLABFunction1);
     rtb_BusAssignment_o_efis_filter = rtb_efisFilter;
-    rtb_BusAssignment_o_fd_on = rtb_Equal5;
+    rtb_BusAssignment_o_fd_on = rtb_OR;
     rtb_BusAssignment_o_ls_on = rtb_qnh;
     rtb_BusAssignment_o_baro_std = rtb_Equal7;
     rtb_BusAssignment_o_baro_qnh = rtb_Equal8;
-    rtb_BusAssignment_e_logic_capt_efis.baro_qfe = rtb_Equal9;
+    rtb_BusAssignment_a_logic_capt_efis.baro_qfe = rtb_Equal9;
     rtb_BusAssignment_o_baro_value_hpa = static_cast<real32_T>(rtb_value_inhg);
     rtb_BusAssignment_o_baro_value_inhg = static_cast<real32_T>(rtb_value_hpa);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.cstr_button_pushed,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.cstr_button_pushed,
       FcuComputer_P.PulseNode_isRisingEdge_m, &rtb_Equal7, &FcuComputer_DWork.sf_MATLABFunction_f);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.wpt_button_pushed,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.wpt_button_pushed,
       FcuComputer_P.PulseNode1_isRisingEdge_k, &rtb_Equal6, &FcuComputer_DWork.sf_MATLABFunction_e);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.vord_button_pushed,
-      FcuComputer_P.PulseNode2_isRisingEdge_a, &rtb_Equal5, &FcuComputer_DWork.sf_MATLABFunction_hl);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.ndb_button_pushed,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.vord_button_pushed,
+      FcuComputer_P.PulseNode2_isRisingEdge_a, &rtb_OR, &FcuComputer_DWork.sf_MATLABFunction_hl);
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.ndb_button_pushed,
       FcuComputer_P.PulseNode3_isRisingEdge_g, &rtb_qnh, &FcuComputer_DWork.sf_MATLABFunction_d);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.arpt_button_pushed,
-      FcuComputer_P.PulseNode4_isRisingEdge_a, &rtb_qfe, &FcuComputer_DWork.sf_MATLABFunction_c);
-    FcuComputer_EFISFilterLogic(rtb_Equal7, rtb_Equal6, rtb_Equal5, rtb_qnh, rtb_qfe, &rtb_efisFilter,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.arpt_button_pushed,
+      FcuComputer_P.PulseNode4_isRisingEdge_a, &rtb_y_pv, &FcuComputer_DWork.sf_MATLABFunction_cb);
+    FcuComputer_EFISFilterLogic(rtb_Equal7, rtb_Equal6, rtb_OR, rtb_qnh, rtb_y_pv, &rtb_efisFilter,
       &FcuComputer_DWork.sf_EFISFilterLogic_h);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.fd_button_pushed,
-      FcuComputer_P.PulseNode_isRisingEdge_i, &rtb_Equal5, &FcuComputer_DWork.sf_MATLABFunction_ja0);
-    FcuComputer_MATLABFunction_m(rtb_Equal5, &rtb_Equal7, FcuComputer_P.TFlipFlop_init_f,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.fd_button_pushed,
+      FcuComputer_P.PulseNode_isRisingEdge_i, &rtb_OR, &FcuComputer_DWork.sf_MATLABFunction_ja0);
+    FcuComputer_MATLABFunction_m(rtb_OR, &rtb_Equal7, FcuComputer_P.TFlipFlop_init_f,
       &FcuComputer_DWork.sf_MATLABFunction_ja);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.ls_button_pushed,
-      FcuComputer_P.PulseNode_isRisingEdge_h, &rtb_Equal5, &FcuComputer_DWork.sf_MATLABFunction_je);
-    FcuComputer_MATLABFunction_m(rtb_Equal5, &rtb_Equal6, FcuComputer_P.TFlipFlop1_init_a,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.ls_button_pushed,
+      FcuComputer_P.PulseNode_isRisingEdge_h, &rtb_OR, &FcuComputer_DWork.sf_MATLABFunction_je);
+    FcuComputer_MATLABFunction_m(rtb_OR, &rtb_Equal6, FcuComputer_P.TFlipFlop1_init_a,
       &FcuComputer_DWork.sf_MATLABFunction_hk);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.baro_knob.pushed,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.baro_knob.pushed,
       FcuComputer_P.PulseNode_isRisingEdge_o, &rtb_Equal8, &FcuComputer_DWork.sf_MATLABFunction_ng);
-    FcuComputer_MATLABFunction(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.baro_knob.pulled,
-      FcuComputer_P.PulseNode1_isRisingEdge_f, &rtb_Equal5, &FcuComputer_DWork.sf_MATLABFunction_gx);
-    FcuComputer_MATLABFunction_p(rtb_Equal8, rtb_Equal5, &rtb_Equal9, &rtb_qnh, &rtb_qfe,
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.baro_knob.pulled,
+      FcuComputer_P.PulseNode1_isRisingEdge_f, &rtb_OR, &FcuComputer_DWork.sf_MATLABFunction_gx);
+    FcuComputer_MATLABFunction_p(rtb_Equal8, rtb_OR, &rtb_Equal9, &rtb_qnh, &rtb_y_pv,
       &FcuComputer_DWork.sf_MATLABFunction_jp);
     FcuComputer_MATLABFunction1(rtb_Equal9, FcuComputer_U.in.discrete_inputs.fo_efis_inputs.baro_is_inhg,
       static_cast<real_T>(FcuComputer_U.in.discrete_inputs.fo_efis_inputs.baro_knob.turns), &rtb_value_hpa,
       &rtb_value_inhg, &FcuComputer_DWork.sf_MATLABFunction1_e);
-    rtb_y_h = static_cast<real32_T>(rtb_value_hpa);
-    rtb_y_k = static_cast<real32_T>(rtb_value_inhg);
-    rtb_BusAssignment_e_logic_capt_efis.fd_on = rtb_BusAssignment_o_fd_on;
-    rtb_BusAssignment_e_logic_capt_efis.ls_on = rtb_BusAssignment_o_ls_on;
-    rtb_BusAssignment_e_logic_capt_efis.efis_filter = rtb_BusAssignment_o_efis_filter;
-    rtb_BusAssignment_e_logic_capt_efis.baro_std = rtb_BusAssignment_o_baro_std;
-    rtb_BusAssignment_e_logic_capt_efis.baro_qnh = rtb_BusAssignment_o_baro_qnh;
-    rtb_BusAssignment_e_logic_capt_efis.baro_value_hpa = rtb_BusAssignment_o_baro_value_hpa;
-    rtb_BusAssignment_e_logic_capt_efis.baro_value_inhg = rtb_BusAssignment_o_baro_value_inhg;
-    rtb_BusAssignment_e_logic_fo_efis.fd_on = rtb_Equal7;
-    rtb_BusAssignment_e_logic_fo_efis.ls_on = rtb_Equal6;
-    rtb_BusAssignment_e_logic_fo_efis.efis_filter = rtb_efisFilter;
-    rtb_BusAssignment_e_logic_fo_efis.baro_std = rtb_Equal9;
-    rtb_BusAssignment_e_logic_fo_efis.baro_qnh = rtb_qnh;
-    rtb_BusAssignment_e_logic_fo_efis.baro_qfe = rtb_qfe;
-    rtb_BusAssignment_e_logic_fo_efis.baro_value_hpa = static_cast<real32_T>(rtb_value_hpa);
-    rtb_BusAssignment_e_logic_fo_efis.baro_value_inhg = static_cast<real32_T>(rtb_value_inhg);
-    FcuComputer_MATLABFunction_n(&rtb_BusAssignment_e_logic_capt_efis,
-      &FcuComputer_U.in.discrete_inputs.capt_efis_inputs, &rtb_baroMode, &rtb_y_h, &rtb_baroValueMode);
+    rtb_y_g = static_cast<real32_T>(rtb_value_hpa);
+    rtb_y_ea = static_cast<real32_T>(rtb_value_inhg);
+    rtb_OR = !FcuComputer_U.in.discrete_inputs.ap_1_engaged;
+    rtb_OR = (FcuComputer_U.in.discrete_inputs.ap_2_engaged || (rtb_OR && FcuComputer_U.in.discrete_inputs.fd_2_engaged)
+              || (rtb_OR && (!FcuComputer_U.in.discrete_inputs.fd_1_engaged) &&
+                  FcuComputer_U.in.discrete_inputs.athr_2_engaged));
+    rtb_BusAssignment_a_logic_fo_efis.baro_qfe = rtb_y_pv;
+    FcuComputer_MATLABFunction_a(FcuComputer_U.in.discrete_inputs.afs_inputs.trk_fpa_button_pressed,
+      FcuComputer_P.PulseNode_isRisingEdge_oa, &rtb_y_pv, &FcuComputer_DWork.sf_MATLABFunction_a4);
+    if (rtb_y_pv) {
+      FcuComputer_DWork.p_trk_fpa_active = !FcuComputer_DWork.p_trk_fpa_active;
+    }
+
+    if (rtb_OR) {
+      rtb_Switch_0 = &FcuComputer_U.in.bus_inputs.fmgc_1_bus.discrete_word_5;
+    } else {
+      rtb_Switch_0 = &FcuComputer_U.in.bus_inputs.fmgc_2_bus.discrete_word_5;
+    }
+
+    FcuComputer_MATLABFunction(rtb_Switch_0, FcuComputer_P.BitfromLabel_bit, &rtb_DataTypeConversion1);
+    rtb_y_pv = (rtb_Switch_0->SSM == static_cast<uint32_T>(SignStatusMatrix::NormalOperation));
+    FcuComputer_Y.out.logic.afs.auto_speed_control = ((rtb_DataTypeConversion1 != 0U) && rtb_y_pv);
+    FcuComputer_MATLABFunction(rtb_Switch_0, FcuComputer_P.BitfromLabel1_bit, &rtb_DataTypeConversion1);
+    FcuComputer_Y.out.logic.afs.selected_speed_control = (rtb_y_pv && (rtb_DataTypeConversion1 != 0U));
+    rtb_BusAssignment_a_logic_capt_efis.fd_on = rtb_BusAssignment_o_fd_on;
+    rtb_BusAssignment_a_logic_capt_efis.ls_on = rtb_BusAssignment_o_ls_on;
+    rtb_BusAssignment_a_logic_capt_efis.efis_filter = rtb_BusAssignment_o_efis_filter;
+    rtb_BusAssignment_a_logic_capt_efis.baro_std = rtb_BusAssignment_o_baro_std;
+    rtb_BusAssignment_a_logic_capt_efis.baro_qnh = rtb_BusAssignment_o_baro_qnh;
+    rtb_BusAssignment_a_logic_capt_efis.baro_value_hpa = rtb_BusAssignment_o_baro_value_hpa;
+    rtb_BusAssignment_a_logic_capt_efis.baro_value_inhg = rtb_BusAssignment_o_baro_value_inhg;
+    rtb_BusAssignment_a_logic_fo_efis.fd_on = rtb_Equal7;
+    rtb_BusAssignment_a_logic_fo_efis.ls_on = rtb_Equal6;
+    rtb_BusAssignment_a_logic_fo_efis.efis_filter = rtb_efisFilter;
+    rtb_BusAssignment_a_logic_fo_efis.baro_std = rtb_Equal9;
+    rtb_BusAssignment_a_logic_fo_efis.baro_qnh = rtb_qnh;
+    rtb_BusAssignment_a_logic_fo_efis.baro_value_hpa = static_cast<real32_T>(rtb_value_hpa);
+    rtb_BusAssignment_a_logic_fo_efis.baro_value_inhg = static_cast<real32_T>(rtb_value_inhg);
+    FcuComputer_MATLABFunction_n(&rtb_BusAssignment_a_logic_capt_efis,
+      &FcuComputer_U.in.discrete_inputs.capt_efis_inputs, &rtb_baroMode, &rtb_y_g, &rtb_baroValueMode);
     rtb_capt_efis_outputs_baro_value_mode = rtb_baroMode;
-    rtb_capt_efis_outputs_baro_value = rtb_y_h;
+    rtb_capt_efis_outputs_baro_value = rtb_y_g;
     rtb_capt_efis_outputs_baro_mode = rtb_baroValueMode;
-    FcuComputer_MATLABFunction_n(&rtb_BusAssignment_e_logic_fo_efis, &FcuComputer_U.in.discrete_inputs.fo_efis_inputs,
-      &rtb_baroValueMode, &rtb_y_h, &rtb_baroMode);
-    rtb_BusConversion_InsertedFor_BusAssignment_at_inport_1_BusCreator1_fo_efis_outputs_baro_value = rtb_y_h;
+    FcuComputer_MATLABFunction_n(&rtb_BusAssignment_a_logic_fo_efis, &FcuComputer_U.in.discrete_inputs.fo_efis_inputs,
+      &rtb_baroValueMode, &rtb_y_g, &rtb_baroMode);
+    rtb_BusConversion_InsertedFor_BusAssignment_at_inport_1_BusCreator1_fo_efis_outputs_baro_value = rtb_y_g;
     rtb_VectorConcatenate[0] = FcuComputer_U.in.discrete_inputs.capt_efis_inputs.baro_is_inhg;
     rtb_VectorConcatenate[1] = FcuComputer_P.Constant10_Value_f;
     rtb_VectorConcatenate[2] = FcuComputer_P.Constant10_Value_f;
@@ -362,7 +416,7 @@ void FcuComputer::step()
       FcuComputer_P.EnumeratedConstant4_Value_n);
     rtb_VectorConcatenate[18] = (FcuComputer_U.in.discrete_inputs.capt_efis_inputs.efis_range ==
       FcuComputer_P.EnumeratedConstant5_Value_a);
-    FcuComputer_MATLABFunction_e(rtb_VectorConcatenate, &rtb_y_e);
+    FcuComputer_MATLABFunction_e(rtb_VectorConcatenate, &rtb_y_i);
     rtb_VectorConcatenate[0] = FcuComputer_U.in.discrete_inputs.fo_efis_inputs.baro_is_inhg;
     rtb_VectorConcatenate[1] = FcuComputer_P.Constant10_Value_a;
     rtb_VectorConcatenate[2] = FcuComputer_P.Constant10_Value_a;
@@ -416,7 +470,7 @@ void FcuComputer::step()
       FcuComputer_U.in.discrete_inputs.capt_efis_inputs.efis_navaid_2);
     rtb_VectorConcatenate[17] = rtb_BusAssignment_o_baro_std;
     rtb_VectorConcatenate[18] = rtb_BusAssignment_o_baro_qnh;
-    FcuComputer_MATLABFunction_e(rtb_VectorConcatenate, &rtb_y_k);
+    FcuComputer_MATLABFunction_e(rtb_VectorConcatenate, &rtb_y_ea);
     rtb_VectorConcatenate[0] = (FcuComputer_U.in.discrete_inputs.fo_efis_inputs.efis_mode ==
       FcuComputer_P.EnumeratedConstant2_Value_a);
     rtb_VectorConcatenate[1] = (FcuComputer_U.in.discrete_inputs.fo_efis_inputs.efis_mode ==
@@ -445,7 +499,7 @@ void FcuComputer::step()
       FcuComputer_U.in.discrete_inputs.fo_efis_inputs.efis_navaid_2);
     rtb_VectorConcatenate[17] = rtb_Equal9;
     rtb_VectorConcatenate[18] = rtb_qnh;
-    FcuComputer_MATLABFunction_e(rtb_VectorConcatenate, &rtb_y_h);
+    FcuComputer_MATLABFunction_e(rtb_VectorConcatenate, &rtb_y_g);
     rtb_VectorConcatenate[0] = FcuComputer_P.Constant19_Value;
     rtb_VectorConcatenate[1] = FcuComputer_P.Constant19_Value;
     rtb_VectorConcatenate[2] = FcuComputer_P.Constant19_Value;
@@ -479,20 +533,32 @@ void FcuComputer::step()
     rtb_VectorConcatenate[10] = FcuComputer_P.Constant20_Value;
     rtb_VectorConcatenate[11] = FcuComputer_P.Constant20_Value;
     rtb_VectorConcatenate[12] = FcuComputer_P.Constant20_Value;
-    rtb_VectorConcatenate[13] = FcuComputer_P.Constant20_Value;
-    rtb_VectorConcatenate[14] = FcuComputer_P.Constant20_Value;
+    rtb_VectorConcatenate[13] = !FcuComputer_DWork.p_trk_fpa_active;
+    rtb_VectorConcatenate[14] = FcuComputer_DWork.p_trk_fpa_active;
     rtb_VectorConcatenate[15] = FcuComputer_P.Constant20_Value;
     rtb_VectorConcatenate[16] = FcuComputer_P.Constant20_Value;
     rtb_VectorConcatenate[17] = FcuComputer_P.Constant20_Value;
     rtb_VectorConcatenate[18] = FcuComputer_P.Constant20_Value;
     FcuComputer_MATLABFunction_e(rtb_VectorConcatenate, &rtb_y_l);
     FcuComputer_Y.out.data = FcuComputer_U.in;
-    rtb_Equal5 = !FcuComputer_U.in.discrete_inputs.ap_1_engaged;
-    FcuComputer_Y.out.logic.fmgc_1_has_priority = (FcuComputer_U.in.discrete_inputs.ap_2_engaged || (rtb_Equal5 &&
-      FcuComputer_U.in.discrete_inputs.fd_2_engaged) || (rtb_Equal5 && (!FcuComputer_U.in.discrete_inputs.fd_1_engaged) &&
-      FcuComputer_U.in.discrete_inputs.athr_2_engaged));
-    FcuComputer_Y.out.logic.capt_efis = rtb_BusAssignment_e_logic_capt_efis;
-    FcuComputer_Y.out.logic.fo_efis = rtb_BusAssignment_e_logic_fo_efis;
+    FcuComputer_Y.out.logic.afs.fmgc_1_has_priority = rtb_OR;
+    FcuComputer_Y.out.logic.afs.trk_fpa_active = FcuComputer_DWork.p_trk_fpa_active;
+    FcuComputer_Y.out.logic.afs.spd_mach_display_value = 0.0;
+    FcuComputer_Y.out.logic.afs.spd_mach_dashes = false;
+    FcuComputer_Y.out.logic.afs.hdg_trk_managed = false;
+    FcuComputer_Y.out.logic.afs.hdg_trk_selected = false;
+    FcuComputer_Y.out.logic.afs.hdg_trk_display_value = 0.0;
+    FcuComputer_Y.out.logic.afs.hdg_trk_dashes = false;
+    FcuComputer_Y.out.logic.afs.alt_display_value = 0.0;
+    FcuComputer_Y.out.logic.afs.lvl_ch_managed = false;
+    FcuComputer_Y.out.logic.afs.lvl_ch_selected = false;
+    FcuComputer_Y.out.logic.afs.vs_fpa_display_value = FcuComputer_P.Constant1_Value.afs.vs_fpa_display_value;
+    FcuComputer_Y.out.logic.afs.vs_fpa_dashes = FcuComputer_P.Constant1_Value.afs.vs_fpa_dashes;
+    FcuComputer_Y.out.logic.afs.exped_active = FcuComputer_P.Constant1_Value.afs.exped_active;
+    FcuComputer_Y.out.logic.afs.loc_only_active = FcuComputer_P.Constant1_Value.afs.loc_only_active;
+    FcuComputer_Y.out.logic.afs.appr_active = FcuComputer_P.Constant1_Value.afs.appr_active;
+    FcuComputer_Y.out.logic.capt_efis = rtb_BusAssignment_a_logic_capt_efis;
+    FcuComputer_Y.out.logic.fo_efis = rtb_BusAssignment_a_logic_fo_efis;
     FcuComputer_Y.out.discrete_outputs.capt_efis_outputs.fd_light_on = rtb_BusAssignment_o_fd_on;
     FcuComputer_Y.out.discrete_outputs.capt_efis_outputs.ls_light_on = rtb_BusAssignment_o_ls_on;
     FcuComputer_Y.out.discrete_outputs.capt_efis_outputs.cstr_light_on = (rtb_BusAssignment_o_efis_filter ==
@@ -524,21 +590,25 @@ void FcuComputer::step()
     FcuComputer_Y.out.discrete_outputs.fo_efis_outputs.baro_value =
       rtb_BusConversion_InsertedFor_BusAssignment_at_inport_1_BusCreator1_fo_efis_outputs_baro_value;
     FcuComputer_Y.out.discrete_outputs.fo_efis_outputs.baro_mode = rtb_baroMode;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.loc_light_on = FcuComputer_P.Constant2_Value_i;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.exped_light_on = FcuComputer_P.Constant3_Value_d;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.appr_light_on = FcuComputer_P.Constant4_Value_j;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.ap_1_light_on = FcuComputer_P.Constant5_Value_a;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.ap_2_light_on = FcuComputer_P.Constant6_Value_f;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.athr_light_on = FcuComputer_P.Constant7_Value_p;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.trk_fpa_mode = FcuComputer_P.Constant1_Value_f;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.loc_light_on = FcuComputer_P.Constant1_Value.afs.loc_only_active;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.exped_light_on = FcuComputer_P.Constant1_Value.afs.exped_active;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.appr_light_on = FcuComputer_P.Constant1_Value.afs.appr_active;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.ap_1_light_on = FcuComputer_U.in.discrete_inputs.ap_1_engaged;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.ap_2_light_on = FcuComputer_U.in.discrete_inputs.ap_2_engaged;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.athr_light_on = (FcuComputer_U.in.discrete_inputs.athr_1_engaged ||
+      FcuComputer_U.in.discrete_inputs.athr_2_engaged);
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.trk_fpa_mode = FcuComputer_DWork.p_trk_fpa_active;
     FcuComputer_Y.out.discrete_outputs.afs_outputs.mach_mode = FcuComputer_P.Constant15_Value;
     FcuComputer_Y.out.discrete_outputs.afs_outputs.spd_mach_value = FcuComputer_P.Constant8_Value;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.spd_mach_managed = FcuComputer_P.Constant9_Value_g;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.spd_mach_dashes = FcuComputer_P.Constant1_Value_c;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.spd_mach_managed = FcuComputer_P.Constant4_Value_m;
     FcuComputer_Y.out.discrete_outputs.afs_outputs.hdg_trk_value = FcuComputer_P.Constant10_Value;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.hdg_trk_managed = FcuComputer_P.Constant11_Value;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.hdg_trk_dashes = FcuComputer_P.Constant2_Value_e;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.hdg_trk_managed = FcuComputer_P.Constant5_Value_a;
     FcuComputer_Y.out.discrete_outputs.afs_outputs.alt_value = FcuComputer_P.Constant12_Value;
-    FcuComputer_Y.out.discrete_outputs.afs_outputs.lvl_ch_managed = FcuComputer_P.Constant13_Value;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.lvl_ch_managed = FcuComputer_P.Constant6_Value_b;
     FcuComputer_Y.out.discrete_outputs.afs_outputs.vs_fpa_value = FcuComputer_P.Constant14_Value;
+    FcuComputer_Y.out.discrete_outputs.afs_outputs.vs_fpa_dashes = FcuComputer_P.Constant3_Value_o;
     FcuComputer_Y.out.discrete_outputs.fcu_healthy = FcuComputer_P.Constant1_Value_i;
     FcuComputer_Y.out.bus_outputs.selected_hdg_deg.SSM = static_cast<uint32_T>(FcuComputer_P.EnumeratedConstant1_Value);
     FcuComputer_Y.out.bus_outputs.selected_hdg_deg.Data = FcuComputer_P.Constant16_Value;
@@ -564,16 +634,16 @@ void FcuComputer::step()
     FcuComputer_Y.out.bus_outputs.ats_discrete_word.Data = FcuComputer_P.Constant9_Value;
     FcuComputer_Y.out.bus_outputs.eis_discrete_word_1_left.SSM = static_cast<uint32_T>
       (FcuComputer_P.EnumeratedConstant1_Value);
-    FcuComputer_Y.out.bus_outputs.eis_discrete_word_1_left.Data = rtb_y_e;
+    FcuComputer_Y.out.bus_outputs.eis_discrete_word_1_left.Data = rtb_y_i;
     FcuComputer_Y.out.bus_outputs.eis_discrete_word_1_right.SSM = static_cast<uint32_T>
       (FcuComputer_P.EnumeratedConstant1_Value);
     FcuComputer_Y.out.bus_outputs.eis_discrete_word_1_right.Data = rtb_y;
     FcuComputer_Y.out.bus_outputs.eis_discrete_word_2_left.SSM = static_cast<uint32_T>
       (FcuComputer_P.EnumeratedConstant1_Value);
-    FcuComputer_Y.out.bus_outputs.eis_discrete_word_2_left.Data = rtb_y_k;
+    FcuComputer_Y.out.bus_outputs.eis_discrete_word_2_left.Data = rtb_y_ea;
     FcuComputer_Y.out.bus_outputs.eis_discrete_word_2_right.SSM = static_cast<uint32_T>
       (FcuComputer_P.EnumeratedConstant1_Value);
-    FcuComputer_Y.out.bus_outputs.eis_discrete_word_2_right.Data = rtb_y_h;
+    FcuComputer_Y.out.bus_outputs.eis_discrete_word_2_right.Data = rtb_y_g;
     FcuComputer_Y.out.bus_outputs.baro_setting_left_hpa.SSM = static_cast<uint32_T>
       (FcuComputer_P.EnumeratedConstant1_Value);
     FcuComputer_Y.out.bus_outputs.baro_setting_left_hpa.Data = rtb_BusAssignment_o_baro_value_hpa;

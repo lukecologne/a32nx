@@ -36,6 +36,8 @@ class FmgcComputer final
     base_fmgc_logic_outputs fmgc_logic_output_MATLABStruct;
     base_fmgc_ap_fd_logic_outputs fmgc_ap_fd_logic_output_MATLABStruct;
     base_fmgc_discrete_outputs fmgc_discrete_output_MATLABStruct;
+    real_T BitfromLabel_bit;
+    real_T BitfromLabel1_bit;
     real_T ConfirmNode_timeDelay;
     real_T ConfirmNode_timeDelay_b;
     SignStatusMatrix EnumeratedConstant1_Value;
@@ -48,14 +50,31 @@ class FmgcComputer final
     fmgc_outputs out_Y0;
     base_fmgc_bus_outputs Constant4_Value;
     base_fmgc_ap_fd_logic_outputs Delay_InitialCondition;
+    real32_T Constant17_Value;
+    real32_T Constant18_Value;
+    real32_T Constant19_Value;
+    real32_T Constant20_Value;
     real32_T Constant16_Value;
     real32_T Constant1_Value;
     real32_T Constant2_Value;
+    real32_T Constant21_Value;
+    real32_T Constant22_Value;
+    real32_T Constant23_Value;
+    real32_T Constant24_Value;
+    real32_T Constant25_Value;
+    real32_T Constant26_Value;
+    real32_T Constant27_Value;
+    real32_T Constant28_Value;
     real32_T Constant11_Value;
     real32_T Constant12_Value;
     real32_T Constant13_Value;
     real32_T Constant14_Value;
     real32_T Constant15_Value;
+    real32_T Constant29_Value;
+    real32_T Constant30_Value;
+    real32_T Constant31_Value;
+    real32_T Constant32_Value;
+    real32_T Constant33_Value;
     boolean_T Delay_InitialCondition_g;
     boolean_T Logic_table[16];
     boolean_T Logic_table_h[16];
@@ -101,6 +120,7 @@ class FmgcComputer final
     rtu_timeDelay, boolean_T *rty_y, rtDW_MATLABFunction_FmgcComputer_T *localDW);
   static void FmgcComputer_RAMonitoring(const fmgc_outputs *rtu_in, real32_T *rty_raComputationValue, boolean_T
     *rty_dualRaFailure);
+  static void FmgcComputer_MATLABFunction_c(const base_arinc_429 *rtu_u, real_T rtu_bit, uint32_T *rty_y);
   static void FmgcComputer_MATLABFunction_g(const boolean_T rtu_u[19], real32_T *rty_y);
 };
 
