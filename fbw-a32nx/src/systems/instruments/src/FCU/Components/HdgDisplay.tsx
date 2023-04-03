@@ -6,6 +6,12 @@ export class HdgDisplay extends DisplayComponent<{bus: EventBus}> {
 
     private dashes = false;
 
+    private managed = false;
+
+    private trkFpaMode = false;
+
+    private lightsTest = false;
+
     private dotVisibilitySub = Subject.create('');
 
     private hdgLabelSub = Subject.create('');
@@ -19,9 +25,18 @@ export class HdgDisplay extends DisplayComponent<{bus: EventBus}> {
 
         const sub = this.props.bus.getSubscriber<FcuSimvars>();
 
+        sub.on('lightsTest').whenChanged().handle((value) => {
+            this.lightsTest = value === 0;
+
+            this.handleLabels();
+            this.handleHdgDisplay();
+            this.handleDot();
+        });
+
         sub.on('afsDisplayTrkFpaMode').whenChanged().handle((value) => {
-            this.trkLabelSub.set(value ? 'Active' : 'Inactive');
-            this.hdgLabelSub.set(value ? 'Inactive' : 'Active');
+            this.trkFpaMode = value;
+
+            this.handleLabels();
         });
 
         sub.on('afsDisplayHdgTrkDashes').whenChanged().handle((value) => {
@@ -35,16 +50,28 @@ export class HdgDisplay extends DisplayComponent<{bus: EventBus}> {
         });
 
         sub.on('afsDisplayHdgTrkManaged').whenChanged().handle((value) => {
-            this.dotVisibilitySub.set(value ? 'visible' : 'hidden');
+            this.managed = value;
+            this.handleDot();
         });
     }
 
     private handleHdgDisplay() {
-        if (this.dashes) {
+        if (this.lightsTest) {
+            this.valueSub.set('888');
+        } else if (this.dashes) {
             this.valueSub.set('---');
         } else {
             this.valueSub.set(Math.round(this.value).toString().padStart(3, '0'));
         }
+    }
+
+    private handleLabels() {
+        this.trkLabelSub.set(this.trkFpaMode || this.lightsTest ? 'Active' : 'Inactive');
+        this.hdgLabelSub.set(!this.trkFpaMode || this.lightsTest ? 'Active' : 'Inactive');
+    }
+
+    private handleDot() {
+        this.dotVisibilitySub.set(this.managed || this.lightsTest ? 'visible' : 'hidden');
     }
 
     public render(): VNode {

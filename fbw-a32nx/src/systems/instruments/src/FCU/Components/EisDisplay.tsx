@@ -15,65 +15,77 @@ export class EisDisplay extends DisplayComponent<EisDisplayProps> {
 
     private baroMode = 0;
 
+    private lightsTest = false;
+
     private baroValueSub = Subject.create('');
 
-    private qnhRef = FSComponent.createRef<SVGGElement>();
+    private qnhLabelSub = Subject.create('');
 
-    private qfeRef = FSComponent.createRef<SVGGElement>();
+    private qfeLabelSub = Subject.create('');
 
     public onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
         const sub = this.props.bus.getSubscriber<FcuSimvars>();
 
+        sub.on('lightsTest').whenChanged().handle((value) => {
+            this.lightsTest = value === 0;
+
+            this.handleLabels();
+            this.handleValue();
+        });
+
         sub.on(`eisDisplay${this.props.isCaptSide ? 'Left' : 'Right'}BaroValueMode`).whenChanged().handle((newVal) => {
             this.baroValueMode = newVal;
-            this.handleDisplay();
+            this.handleLabels();
+            this.handleValue();
         });
 
         sub.on(`eisDisplay${this.props.isCaptSide ? 'Left' : 'Right'}BaroValue`).whenChanged().handle((newVal) => {
             this.baroValue = newVal;
-            this.handleDisplay();
+            this.handleValue();
         });
 
         sub.on(`eisDisplay${this.props.isCaptSide ? 'Left' : 'Right'}BaroMode`).whenChanged().handle((newVal) => {
             this.baroMode = newVal;
-            this.handleDisplay();
+            this.handleLabels();
+            this.handleValue();
         });
     }
 
-    private handleDisplay() {
-        if (this.baroValueMode === 0) {
+    private handleValue() {
+        if (this.lightsTest) {
+            this.baroValueSub.set('88.88');
+        } else if (this.baroValueMode === 0) {
             this.baroValueSub.set('Std');
         } else if (this.baroValueMode === 1) {
             this.baroValueSub.set(Math.round(this.baroValue).toString());
         } else {
             this.baroValueSub.set(this.baroValue.toFixed(2));
         }
+    }
 
-        if (this.baroMode === 0) {
-            this.qfeRef.instance.classList.remove('Active');
-            this.qfeRef.instance.classList.add('Inactive');
-            this.qnhRef.instance.classList.remove('Active');
-            this.qnhRef.instance.classList.add('Inactive');
+    private handleLabels() {
+        if (this.lightsTest) {
+            this.qfeLabelSub.set('Active');
+            this.qnhLabelSub.set('Active');
+        } else if (this.baroMode === 0) {
+            this.qfeLabelSub.set('Inactive');
+            this.qnhLabelSub.set('Inactive');
         } else if (this.baroMode === 1) {
-            this.qfeRef.instance.classList.remove('Active');
-            this.qfeRef.instance.classList.add('Inactive');
-            this.qnhRef.instance.classList.remove('Inactive');
-            this.qnhRef.instance.classList.add('Active');
+            this.qfeLabelSub.set('Inactive');
+            this.qnhLabelSub.set('Active');
         } else {
-            this.qfeRef.instance.classList.remove('Inactive');
-            this.qfeRef.instance.classList.add('Active');
-            this.qnhRef.instance.classList.remove('Active');
-            this.qnhRef.instance.classList.add('Inactive');
+            this.qfeLabelSub.set('Active');
+            this.qnhLabelSub.set('Inactive');
         }
     }
 
     public render(): VNode {
         return (
             <g transform={`translate(${this.props.x} ${this.props.y})`} class="efis-background">
-                <text id="QFE" class="Inactive" x="25.088" y="32.768" ref={this.qfeRef}>QFE</text>
-                <text id="QNH" class="Active" x="150.528" y="32.768" text-anchor="end" ref={this.qnhRef}>QNH</text>
+                <text id="QFE" class={this.qfeLabelSub} x="25.088" y="32.768">QFE</text>
+                <text id="QNH" class={this.qnhLabelSub} x="150.528" y="32.768" text-anchor="end">QNH</text>
                 <text id="Value" class="Value" x="14.336" y="88.064">{this.baroValueSub}</text>
             </g>
         );

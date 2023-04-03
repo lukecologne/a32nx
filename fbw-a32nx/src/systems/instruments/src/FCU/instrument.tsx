@@ -21,6 +21,8 @@ class A32NX_FCU extends BaseInstrument {
         this.bus = new EventBus();
         this.simVarPublisher = new FCUSimvarPublisher(this.bus);
 
+        this.simVarPublisher.subscribe('lightsTest');
+
         this.simVarPublisher.subscribe('eisDisplayLeftBaroValueMode');
         this.simVarPublisher.subscribe('eisDisplayLeftBaroValue');
         this.simVarPublisher.subscribe('eisDisplayLeftBaroMode');

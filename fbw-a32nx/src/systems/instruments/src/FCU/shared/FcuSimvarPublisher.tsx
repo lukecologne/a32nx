@@ -1,6 +1,8 @@
 import { EventBus, SimVarDefinition, SimVarValueType, SimVarPublisher } from 'msfssdk';
 
 export interface FcuSimvars {
+    lightsTest: number;
+
     eisDisplayLeftBaroValueMode: number;
     eisDisplayLeftBaroValue: number;
     eisDisplayLeftBaroMode: number;
@@ -23,6 +25,8 @@ export interface FcuSimvars {
 }
 
 export enum FcuVars {
+    lightsTest = 'L:A32NX_OVHD_INTLT_ANN',
+
     eisDisplayLeftBaroValueMode = 'L:A32NX_FCU_EFIS_L_DISPLAY_BARO_VALUE_MODE',
     eisDisplayLeftBaroValue = 'L:A32NX_FCU_EFIS_L_DISPLAY_BARO_VALUE',
     eisDisplayLeftBaroMode = 'L:A32NX_FCU_EFIS_L_DISPLAY_BARO_MODE',
@@ -46,6 +50,8 @@ export enum FcuVars {
 
 export class FCUSimvarPublisher extends SimVarPublisher<FcuSimvars> {
     private static simvars = new Map<keyof FcuSimvars, SimVarDefinition>([
+        ['lightsTest', { name: FcuVars.lightsTest, type: SimVarValueType.Number }],
+
         ['eisDisplayLeftBaroValueMode', { name: FcuVars.eisDisplayLeftBaroValueMode, type: SimVarValueType.Number }],
         ['eisDisplayLeftBaroValue', { name: FcuVars.eisDisplayLeftBaroValue, type: SimVarValueType.Number }],
         ['eisDisplayLeftBaroMode', { name: FcuVars.eisDisplayLeftBaroMode, type: SimVarValueType.Number }],

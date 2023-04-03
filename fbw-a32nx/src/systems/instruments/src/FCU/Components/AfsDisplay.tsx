@@ -9,6 +9,10 @@ interface AfsDisplayProps extends ComponentProps {
 }
 
 export class AfsDisplay extends DisplayComponent<AfsDisplayProps> {
+    private lightsTest = false;
+
+    private trkFpaMode = false;
+
     private trkFpaLabelSub = Subject.create('');
 
     private hdgVsLabelSub = Subject.create('');
@@ -18,10 +22,21 @@ export class AfsDisplay extends DisplayComponent<AfsDisplayProps> {
 
         const sub = this.props.bus.getSubscriber<FcuSimvars>();
 
-        sub.on('afsDisplayTrkFpaMode').whenChanged().handle((value) => {
-            this.trkFpaLabelSub.set(value ? 'Active' : 'Inactive');
-            this.hdgVsLabelSub.set(value ? 'Inactive' : 'Active');
+        sub.on('lightsTest').whenChanged().handle((value) => {
+            this.lightsTest = value === 0;
+
+            this.handleLabels();
         });
+
+        sub.on('afsDisplayTrkFpaMode').whenChanged().handle((value) => {
+            this.trkFpaMode = value;
+            this.handleLabels();
+        });
+    }
+
+    private handleLabels() {
+        this.trkFpaLabelSub.set(this.trkFpaMode || this.lightsTest ? 'Active' : 'Inactive');
+        this.hdgVsLabelSub.set(!this.trkFpaMode || this.lightsTest ? 'Active' : 'Inactive');
     }
 
     public render(): VNode {

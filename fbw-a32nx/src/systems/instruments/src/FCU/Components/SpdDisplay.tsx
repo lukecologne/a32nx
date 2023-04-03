@@ -6,7 +6,11 @@ export class SpdDisplay extends DisplayComponent<{bus: EventBus}> {
 
     private dashes = false;
 
+    private managed = false;
+
     private machActive = false;
+
+    private lightsTest = false;
 
     private dotVisibilitySub = Subject.create('');
 
@@ -21,10 +25,16 @@ export class SpdDisplay extends DisplayComponent<{bus: EventBus}> {
 
         const sub = this.props.bus.getSubscriber<FcuSimvars>();
 
+        sub.on('lightsTest').whenChanged().handle((value) => {
+            this.lightsTest = value === 0;
+
+            this.handleLabels();
+            this.handleSpeedDisplay();
+            this.handleDot();
+        });
+
         sub.on('afsDisplayMachMode').whenChanged().handle((value) => {
             this.machActive = value;
-            this.machLabelSub.set(value ? 'Active' : 'Inactive');
-            this.spdLabelSub.set(value ? 'Inactive' : 'Active');
 
             this.handleSpeedDisplay();
         });
@@ -40,12 +50,15 @@ export class SpdDisplay extends DisplayComponent<{bus: EventBus}> {
         });
 
         sub.on('afsDisplaySpdMachManaged').whenChanged().handle((value) => {
-            this.dotVisibilitySub.set(value ? 'visible' : 'hidden');
+            this.managed = value;
+            this.handleDot();
         });
     }
 
     private handleSpeedDisplay() {
-        if (this.machActive && this.dashes) {
+        if (this.lightsTest) {
+            this.valueSub.set('8.88');
+        } else if (this.machActive && this.dashes) {
             this.valueSub.set('-.--');
         } else if (this.machActive && !this.dashes) {
             this.valueSub.set(this.value.toFixed(2));
@@ -54,6 +67,15 @@ export class SpdDisplay extends DisplayComponent<{bus: EventBus}> {
         } else {
             this.valueSub.set(Math.round(this.value).toString().padStart(3, '0'));
         }
+    }
+
+    private handleLabels() {
+        this.machLabelSub.set(this.machActive || this.lightsTest ? 'Active' : 'Inactive');
+        this.spdLabelSub.set(!this.machActive || this.lightsTest ? 'Active' : 'Inactive');
+    }
+
+    private handleDot() {
+        this.dotVisibilitySub.set(this.managed || this.lightsTest ? 'visible' : 'hidden');
     }
 
     public render(): VNode {

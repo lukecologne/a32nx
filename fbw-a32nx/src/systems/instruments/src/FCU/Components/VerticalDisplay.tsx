@@ -2,11 +2,17 @@ import { DisplayComponent, EventBus, FSComponent, Subject, VNode } from 'msfssdk
 import { FcuSimvars } from '../shared/FcuSimvarPublisher';
 
 export class VerticalDisplay extends DisplayComponent<{bus: EventBus}> {
+    private altValue = 0;
+
     private vsValue = 0;
 
     private vsDashes = false;
 
     private trkFpaMode = false;
+
+    private managed = false;
+
+    private lightsTest = false;
 
     private dotVisibilitySub = Subject.create('');
 
@@ -23,13 +29,20 @@ export class VerticalDisplay extends DisplayComponent<{bus: EventBus}> {
 
         const sub = this.props.bus.getSubscriber<FcuSimvars>();
 
+        sub.on('lightsTest').whenChanged().handle((value) => {
+            this.lightsTest = value === 0;
+
+            this.handleLabels();
+            this.handleVsFpaDisplay();
+            this.handleAltDisplay();
+            this.handleDot();
+        });
+
         sub.on('afsDisplayTrkFpaMode').whenChanged().handle((value) => {
             this.trkFpaMode = value;
 
-            this.fpaLabelSub.set(value ? 'Active' : 'Inactive');
-            this.vsLabelSub.set(value ? 'Inactive' : 'Active');
-
             this.handleVsFpaDisplay();
+            this.handleLabels();
         });
 
         sub.on('afsDisplayVsFpaDashes').whenChanged().handle((value) => {
@@ -43,19 +56,32 @@ export class VerticalDisplay extends DisplayComponent<{bus: EventBus}> {
         });
 
         sub.on('afsDisplayAltValue').whenChanged().handle((value) => {
-            this.altValueSub.set(Math.round(value).toString().padStart(5, '0'));
+            this.altValue = value;
+            this.handleAltDisplay();
         });
 
         sub.on('afsDisplayLvlChManaged').whenChanged().handle((value) => {
-            this.dotVisibilitySub.set(value ? 'visible' : 'hidden');
+            this.managed = value;
+
+            this.handleDot();
         });
+    }
+
+    private handleAltDisplay() {
+        if (this.lightsTest) {
+            this.altValueSub.set('88888');
+        } else {
+            this.altValueSub.set(Math.round(this.altValue).toString().padStart(5, '0'));
+        }
     }
 
     private handleVsFpaDisplay() {
         const sign = Math.sign(this.vsValue) >= 0 ? '+' : '~';
         const absValue = Math.abs(this.vsValue);
 
-        if (this.trkFpaMode && this.vsDashes) {
+        if (this.lightsTest) {
+            this.vsValueSub.set('+8.888');
+        } else if (this.trkFpaMode && this.vsDashes) {
             this.vsValueSub.set('~-.-');
         } else if (this.trkFpaMode && !this.vsDashes) {
             this.vsValueSub.set(`${sign}${absValue.toFixed(1)}`);
@@ -64,6 +90,15 @@ export class VerticalDisplay extends DisplayComponent<{bus: EventBus}> {
         } else {
             this.vsValueSub.set(`${sign}${Math.floor(absValue * 0.01).toString().padStart(2, '0')}oo`);
         }
+    }
+
+    private handleLabels() {
+        this.fpaLabelSub.set(this.trkFpaMode || this.lightsTest ? 'Active' : 'Inactive');
+        this.vsLabelSub.set(!this.trkFpaMode || this.lightsTest ? 'Active' : 'Inactive');
+    }
+
+    private handleDot() {
+        this.dotVisibilitySub.set(this.managed || this.lightsTest ? 'visible' : 'hidden');
     }
 
     public render(): VNode {
