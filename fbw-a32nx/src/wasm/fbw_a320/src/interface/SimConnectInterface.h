@@ -198,6 +198,7 @@ class SimConnectInterface {
                int elacDisabled,
                int secDisabled,
                int facDisabled,
+               bool fcuDisabled,
                int fmgcDisabled,
                const std::vector<std::shared_ptr<ThrottleAxisMapping>>& throttleAxis,
                std::shared_ptr<SpoilersHandler> spoilersHandler,
@@ -282,6 +283,10 @@ class SimConnectInterface {
   base_fac_analog_outputs getClientDataFacAnalogsOutput();
   base_fac_bus getClientDataFacBusOutput();
 
+  bool setClientDataFcuBus(base_fcu_bus output);
+
+  base_fcu_bus getClientDataFcuBusOutput();
+
   bool setClientDataFmgcDiscretes(base_fmgc_discrete_inputs output);
   bool setClientDataFmgcABus(base_fmgc_a_bus output, int fmgcIndex);
   bool setClientDataFmgcBBus(base_fmgc_b_bus output, int fmgcIndex);
@@ -327,6 +332,7 @@ class SimConnectInterface {
     FAC_ANALOG_OUTPUTS,
     FAC_1_BUS_OUTPUT,
     FAC_2_BUS_OUTPUT,
+    FCU_BUS_OUTPUT,
     FMGC_DISCRETE_INPUTS,
     FMGC_DISCRETE_OUTPUTS,
     FMGC_1_BUS_A_OUTPUT,
@@ -360,6 +366,7 @@ class SimConnectInterface {
   int elacDisabled = -1;
   int secDisabled = -1;
   int facDisabled = -1;
+  bool fcuDisabled = false;
 
   // change to non-static when aileron events can be processed via SimConnect
   static bool loggingFlightControlsEnabled;
@@ -389,6 +396,8 @@ class SimConnectInterface {
   base_fac_discrete_outputs clientDataFacDiscreteOutputs = {};
   base_fac_analog_outputs clientDataFacAnalogOutputs = {};
   base_fac_bus clientDataFacBusOutputs = {};
+
+  base_fcu_bus clientDataFcuBusOutputs = {};
 
   base_fmgc_discrete_outputs clientDataFmgcDiscreteOutputs = {};
   base_fmgc_a_bus clientDataFmgcABusOutputs = {};

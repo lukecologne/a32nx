@@ -27,10 +27,10 @@ bool FlyByWireInterface::connect() {
   flightDataRecorder.initialize();
 
   // connect to sim connect
-  return simConnectInterface.connect(clientDataEnabled, elacDisabled, secDisabled, facDisabled, fmgcDisabled, throttleAxis, spoilersHandler,
-                                     flightControlsKeyChangeAileron, flightControlsKeyChangeElevator, flightControlsKeyChangeRudder,
-                                     disableXboxCompatibilityRudderAxisPlusMinus, enableRudder2AxisMode, idMinimumSimulationRate->get(),
-                                     idMaximumSimulationRate->get(), limitSimulationRateByPerformance);
+  return simConnectInterface.connect(clientDataEnabled, elacDisabled, secDisabled, facDisabled, fcuDisabled, fmgcDisabled, throttleAxis,
+                                     spoilersHandler, flightControlsKeyChangeAileron, flightControlsKeyChangeElevator,
+                                     flightControlsKeyChangeRudder, disableXboxCompatibilityRudderAxisPlusMinus, enableRudder2AxisMode,
+                                     idMinimumSimulationRate->get(), idMaximumSimulationRate->get(), limitSimulationRateByPerformance);
 }
 
 void FlyByWireInterface::disconnect() {
@@ -157,17 +157,19 @@ void FlyByWireInterface::loadConfiguration() {
   elacDisabled = INITypeConversion::getInteger(iniStructure, "MODEL", "ELAC_DISABLED", -1);
   secDisabled = INITypeConversion::getInteger(iniStructure, "MODEL", "SEC_DISABLED", -1);
   facDisabled = INITypeConversion::getInteger(iniStructure, "MODEL", "FAC_DISABLED", -1);
+  fcuDisabled = INITypeConversion::getBoolean(iniStructure, "MODEL", "FCU_DISABLED", false);
   fmgcDisabled = INITypeConversion::getInteger(iniStructure, "MODEL", "FMGC_DISABLED", -1);
   tailstrikeProtectionEnabled = INITypeConversion::getBoolean(iniStructure, "MODEL", "TAILSTRIKE_PROTECTION_ENABLED", false);
 
   // if any model is deactivated we need to enable client data
-  clientDataEnabled = (elacDisabled != -1 || secDisabled != -1 || facDisabled != -1 || fmgcDisabled != -1);
+  clientDataEnabled = (elacDisabled != -1 || secDisabled != -1 || facDisabled != -1 || fmgcDisabled != -1 || fcuDisabled);
 
   // print configuration into console
   std::cout << "WASM: MODEL     : CLIENT_DATA_ENABLED (auto)           = " << clientDataEnabled << std::endl;
   std::cout << "WASM: MODEL     : ELAC_DISABLED                        = " << elacDisabled << std::endl;
   std::cout << "WASM: MODEL     : SEC_DISABLED                         = " << secDisabled << std::endl;
   std::cout << "WASM: MODEL     : FAC_DISABLED                         = " << facDisabled << std::endl;
+  std::cout << "WASM: MODEL     : FCU_DISABLED                         = " << fcuDisabled << std::endl;
   std::cout << "WASM: MODEL     : FMGC_DISABLED                        = " << fmgcDisabled << std::endl;
   std::cout << "WASM: MODEL     : TAILSTRIKE_PROTECTION_ENABLED        = " << tailstrikeProtectionEnabled << std::endl;
 
@@ -1604,12 +1606,12 @@ bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
     fmgcsBusOutputs[fmgcIndex] = fmgcs[fmgcIndex].getBusOutputs();
   }
 
-  if (facDisabled != -1 || elacDisabled != -1) {
-    simConnectInterface.setClientDataFmgcBBus(fmgcsBusOutputs[fmgcIndex].fmgc_b_bus, fmgcIndex);
+  if (oppFmgcIndex == fmgcDisabled || fcuDisabled) {
+    simConnectInterface.setClientDataFmgcABus(fmgcsBusOutputs[fmgcIndex].fmgc_a_bus, fmgcIndex);
   }
 
-  if (oppFmgcIndex == fmgcDisabled) {
-    simConnectInterface.setClientDataFmgcABus(fmgcsBusOutputs[fmgcIndex].fmgc_a_bus, fmgcIndex);
+  if (facDisabled != -1 || elacDisabled != -1) {
+    simConnectInterface.setClientDataFmgcBBus(fmgcsBusOutputs[fmgcIndex].fmgc_b_bus, fmgcIndex);
   }
 
   idFmgcHealthy[fmgcIndex]->set(fmgcsDiscreteOutputs[fmgcIndex].fmgc_healthy);
@@ -1665,9 +1667,19 @@ bool FlyByWireInterface::updateFcu(double sampleTime) {
   fcu.modelInputs.in.bus_inputs.fmgc_1_bus = fmgcsBusOutputs[0].fmgc_a_bus;
   fcu.modelInputs.in.bus_inputs.fmgc_2_bus = fmgcsBusOutputs[1].fmgc_a_bus;
 
-  fcu.update(sampleTime, simData.simulationTime, failuresConsumer.isActive(Failures::Fcu1), failuresConsumer.isActive(Failures::Fcu2),
-             idElecDcEssBusPowered->get(), idElecDcBus2Powered->get());
-  fcuBusOutputs = fcu.getBusOutputs();
+  if (fcuDisabled) {
+    fcuBusOutputs = simConnectInterface.getClientDataFcuBusOutput();
+  } else {
+    fcu.update(sampleTime, simData.simulationTime, failuresConsumer.isActive(Failures::Fcu1), failuresConsumer.isActive(Failures::Fcu2),
+               idElecDcEssBusPowered->get(), idElecDcBus2Powered->get());
+    fcuBusOutputs = fcu.getBusOutputs();
+  }
+
+  base_fcu_discrete_outputs discreteOutputs = fcu.getDiscreteOutputs();
+
+  if (fmgcDisabled != -1) {
+    simConnectInterface.setClientDataFcuBus(fcuBusOutputs);
+  }
 
   idFcuSelectedHeading->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_hdg_deg));
   idFcuSelectedAltitude->set(Arinc429Utils::toSimVar(fcuBusOutputs.selected_alt_ft));
@@ -1687,8 +1699,6 @@ bool FlyByWireInterface::updateFcu(double sampleTime) {
   idFcuEisRightBaroHpa->set(Arinc429Utils::toSimVar(fcuBusOutputs.baro_setting_right_hpa));
   idFcuDiscreteWord1->set(Arinc429Utils::toSimVar(fcuBusOutputs.fcu_discrete_word_1));
   idFcuDiscreteWord2->set(Arinc429Utils::toSimVar(fcuBusOutputs.fcu_discrete_word_2));
-
-  base_fcu_discrete_outputs discreteOutputs = fcu.getDiscreteOutputs();
 
   for (int i = 0; i < 2; i++) {
     std::string idString = std::to_string(i + 1);
