@@ -14,6 +14,86 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
 
   1.0,
 
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  0.0,
+
+  1.0,
+
+  1.0,
+
+  0.1,
+
+  0.1,
+
+  0.1,
+
+  0.1,
+
+  0.1,
+
+  0.1,
+
+  0.1,
+
+  0.1,
+
   45.0,
 
   45.0,
@@ -110,6 +190,20 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
 
   efis_range_selection::RANGE_160,
 
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
+  0.0F,
+
   true,
 
   false,
@@ -159,6 +253,14 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
   true,
 
   true,
+
+  0,
+
+  0,
+
+  0,
+
+  0,
 
   0,
 
@@ -635,6 +737,34 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
         false,
         false,
         false,
+        false,
+
+        {
+          false,
+          false,
+          0
+        },
+
+        {
+          false,
+          false,
+          0
+        },
+
+        {
+          false,
+          false,
+          0
+        },
+
+        {
+          false,
+          false,
+          0
+        },
+        false,
+        false,
+        false,
         false
       },
 
@@ -956,6 +1086,34 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
       false,
       false,
       0.0F,
+      false,
+      false,
+      false,
+      false,
+
+      {
+        false,
+        false,
+        0
+      },
+
+      {
+        false,
+        false,
+        0
+      },
+
+      {
+        false,
+        false,
+        0
+      },
+
+      {
+        false,
+        false,
+        0
+      },
       false,
       false,
       false,
@@ -1035,14 +1193,6 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
     },
     false
   },
-
-  0.0F,
-
-  0.0F,
-
-  0.0F,
-
-  0.0F,
 
   0.0F,
 

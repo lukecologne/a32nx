@@ -71,6 +71,29 @@ enum class SignStatusMatrix
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_base_fcu_knob_inputs_
+#define DEFINED_TYPEDEF_FOR_base_fcu_knob_inputs_
+
+struct base_fcu_knob_inputs
+{
+  boolean_T pushed;
+  boolean_T pulled;
+  int8_T turns;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
+#define DEFINED_TYPEDEF_FOR_base_arinc_429_
+
+struct base_arinc_429
+{
+  uint32_T SSM;
+  real32_T Data;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_time_
 #define DEFINED_TYPEDEF_FOR_base_time_
 
@@ -93,18 +116,6 @@ struct base_sim_data
   boolean_T tracking_mode_on_override;
   boolean_T tailstrike_protection_on;
   boolean_T computer_running;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_fcu_knob_inputs_
-#define DEFINED_TYPEDEF_FOR_base_fcu_knob_inputs_
-
-struct base_fcu_knob_inputs
-{
-  boolean_T pushed;
-  boolean_T pulled;
-  int8_T turns;
 };
 
 #endif
@@ -166,17 +177,6 @@ struct base_fcu_discrete_inputs
   base_fcu_efis_panel_inputs capt_efis_inputs;
   base_fcu_efis_panel_inputs fo_efis_inputs;
   base_fcu_afs_panel_inputs afs_inputs;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
-#define DEFINED_TYPEDEF_FOR_base_arinc_429_
-
-struct base_arinc_429
-{
-  uint32_T SSM;
-  real32_T Data;
 };
 
 #endif
@@ -289,6 +289,14 @@ struct base_afs_logic_outputs
   boolean_T exped_active;
   boolean_T loc_only_active;
   boolean_T appr_active;
+  base_fcu_knob_inputs hdg_trk_buttons;
+  base_fcu_knob_inputs spd_mach_buttons;
+  base_fcu_knob_inputs alt_buttons;
+  base_fcu_knob_inputs vs_fpa_buttons;
+  boolean_T loc_pushed;
+  boolean_T exped_pushed;
+  boolean_T appr_pushed;
+  boolean_T spd_mach_switching_pushed;
 };
 
 #endif
@@ -440,10 +448,22 @@ struct struct_nm25uKBLHRjCcZyzI1BLUB
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_Qi23mwLghKJ2ko1drOmVb_
-#define DEFINED_TYPEDEF_FOR_struct_Qi23mwLghKJ2ko1drOmVb_
+#ifndef DEFINED_TYPEDEF_FOR_struct_XAtn0711Lcc2c5LVlUmASD_
+#define DEFINED_TYPEDEF_FOR_struct_XAtn0711Lcc2c5LVlUmASD_
 
-struct struct_Qi23mwLghKJ2ko1drOmVb
+struct struct_XAtn0711Lcc2c5LVlUmASD
+{
+  boolean_T pushed;
+  boolean_T pulled;
+  real_T turns;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_struct_7tyiLuCbimoqlq76NRRbYH_
+#define DEFINED_TYPEDEF_FOR_struct_7tyiLuCbimoqlq76NRRbYH_
+
+struct struct_7tyiLuCbimoqlq76NRRbYH
 {
   boolean_T fmgc_1_has_priority;
   struct_nm25uKBLHRjCcZyzI1BLUB chosen_fmgc_data;
@@ -466,6 +486,14 @@ struct struct_Qi23mwLghKJ2ko1drOmVb
   boolean_T exped_active;
   boolean_T loc_only_active;
   boolean_T appr_active;
+  struct_XAtn0711Lcc2c5LVlUmASD hdg_trk_buttons;
+  struct_XAtn0711Lcc2c5LVlUmASD spd_mach_buttons;
+  struct_XAtn0711Lcc2c5LVlUmASD alt_buttons;
+  struct_XAtn0711Lcc2c5LVlUmASD vs_fpa_buttons;
+  boolean_T loc_pushed;
+  boolean_T exped_pushed;
+  boolean_T appr_pushed;
+  boolean_T spd_mach_switching_pushed;
 };
 
 #endif
@@ -487,12 +515,12 @@ struct struct_bqjSWtmatK4obwyFIPQOyC
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_qtnS5krySJ3SHFyCtu7w5E_
-#define DEFINED_TYPEDEF_FOR_struct_qtnS5krySJ3SHFyCtu7w5E_
+#ifndef DEFINED_TYPEDEF_FOR_struct_gt6vuhUJ7zjruxMgjjHheG_
+#define DEFINED_TYPEDEF_FOR_struct_gt6vuhUJ7zjruxMgjjHheG_
 
-struct struct_qtnS5krySJ3SHFyCtu7w5E
+struct struct_gt6vuhUJ7zjruxMgjjHheG
 {
-  struct_Qi23mwLghKJ2ko1drOmVb afs;
+  struct_7tyiLuCbimoqlq76NRRbYH afs;
   struct_bqjSWtmatK4obwyFIPQOyC capt_efis;
   struct_bqjSWtmatK4obwyFIPQOyC fo_efis;
 };
