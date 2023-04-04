@@ -1542,6 +1542,15 @@ bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
   SimData simData = simConnectInterface.getSimData();
   SimInputAutopilot simInputAutopilot = simConnectInterface.getSimInputAutopilot();
 
+  fmgcs[fmgcIndex].modelInputs.in.time.dt = sampleTime;
+  fmgcs[fmgcIndex].modelInputs.in.time.simulation_time = simData.simulationTime;
+  fmgcs[fmgcIndex].modelInputs.in.time.monotonic_time = monotonicTime;
+
+  fmgcs[fmgcIndex].modelInputs.in.sim_data.slew_on = wasInSlew;
+  fmgcs[fmgcIndex].modelInputs.in.sim_data.pause_on = pauseDetected;
+  fmgcs[fmgcIndex].modelInputs.in.sim_data.tracking_mode_on_override = idExternalOverride->get() == 1;
+  fmgcs[fmgcIndex].modelInputs.in.sim_data.tailstrike_protection_on = tailstrikeProtectionEnabled;
+
   fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.is_unit_1 = fmgcIndex == 0;
   fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.athr_opp_engaged = fmgcsDiscreteOutputs[oppFmgcIndex].athr_own_engaged;
   fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.fcu_athr_button = simConnectInterface.getSimInputThrottles().ATHR_push;
@@ -1639,6 +1648,15 @@ bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
 
 bool FlyByWireInterface::updateFcu(double sampleTime) {
   SimData simData = simConnectInterface.getSimData();
+
+  fcu.modelInputs.in.time.dt = sampleTime;
+  fcu.modelInputs.in.time.simulation_time = simData.simulationTime;
+  fcu.modelInputs.in.time.monotonic_time = monotonicTime;
+
+  fcu.modelInputs.in.sim_data.slew_on = wasInSlew;
+  fcu.modelInputs.in.sim_data.pause_on = pauseDetected;
+  fcu.modelInputs.in.sim_data.tracking_mode_on_override = idExternalOverride->get() == 1;
+  fcu.modelInputs.in.sim_data.tailstrike_protection_on = tailstrikeProtectionEnabled;
 
   fcu.modelInputs.in.discrete_inputs.ap_1_engaged = fmgcsDiscreteOutputs[0].ap_own_engaged;
   fcu.modelInputs.in.discrete_inputs.fd_1_engaged = fmgcsDiscreteOutputs[0].fd_own_engaged;
