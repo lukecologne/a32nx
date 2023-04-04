@@ -102,6 +102,8 @@ clang++ \
   "${DIR}/src/utils/PulseNode.cpp" \
   "${DIR}/src/utils/HysteresisNode.cpp" \
   -I "${DIR}/src/model" \
+  "${DIR}/src/model/Autothrust_data.cpp" \
+  "${DIR}/src/model/Autothrust.cpp" \
   "${DIR}/src/model/Double2MultiWord.cpp" \
   "${DIR}/src/model/ElacComputer_data.cpp" \
   "${DIR}/src/model/ElacComputer.cpp" \

@@ -5,6 +5,7 @@
 
 #include "AdditionalData.h"
 #include "Arinc429.h"
+#include "Autothrust.h"
 #include "CalculatedRadioReceiver.h"
 #include "EngineData.h"
 #include "FlightDataRecorder.h"
@@ -112,6 +113,10 @@ class FlyByWireInterface {
   SimConnectInterface simConnectInterface;
 
   FailuresConsumer failuresConsumer;
+
+  AutothrustModelClass autoThrust;
+  AutothrustModelClass::ExternalInputs_Autothrust_T autoThrustInput = {};
+  athr_output autoThrustOutput;
 
   base_ra_bus raBusOutputs[2] = {};
 

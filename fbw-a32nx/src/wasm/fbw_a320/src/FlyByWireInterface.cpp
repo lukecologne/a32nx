@@ -1980,6 +1980,119 @@ bool FlyByWireInterface::updateAutothrust(double sampleTime) {
   idThrottlePosition3d_1->set(idThrottlePositionLookupTable3d.get(thrustLeverAngle_1->get()));
   idThrottlePosition3d_2->set(idThrottlePositionLookupTable3d.get(thrustLeverAngle_2->get()));
 
+  autoThrustInput.in.time.dt = sampleTime;
+  autoThrustInput.in.time.simulation_time = simData.simulationTime;
+
+  autoThrustInput.in.data.nz_g = simData.nz_g;
+  autoThrustInput.in.data.Theta_deg = simData.Theta_deg;
+  autoThrustInput.in.data.Phi_deg = simData.Phi_deg;
+  autoThrustInput.in.data.V_ias_kn = simData.V_ias_kn;
+  autoThrustInput.in.data.V_tas_kn = simData.V_tas_kn;
+  autoThrustInput.in.data.V_mach = simData.V_mach;
+  autoThrustInput.in.data.V_gnd_kn = simData.V_gnd_kn;
+  autoThrustInput.in.data.alpha_deg = simData.alpha_deg;
+  autoThrustInput.in.data.H_ft = simData.H_ft;
+  autoThrustInput.in.data.H_ind_ft = simData.H_ind_ft;
+  autoThrustInput.in.data.H_radio_ft = simData.H_radio_ft;
+  autoThrustInput.in.data.H_dot_fpm = simData.H_dot_fpm;
+  autoThrustInput.in.data.bx_m_s2 = simData.bx_m_s2;
+  autoThrustInput.in.data.by_m_s2 = simData.by_m_s2;
+  autoThrustInput.in.data.bz_m_s2 = simData.bz_m_s2;
+  autoThrustInput.in.data.gear_strut_compression_1 = simData.gear_animation_pos_1;
+  autoThrustInput.in.data.gear_strut_compression_2 = simData.gear_animation_pos_2;
+  autoThrustInput.in.data.flap_handle_index = flapsHandleIndexFlapConf->get();
+  autoThrustInput.in.data.is_engine_operative_1 = simData.engine_combustion_1;
+  autoThrustInput.in.data.is_engine_operative_2 = simData.engine_combustion_2;
+  autoThrustInput.in.data.commanded_engine_N1_1_percent = simData.commanded_engine_N1_1_percent;
+  autoThrustInput.in.data.commanded_engine_N1_2_percent = simData.commanded_engine_N1_2_percent;
+  autoThrustInput.in.data.engine_N1_1_percent = simData.engine_N1_1_percent;
+  autoThrustInput.in.data.engine_N1_2_percent = simData.engine_N1_2_percent;
+  autoThrustInput.in.data.corrected_engine_N1_1_percent = simData.corrected_engine_N1_1_percent;
+  autoThrustInput.in.data.corrected_engine_N1_2_percent = simData.corrected_engine_N1_2_percent;
+  autoThrustInput.in.data.TAT_degC = simData.total_air_temperature_celsius;
+  autoThrustInput.in.data.OAT_degC = simData.ambient_temperature_celsius;
+
+  autoThrustInput.in.input.ATHR_push = simConnectInterface.getSimInputThrottles().ATHR_push;
+  autoThrustInput.in.input.ATHR_disconnect =
+      simConnectInterface.getSimInputThrottles().ATHR_disconnect || idAutothrustDisconnect->get() == 1;
+  autoThrustInput.in.input.TLA_1_deg = thrustLeverAngle_1->get();
+  autoThrustInput.in.input.TLA_2_deg = thrustLeverAngle_2->get();
+  autoThrustInput.in.input.V_c_kn = simData.ap_V_c_kn;
+  autoThrustInput.in.input.V_LS_kn = facsDiscreteOutputs[0].fac_healthy ? facsBusOutputs[0].v_ls_kn.Data : facsBusOutputs[1].v_ls_kn.Data;
+  autoThrustInput.in.input.V_MAX_kn =
+      facsDiscreteOutputs[0].fac_healthy ? facsBusOutputs[0].v_max_kn.Data : facsBusOutputs[1].v_max_kn.Data;
+  autoThrustInput.in.input.thrust_limit_REV_percent = idAutothrustThrustLimitREV->get();
+  autoThrustInput.in.input.thrust_limit_IDLE_percent = idAutothrustThrustLimitIDLE->get();
+  autoThrustInput.in.input.thrust_limit_CLB_percent = idAutothrustThrustLimitCLB->get();
+  autoThrustInput.in.input.thrust_limit_MCT_percent = idAutothrustThrustLimitMCT->get();
+  autoThrustInput.in.input.thrust_limit_FLEX_percent = idAutothrustThrustLimitFLX->get();
+  autoThrustInput.in.input.thrust_limit_TOGA_percent = idAutothrustThrustLimitTOGA->get();
+  autoThrustInput.in.input.flex_temperature_degC = idFmgcFlexTemperature->get();
+  autoThrustInput.in.input.mode_requested = 0;
+  autoThrustInput.in.input.is_mach_mode_active = simData.is_mach_mode_active;
+  autoThrustInput.in.input.alpha_floor_condition =
+      reinterpret_cast<Arinc429DiscreteWord*>(&facsBusOutputs[0].discrete_word_5)->bitFromValueOr(29, false) ||
+      reinterpret_cast<Arinc429DiscreteWord*>(&facsBusOutputs[1].discrete_word_5)->bitFromValueOr(29, false);
+  autoThrustInput.in.input.is_approach_mode_active = false;
+  autoThrustInput.in.input.is_SRS_TO_mode_active = false;
+  autoThrustInput.in.input.is_SRS_GA_mode_active = false;
+  autoThrustInput.in.input.is_LAND_mode_active = false;
+  autoThrustInput.in.input.thrust_reduction_altitude = fmThrustReductionAltitude->valueOr(0);
+  autoThrustInput.in.input.thrust_reduction_altitude_go_around = fmThrustReductionAltitudeGoAround->valueOr(0);
+  autoThrustInput.in.input.flight_phase = idFmgcFlightPhase->get();
+  autoThrustInput.in.input.is_alt_soft_mode_active = false;
+  autoThrustInput.in.input.is_anti_ice_wing_active = additionalData.wingAntiIce == 1;
+  autoThrustInput.in.input.is_anti_ice_engine_1_active = simData.engineAntiIce_1 == 1;
+  autoThrustInput.in.input.is_anti_ice_engine_2_active = simData.engineAntiIce_2 == 1;
+  autoThrustInput.in.input.is_air_conditioning_1_active = idAirConditioningPack_1->get();
+  autoThrustInput.in.input.is_air_conditioning_2_active = idAirConditioningPack_2->get();
+  autoThrustInput.in.input.FD_active = simData.ap_fd_1_active || simData.ap_fd_2_active;
+  autoThrustInput.in.input.ATHR_reset_disable = simConnectInterface.getSimInputThrottles().ATHR_reset_disable == 1;
+  autoThrustInput.in.input.is_TCAS_active = getTcasAdvisoryState() > 1;
+  autoThrustInput.in.input.target_TCAS_RA_rate_fpm = 0;
+
+  // step the model -------------------------------------------------------------------------------------------------
+  autoThrust.setExternalInputs(&autoThrustInput);
+  autoThrust.step();
+
+  // get output from model ------------------------------------------------------------------------------------------
+  autoThrustOutput = autoThrust.getExternalOutputs().out.output;
+
+  // set autothrust disabled state (when ATHR disconnect is pressed longer than 15s)
+  idAutothrustDisabled->set(autoThrust.getExternalOutputs().out.data_computed.ATHR_disabled);
+
+  // write output to sim --------------------------------------------------------------------------------------------
+  SimOutputThrottles simOutputThrottles = {std::fmin(99.9999999999999, autoThrustOutput.sim_throttle_lever_1_pos),
+                                           std::fmin(99.9999999999999, autoThrustOutput.sim_throttle_lever_2_pos),
+                                           autoThrustOutput.sim_thrust_mode_1, autoThrustOutput.sim_thrust_mode_2};
+  if (!simConnectInterface.sendData(simOutputThrottles)) {
+    std::cout << "WASM: Write data failed!" << std::endl;
+    return false;
+  }
+
+  // update local variables
+  idAutothrustN1_TLA_1->set(autoThrustOutput.N1_TLA_1_percent);
+  idAutothrustN1_TLA_2->set(autoThrustOutput.N1_TLA_2_percent);
+  idAutothrustReverse_1->set(autoThrustOutput.is_in_reverse_1);
+  idAutothrustReverse_2->set(autoThrustOutput.is_in_reverse_2);
+  idAutothrustThrustLimitType->set(autoThrustOutput.thrust_limit_type);
+  idAutothrustThrustLimit->set(autoThrustOutput.thrust_limit_percent);
+  idAutothrustN1_c_1->set(autoThrustOutput.N1_c_1_percent);
+  idAutothrustN1_c_2->set(autoThrustOutput.N1_c_2_percent);
+  idAutothrustStatus->set(autoThrustOutput.status);
+  idAutothrustMode->set(autoThrustOutput.mode);
+  idAutothrustModeMessage->set(autoThrustOutput.mode_message);
+
+  // update warnings
+  auto fwcFlightPhase = idFwcFlightPhase->get();
+  if (fwcFlightPhase == 2 || fwcFlightPhase == 3 || fwcFlightPhase == 4 || fwcFlightPhase == 8 || fwcFlightPhase == 9) {
+    idAutothrustThrustLeverWarningFlex->set(autoThrustOutput.thrust_lever_warning_flex);
+    idAutothrustThrustLeverWarningToga->set(autoThrustOutput.thrust_lever_warning_toga);
+  } else {
+    idAutothrustThrustLeverWarningFlex->set(0);
+    idAutothrustThrustLeverWarningToga->set(0);
+  }
+
   // reset button state
   simConnectInterface.resetSimInputThrottles();
 
