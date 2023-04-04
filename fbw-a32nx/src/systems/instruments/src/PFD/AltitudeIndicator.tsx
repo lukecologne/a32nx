@@ -274,20 +274,22 @@ export class AltitudeIndicatorOfftape extends DisplayComponent<AltitudeIndicator
 
     private altitude = Subject.create(0);
 
-    private targetAltitudeSelected = 0;
+    private fcuSelectedAlt = new Arinc429Word(0);
 
-    private shownTargetAltitude = Subject.create<number>(0);
+    private altConstraint = new Arinc429Word(0);
 
-    private constraint = 0;
+    private fmgcDiscreteWord1 = new Arinc429Word(0);
 
-    private activeVerticalMode = 0;
+    private fmgcDiscreteWord4 = new Arinc429Word(0);
+
+    private shownTargetAltitude = Subject.create<Arinc429Word>(new Arinc429Word(0));
 
     private targetAltitudeColor = Subject.create<TargetAltitudeColor>(TargetAltitudeColor.Cyan);
 
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<PFDSimvars & Arinc429Values & SimplaneValues>();
+        const sub = this.props.bus.getSubscriber<PFDSimvars & Arinc429Values>();
 
         sub.on('altitudeAr').handle((altitude) => {
             if (!altitude.isNormalOperation()) {
@@ -308,18 +310,23 @@ export class AltitudeIndicatorOfftape extends DisplayComponent<AltitudeIndicator
             }
         });
 
-        sub.on('activeVerticalMode').whenChanged().handle((v) => {
-            this.activeVerticalMode = v;
+        sub.on('fmgcDiscreteWord1').whenChanged().handle((v) => {
+            this.fmgcDiscreteWord1 = v;
             this.handleAltManagedChange();
         });
 
-        sub.on('selectedAltitude').whenChanged().handle((alt) => {
-            this.targetAltitudeSelected = alt;
+        sub.on('fmgcDiscreteWord4').whenChanged().handle((v) => {
+            this.fmgcDiscreteWord4 = v;
             this.handleAltManagedChange();
         });
 
-        sub.on('altConstraint').whenChanged().handle((cstr) => {
-            this.constraint = cstr;
+        sub.on('fcuSelectedAltitude').whenChanged().handle((alt) => {
+            this.fcuSelectedAlt = alt;
+            this.handleAltManagedChange();
+        });
+
+        sub.on('fmgcFmAltitudeConstraint').whenChanged().handle((cstr) => {
+            this.altConstraint = cstr;
             this.handleAltManagedChange();
         });
     }
@@ -354,37 +361,42 @@ export class AltitudeIndicatorOfftape extends DisplayComponent<AltitudeIndicator
     }
 
     private handleAltManagedChange() {
-        // TODO find proper logic for this (what happens when a constraint is sent by the fms but vertical mode is not managed)
-        const isManagedModeActive = this.activeVerticalMode !== VerticalMode.OP_CLB && this.activeVerticalMode !== VerticalMode.OP_DES
-                            && this.activeVerticalMode !== VerticalMode.VS && this.activeVerticalMode !== VerticalMode.FPA;
-        const hasConstraint = this.constraint > 0 && isManagedModeActive;
+        const landTrackActive = this.fmgcDiscreteWord4.getBitValueOr(14, false);
+        const gsActive = this.fmgcDiscreteWord1.getBitValueOr(22, false);
+        const finalDesActive = this.fmgcDiscreteWord1.getBitValueOr(23, false);
 
-        const selectedAltIgnored = this.activeVerticalMode >= VerticalMode.GS_CPT && this.activeVerticalMode < VerticalMode.ROLL_OUT || this.activeVerticalMode === VerticalMode.FINAL;
+        const selectedAltIgnored = landTrackActive || gsActive || finalDesActive;
 
-        this.shownTargetAltitude.set(hasConstraint && !selectedAltIgnored ? this.constraint : this.targetAltitudeSelected);
+        const targetAltIsSelected = selectedAltIgnored || this.altConstraint.isFailureWarning() || this.altConstraint.isNoComputedData();
+
+        this.shownTargetAltitude.set(targetAltIsSelected ? this.fcuSelectedAlt : this.altConstraint);
 
         if (selectedAltIgnored) {
             this.targetAltitudeColor.set(TargetAltitudeColor.White);
-        } else if (hasConstraint) {
-            this.targetAltitudeColor.set(TargetAltitudeColor.Magenta);
-        } else {
+        } else if (targetAltIsSelected) {
             this.targetAltitudeColor.set(TargetAltitudeColor.Cyan);
+        } else {
+            this.targetAltitudeColor.set(TargetAltitudeColor.Magenta);
         }
     }
 }
 
 interface SelectedAltIndicatorProps {
     bus: ArincEventBus
-    selectedAltitude: Subscribable<number>
+    selectedAltitude: Subscribable<Arinc429Word>
     altitudeColor: Subscribable<TargetAltitudeColor>
 }
 
 class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
     private baroInStd = false;
 
-    private selectedAltitudeColor = Subject.create('Cyan');
+    private selectedAltLowerText = FSComponent.createRef<SVGTextElement>();
 
-    private selectedAltFlTextVisbility = Subject.create('hidden');
+    private selectedAltLowerFLText = FSComponent.createRef<SVGTextElement>();
+
+    private selectedAltUpperText = FSComponent.createRef<SVGTextElement>();
+
+    private selectedAltUpperFLText = FSComponent.createRef<SVGTextElement>();
 
     private selectedAltLowerGroupRef = FSComponent.createRef<SVGGElement>();
 
@@ -396,9 +408,13 @@ class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
 
     private blackFill = FSComponent.createRef<SVGPathElement>();
 
+    private targetSymbolRef = FSComponent.createRef<SVGPathElement>();
+
+    private altTapeTargetText = FSComponent.createRef<SVGTextElement>();
+
     private altitude = new Arinc429Word(0);
 
-    private shownTargetAltitude = 0;
+    private shownTargetAltitude = new Arinc429Word(0);
 
     private textSub = Subject.create('');
 
@@ -443,9 +459,11 @@ class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
             this.baroInStd = m.getBitValueOr(28, false) || m.isFailureWarning();
 
             if (this.baroInStd) {
-                this.selectedAltFlTextVisbility.set('visible');
+                this.selectedAltLowerFLText.instance.style.visibility = 'visible';
+                this.selectedAltUpperFLText.instance.style.visibility = 'visible';
             } else {
-                this.selectedAltFlTextVisbility.set('hidden');
+                this.selectedAltLowerFLText.instance.style.visibility = 'hidden';
+                this.selectedAltUpperFLText.instance.style.visibility = 'hidden';
             }
             this.handleAltitudeDisplay();
             this.setText();
@@ -464,17 +482,17 @@ class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
     }
 
     private handleAltitudeDisplay() {
-        if (this.selectedAltInvalid) {
+        if (this.shownTargetAltitude.isNoComputedData() || this.shownTargetAltitude.isFailureWarning()) {
             this.selectedAltUpperGroupRef.instance.style.display = 'none';
             this.selectedAltLowerGroupRef.instance.style.display = 'none';
             this.targetGroupRef.instance.style.display = 'none';
             this.selectedAltFailText.instance.style.display = 'block';
-        } else if (this.altitude.value - this.shownTargetAltitude > DisplayRange) {
+        } else if (this.altitude.value - this.shownTargetAltitude.value > DisplayRange) {
             this.selectedAltLowerGroupRef.instance.style.display = 'block';
             this.selectedAltUpperGroupRef.instance.style.display = 'none';
             this.targetGroupRef.instance.style.display = 'none';
             this.selectedAltFailText.instance.style.display = 'none';
-        } else if (this.altitude.value - this.shownTargetAltitude < -DisplayRange) {
+        } else if (this.altitude.value - this.shownTargetAltitude.value < -DisplayRange) {
             this.targetGroupRef.instance.style.display = 'none';
             this.selectedAltUpperGroupRef.instance.style.display = 'block';
             this.selectedAltLowerGroupRef.instance.style.display = 'none';
@@ -491,17 +509,17 @@ class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
         let boxLength = 19.14;
         let text = '0';
         if (this.baroInStd) {
-            text = Math.round(this.shownTargetAltitude / 100).toString().padStart(3, '0');
+            text = Math.round(this.shownTargetAltitude.value / 100).toString().padStart(3, '0');
             boxLength = 12.5;
         } else {
-            text = Math.round(this.shownTargetAltitude).toString().padStart(5, ' ');
+            text = Math.round(this.shownTargetAltitude.value).toString().padStart(5, ' ');
         }
         this.textSub.set(text);
         this.blackFill.instance.setAttribute('d', `m117.75 77.784h${boxLength}v6.0476h-${boxLength}z`);
     }
 
     private getOffset() {
-        const offset = (this.altitude.value - this.shownTargetAltitude) * DistanceSpacing / ValueSpacing;
+        const offset = (this.altitude.value - this.shownTargetAltitude.value) * DistanceSpacing / ValueSpacing;
         this.targetGroupRef.instance.style.transform = `translate3d(0px, ${offset}px, 0px)`;
     }
 
@@ -509,33 +527,17 @@ class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
         return (
             <>
                 <g id="SelectedAltLowerGroup" ref={this.selectedAltLowerGroupRef}>
-                    <text id="SelectedAltLowerText" class={`FontMedium EndAlign ${this.selectedAltitudeColor}`} x="135.7511" y="128.70299" style="white-space: pre">{this.textSub}</text>
-                    <text
-                        id="SelectedAltLowerFLText"
-                        visibility={this.selectedAltFlTextVisbility}
-                        class={`FontSmall MiddleAlign ${this.selectedAltitudeColor}`}
-                        x="120.87094"
-                        y="128.71681"
-                    >
-                        FL
-                    </text>
+                    <text id="SelectedAltLowerText" ref={this.selectedAltLowerText} class="FontMedium EndAlign Cyan" x="135.7511" y="128.70299" style="white-space: pre">{this.textSub}</text>
+                    <text id="SelectedAltLowerFLText" ref={this.selectedAltLowerFLText} class="FontSmall MiddleAlign Cyan" x="120.87094" y="128.71681">FL</text>
                 </g>
                 <g id="SelectedAltUpperGroup" ref={this.selectedAltUpperGroupRef}>
-                    <text id="SelectedAltUpperText" class={`FontMedium EndAlign ${this.selectedAltitudeColor}`} x="136.22987" y="37.250134" style="white-space: pre">{this.textSub}</text>
-                    <text
-                        id="SelectedAltUpperFLText"
-                        visibility={this.selectedAltFlTextVisbility}
-                        class={`FontSmall MiddleAlign ${this.selectedAltitudeColor}`}
-                        x="120.85925"
-                        y="37.125755"
-                    >
-                        FL
-                    </text>
+                    <text id="SelectedAltUpperText" ref={this.selectedAltUpperText} class="FontMedium EndAlign Cyan" x="136.22987" y="37.250134" style="white-space: pre">{this.textSub}</text>
+                    <text id="SelectedAltUpperFLText" ref={this.selectedAltUpperFLText} class="FontSmall MiddleAlign Cyan" x="120.85925" y="37.125755">FL</text>
                 </g>
                 <g id="AltTapeTargetSymbol" ref={this.targetGroupRef}>
                     <path class="BlackFill" ref={this.blackFill} />
-                    <path class={`NormalStroke ${this.selectedAltitudeColor}`} d="m122.79 83.831v6.5516h-7.0514v-8.5675l2.0147-1.0079m4.8441-3.0238v-6.5516h-6.8588v8.5675l2.0147 1.0079" />
-                    <text id="AltTapeTargetText" class={`FontMedium StartAlign ${this.selectedAltitudeColor}`} x="118.228" y="83.067062" style="white-space: pre">{this.textSub}</text>
+                    <path class="NormalStroke Cyan" ref={this.targetSymbolRef} d="m122.79 83.831v6.5516h-7.0514v-8.5675l2.0147-1.0079m4.8441-3.0238v-6.5516h-6.8588v8.5675l2.0147 1.0079" />
+                    <text id="AltTapeTargetText" ref={this.altTapeTargetText} class="FontMedium StartAlign Cyan" x="118.228" y="83.067062" style="white-space: pre">{this.textSub}</text>
                 </g>
                 <text id="SelectedAltUpperText" ref={this.selectedAltFailText} class="FontSmall EndAlign Red Blink9Seconds" x="136.22987" y="37.250134">ALT SEL</text>
             </>
@@ -544,7 +546,7 @@ class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
 }
 
 interface AltimeterIndicatorProps {
-    altitude: Subscribable<Number>,
+    altitude: Subscribable<number>,
     bus: ArincEventBus,
 }
 
@@ -690,14 +692,14 @@ class AltimeterIndicator extends DisplayComponent<AltimeterIndicatorProps> {
  interface MetricAltIndicatorState {
     altitude: Arinc429Word;
     MDA: Arinc429Word;
-    targetAlt: number;
+    targetAlt: Arinc429Word;
     altitudeColor: TargetAltitudeColor;
-    metricAltToggle: boolean;
+    fcuDiscreteWord1: Arinc429Word;
 }
 
 interface MetricAltIndicatorProps {
     bus: ArincEventBus;
-    targetAlt: Subscribable<number>
+    targetAlt: Subscribable<Arinc429Word>
     altitudeColor: Subscribable<TargetAltitudeColor>
 }
 
@@ -716,8 +718,8 @@ class MetricAltIndicator extends DisplayComponent<MetricAltIndicatorProps> {
         altitude: new Arinc429Word(0),
         MDA: new Arinc429Word(0),
         altitudeColor: TargetAltitudeColor.Cyan,
-        targetAlt: 0,
-        metricAltToggle: false,
+        targetAlt: new Arinc429Word(0),
+        fcuDiscreteWord1: new Arinc429Word(0),
     }
 
     private fmgcDiscreteWord1 = new Arinc429Word(0);
@@ -777,7 +779,7 @@ class MetricAltIndicator extends DisplayComponent<MetricAltIndicatorProps> {
         if (this.needsUpdate) {
             this.needsUpdate = false;
 
-            const showMetricAlt = this.state.fcuDiscreteWord1.getBitValueOr(20, false);
+            const showMetricAlt = this.state.fcuDiscreteWord1.getBitValueOr(20, false) && !this.state.targetAlt.isFailureWarning() && !this.state.targetAlt.isNoComputedData();
             if (!showMetricAlt) {
                 this.metricAlt.instance.style.display = 'none';
             } else {
@@ -785,7 +787,7 @@ class MetricAltIndicator extends DisplayComponent<MetricAltIndicatorProps> {
                 const currentMetricAlt = Math.round(this.state.altitude.value * 0.3048 / 10) * 10;
                 this.metricAltText.instance.textContent = currentMetricAlt.toString();
 
-                const targetMetric = Math.round(this.state.targetAlt * 0.3048 / 10) * 10;
+                const targetMetric = Math.round(this.state.targetAlt.value * 0.3048 / 10) * 10;
                 this.metricAltTargetText.instance.textContent = targetMetric.toString();
 
                 this.updateAltitudeColor();

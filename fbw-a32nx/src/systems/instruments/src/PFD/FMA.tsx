@@ -1592,7 +1592,6 @@ class E2Cell extends ShowForSecondsComponent<CellProps> {
             <g>
                 <path ref={this.modeChangedPathRef} d="m156.13 9.0715v6.0476h-20.81v-6.0476z" visibility="hidden" class="NormalStroke White" />
                 <text class="FontMedium MiddleAlign White" x="145.95045" style="word-spacing: -1.9844px" y="14.417698">{this.textSub}</text>
-
             </g>
         );
     }

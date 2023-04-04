@@ -850,7 +850,7 @@ export class ArincValueProvider {
 
         const fd1Engaged = this.fmgc1DiscreteWord4.getBitValueOr(13, false);
         const fd2Engaged = this.fmgc2DiscreteWord4.getBitValueOr(13, false);
-        const fdOwnSelectedOn = this.fcuEisDiscreteWord2.getBitValueOr(23, false);
+        const fdOwnSelectedOn = !this.fcuEisDiscreteWord2.getBitValueOr(23, false);
 
         const ownFdEngaged = side2 ? fd2Engaged : fd1Engaged;
         const oppFdEngaged = side2 ? fd1Engaged : fd2Engaged;

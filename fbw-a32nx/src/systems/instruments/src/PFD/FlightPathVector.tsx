@@ -75,6 +75,9 @@ export class FlightPathVector extends DisplayComponent<{ bus: ArincEventBus }> {
                     this.fpvFlag.instance.style.visibility = 'hidden';
                     this.bird.instance.classList.remove('HiddenElement');
                     this.moveBird();
+                } else if (!trkFpaActive) {
+                    this.fpvFlag.instance.style.visibility = 'hidden';
+                    this.bird.instance.classList.add('HiddenElement');
                 } else if (trkFpaActive && this.data.pitch.isNormalOperation() && this.data.roll.isNormalOperation()) {
                     this.fpvFlag.instance.style.visibility = 'visible';
                     this.bird.instance.classList.add('HiddenElement');
