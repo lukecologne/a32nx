@@ -171,7 +171,7 @@
         <ANIM_NAME>AUTOPILOT_Switch_Altitude_Increment</ANIM_NAME>
         <PART_ID>AUTOPILOT_Switch_Altitude_Increment</PART_ID>
         <CURSOR>Animtip</CURSOR>
-        <INIT_ALTITUDE>1000</INIT_ALTITUDE>
+        <INIT>1</INIT>
         <INPUT_EVENT_ID_SOURCE>AUTOPILOT</INPUT_EVENT_ID_SOURCE>
     </Parameters>
     <Parameters Type="Override">
@@ -179,7 +179,7 @@
     </Parameters>
     <UseTemplate Name="ASOBO_GT_Update">
         <UPDATE_ONCE>True</UPDATE_ONCE>
-        <UPDATE_CODE>#INIT_ALTITUDE# (&gt;L:XMLVAR_Autopilot_Altitude_Increment)</UPDATE_CODE>
+        <UPDATE_CODE>#INIT# (&gt;L:A32NX_FCU_ALT_INCREMENT_1000)</UPDATE_CODE>
     </UseTemplate>
     <Component ID="#NODE_ID#" Node="#NODE_ID#">
         <UseTemplate Name="ASOBO_AUTOPILOT_Push_Template">
@@ -188,16 +188,16 @@
             <NO_TEXT_EMISSIVE>True</NO_TEXT_EMISSIVE>
             <TT_DESCRIPTION_ID>@TT_Package.AUTOPILOT_KNOB_ALTITUDE_INCREMENT_ACTION</TT_DESCRIPTION_ID>
             <TOOLTIP_TITLE>@TT_Package.AUTOPILOT_KNOB_ALTITUDE_INCREMENT_TITLE</TOOLTIP_TITLE>
-            <GET_STATE_EXTERNAL>(L:XMLVAR_Autopilot_Altitude_Increment) sp0</GET_STATE_EXTERNAL>
-            <SIM_STATE_IS_ON_EXTERNAL>l0 1000 ==</SIM_STATE_IS_ON_EXTERNAL>
-            <SET_STATE_OFF>100 (&gt;L:XMLVAR_Autopilot_Altitude_Increment)</SET_STATE_OFF>
-            <SET_STATE_ON>1000 (&gt;L:XMLVAR_Autopilot_Altitude_Increment)</SET_STATE_ON>
+            <GET_STATE_EXTERNAL>(L:A32NX_FCU_ALT_INCREMENT_1000) sp0</GET_STATE_EXTERNAL>
+            <SIM_STATE_IS_ON_EXTERNAL>l0 1 ==</SIM_STATE_IS_ON_EXTERNAL>
+            <SET_STATE_OFF>0 (&gt;L:A32NX_FCU_ALT_INCREMENT_1000)</SET_STATE_OFF>
+            <SET_STATE_ON>1 (&gt;L:A32NX_FCU_ALT_INCREMENT_1000)</SET_STATE_ON>
             <STR_STATE_OFF>Hundred</STR_STATE_OFF>
             <STR_STATE_ON>Thousand</STR_STATE_ON>
             <TT_VALUE_OFF>'100'</TT_VALUE_OFF>
             <TT_VALUE_ON>'1000'</TT_VALUE_ON>
             <CHECK_STATE_HAS_CHANGED>False</CHECK_STATE_HAS_CHANGED>
-            <LOCAL_VAR_TO_WATCH_0>XMLVAR_Autopilot_Altitude_Increment</LOCAL_VAR_TO_WATCH_0>
+            <LOCAL_VAR_TO_WATCH_0>A32NX_FCU_ALT_INCREMENT_1000</LOCAL_VAR_TO_WATCH_0>
             <WWISE_EVENT_1>lswitch</WWISE_EVENT_1>
             <WWISE_EVENT_2>lswitch</WWISE_EVENT_2>
         </UseTemplate>

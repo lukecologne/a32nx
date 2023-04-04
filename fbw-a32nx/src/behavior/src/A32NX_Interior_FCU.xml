@@ -18,7 +18,6 @@
             <ANIM_NAME_PUSHPULL>AUTOPILOT_Knob_Altitude_PushPull#SUFFIX_ID#</ANIM_NAME_PUSHPULL>
             <HELPID>HELPID_AUTOPILOT_ALTITUDE_INDICATOR</HELPID>
             <ID>1</ID>
-            <INCREMENT>(L:XMLVAR_Autopilot_Altitude_Increment)</INCREMENT>
             <NODE_ID>AUTOPILOT_Knob_Altitude#SUFFIX_ID#</NODE_ID>
             <PART_ID>AUTOPILOT_Knob_Altitude</PART_ID>
         </DefaultTemplateParameters>
