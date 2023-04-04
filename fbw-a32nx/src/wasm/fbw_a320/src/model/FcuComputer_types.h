@@ -71,17 +71,6 @@ enum class SignStatusMatrix
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
-#define DEFINED_TYPEDEF_FOR_base_arinc_429_
-
-struct base_arinc_429
-{
-  uint32_T SSM;
-  real32_T Data;
-};
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_base_time_
 #define DEFINED_TYPEDEF_FOR_base_time_
 
@@ -152,7 +141,7 @@ struct base_fcu_afs_panel_inputs
   boolean_T appr_button_pressed;
   boolean_T spd_mach_button_pressed;
   boolean_T trk_fpa_button_pressed;
-  real_T metric_alt_button_pressed;
+  boolean_T metric_alt_button_pressed;
   base_fcu_knob_inputs spd_knob;
   base_fcu_knob_inputs hdg_trk_knob;
   base_fcu_knob_inputs alt_knob;
@@ -177,6 +166,17 @@ struct base_fcu_discrete_inputs
   base_fcu_efis_panel_inputs capt_efis_inputs;
   base_fcu_efis_panel_inputs fo_efis_inputs;
   base_fcu_afs_panel_inputs afs_inputs;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
+#define DEFINED_TYPEDEF_FOR_base_arinc_429_
+
+struct base_arinc_429
+{
+  uint32_T SSM;
+  real32_T Data;
 };
 
 #endif
@@ -247,25 +247,44 @@ struct fcu_inputs
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_base_afs_fmgc_data_
+#define DEFINED_TYPEDEF_FOR_base_afs_fmgc_data_
+
+struct base_afs_fmgc_data
+{
+  real32_T v_cas_kts;
+  real32_T v_mach;
+  real32_T hdg_deg;
+  real32_T trk_deg;
+  real32_T alt_ft;
+  real32_T vs_ft_min;
+  real32_T fpa_deg;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_afs_logic_outputs_
 #define DEFINED_TYPEDEF_FOR_base_afs_logic_outputs_
 
 struct base_afs_logic_outputs
 {
   boolean_T fmgc_1_has_priority;
+  base_afs_fmgc_data chosen_fmgc_data;
+  boolean_T any_ap_fd_engaged;
   boolean_T trk_fpa_active;
+  boolean_T metric_alt_active;
   boolean_T auto_speed_control;
   boolean_T selected_speed_control;
-  real_T spd_mach_display_value;
+  real32_T spd_mach_display_value;
   boolean_T spd_mach_dashes;
   boolean_T hdg_trk_managed;
   boolean_T hdg_trk_selected;
-  real_T hdg_trk_display_value;
+  real32_T hdg_trk_display_value;
   boolean_T hdg_trk_dashes;
-  real_T alt_display_value;
+  real32_T alt_display_value;
   boolean_T lvl_ch_managed;
-  boolean_T lvl_ch_selected;
-  real_T vs_fpa_display_value;
+  boolean_T lvl_ch_vs_fpa;
+  real32_T vs_fpa_display_value;
   boolean_T vs_fpa_dashes;
   boolean_T exped_active;
   boolean_T loc_only_active;
@@ -405,6 +424,52 @@ struct fcu_outputs
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_struct_nm25uKBLHRjCcZyzI1BLUB_
+#define DEFINED_TYPEDEF_FOR_struct_nm25uKBLHRjCcZyzI1BLUB_
+
+struct struct_nm25uKBLHRjCcZyzI1BLUB
+{
+  real_T v_cas_kts;
+  real_T v_mach;
+  real_T hdg_deg;
+  real_T trk_deg;
+  real_T alt_ft;
+  real_T vs_ft_min;
+  real_T fpa_deg;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_struct_Qi23mwLghKJ2ko1drOmVb_
+#define DEFINED_TYPEDEF_FOR_struct_Qi23mwLghKJ2ko1drOmVb_
+
+struct struct_Qi23mwLghKJ2ko1drOmVb
+{
+  boolean_T fmgc_1_has_priority;
+  struct_nm25uKBLHRjCcZyzI1BLUB chosen_fmgc_data;
+  boolean_T any_ap_fd_engaged;
+  boolean_T trk_fpa_active;
+  boolean_T metric_alt_active;
+  boolean_T auto_speed_control;
+  boolean_T selected_speed_control;
+  real_T spd_mach_display_value;
+  boolean_T spd_mach_dashes;
+  boolean_T hdg_trk_managed;
+  boolean_T hdg_trk_selected;
+  real_T hdg_trk_display_value;
+  boolean_T hdg_trk_dashes;
+  real_T alt_display_value;
+  boolean_T lvl_ch_managed;
+  boolean_T lvl_ch_vs_fpa;
+  real_T vs_fpa_display_value;
+  boolean_T vs_fpa_dashes;
+  boolean_T exped_active;
+  boolean_T loc_only_active;
+  boolean_T appr_active;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_struct_bqjSWtmatK4obwyFIPQOyC_
 #define DEFINED_TYPEDEF_FOR_struct_bqjSWtmatK4obwyFIPQOyC_
 
@@ -422,12 +487,12 @@ struct struct_bqjSWtmatK4obwyFIPQOyC
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_ul2f9Ar6X0jOQvBrxsWlw_
-#define DEFINED_TYPEDEF_FOR_struct_ul2f9Ar6X0jOQvBrxsWlw_
+#ifndef DEFINED_TYPEDEF_FOR_struct_qtnS5krySJ3SHFyCtu7w5E_
+#define DEFINED_TYPEDEF_FOR_struct_qtnS5krySJ3SHFyCtu7w5E_
 
-struct struct_ul2f9Ar6X0jOQvBrxsWlw
+struct struct_qtnS5krySJ3SHFyCtu7w5E
 {
-  base_afs_logic_outputs afs;
+  struct_Qi23mwLghKJ2ko1drOmVb afs;
   struct_bqjSWtmatK4obwyFIPQOyC capt_efis;
   struct_bqjSWtmatK4obwyFIPQOyC fo_efis;
 };

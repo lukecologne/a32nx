@@ -6,6 +6,20 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
 
   20.0,
 
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  1.0,
+
+  45.0,
+
+  45.0,
+
+  SignStatusMatrix::NoComputedData,
+
   SignStatusMatrix::NormalOperation,
 
   efis_filter_selection::CSTR,
@@ -142,6 +156,14 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
 
   true,
 
+  true,
+
+  true,
+
+  0,
+
+  0,
+
 
   {
     {
@@ -216,7 +238,7 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
           false,
           false,
           false,
-          0.0,
+          false,
 
           {
             false,
@@ -585,19 +607,31 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
     {
       {
         false,
+
+        {
+          0.0F,
+          0.0F,
+          0.0F,
+          0.0F,
+          0.0F,
+          0.0F,
+          0.0F
+        },
         false,
         false,
         false,
-        0.0,
+        false,
+        false,
+        0.0F,
         false,
         false,
         false,
-        0.0,
+        0.0F,
         false,
-        0.0,
+        0.0F,
         false,
         false,
-        0.0,
+        0.0F,
         false,
         false,
         false,
@@ -897,19 +931,31 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
   {
     {
       false,
+
+      {
+        0.0F,
+        0.0F,
+        0.0F,
+        0.0F,
+        0.0F,
+        0.0F,
+        0.0F
+      },
       false,
       false,
       false,
-      0.0,
+      false,
+      false,
+      0.0F,
       false,
       false,
       false,
-      0.0,
+      0.0F,
       false,
-      0.0,
+      0.0F,
       false,
       false,
-      0.0,
+      0.0F,
       false,
       false,
       false,
@@ -990,14 +1036,6 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
     false
   },
 
-  0.0,
-
-  0.0,
-
-  0.0,
-
-  0.0,
-
   0.0F,
 
   0.0F,
@@ -1009,28 +1047,6 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
   0.0F,
 
   0.0F,
-
-  0.0F,
-
-  0.0F,
-
-  0.0F,
-
-  0.0F,
-
-  0.0F,
-
-  false,
-
-  false,
-
-  false,
-
-  false,
-
-  false,
-
-  false,
 
   false,
 
