@@ -27,7 +27,7 @@ bool FlyByWireInterface::connect() {
   flightDataRecorder.initialize();
 
   // connect to sim connect
-  return simConnectInterface.connect(clientDataEnabled, elacDisabled, secDisabled, facDisabled, fcuDisabled, fmgcDisabled, throttleAxis,
+  return simConnectInterface.connect(clientDataEnabled, elacDisabled, secDisabled, facDisabled, fmgcDisabled, fcuDisabled, throttleAxis,
                                      spoilersHandler, flightControlsKeyChangeAileron, flightControlsKeyChangeElevator,
                                      flightControlsKeyChangeRudder, disableXboxCompatibilityRudderAxisPlusMinus, enableRudder2AxisMode,
                                      idMinimumSimulationRate->get(), idMaximumSimulationRate->get(), limitSimulationRateByPerformance);

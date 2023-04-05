@@ -198,8 +198,8 @@ class SimConnectInterface {
                int elacDisabled,
                int secDisabled,
                int facDisabled,
-               bool fcuDisabled,
                int fmgcDisabled,
+               bool fcuDisabled,
                const std::vector<std::shared_ptr<ThrottleAxisMapping>>& throttleAxis,
                std::shared_ptr<SpoilersHandler> spoilersHandler,
                double keyChangeAileron,
@@ -366,6 +366,7 @@ class SimConnectInterface {
   int elacDisabled = -1;
   int secDisabled = -1;
   int facDisabled = -1;
+  int fmgcDisabled = -1;
   bool fcuDisabled = false;
 
   // change to non-static when aileron events can be processed via SimConnect

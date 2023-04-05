@@ -15,8 +15,8 @@ bool SimConnectInterface::connect(bool clientDataEnabled,
                                   int elacDisabled,
                                   int secDisabled,
                                   int facDisabled,
-                                  bool fcuDisabled,
                                   int fmgcDisabled,
+                                  bool fcuDisabled,
                                   const std::vector<std::shared_ptr<ThrottleAxisMapping>>& throttleAxis,
                                   std::shared_ptr<SpoilersHandler> spoilersHandler,
                                   double keyChangeAileron,
@@ -50,6 +50,7 @@ bool SimConnectInterface::connect(bool clientDataEnabled,
     this->elacDisabled = elacDisabled;
     this->secDisabled = secDisabled;
     this->facDisabled = facDisabled;
+    this->fmgcDisabled = fmgcDisabled;
     this->fcuDisabled = fcuDisabled;
     // store key change value for each axis
     flightControlsKeyChangeAileron = keyChangeAileron;
@@ -851,7 +852,7 @@ bool SimConnectInterface::prepareClientDataDefinitions() {
     }
 
     // request data to be updated when set
-    if (fcuDisabled) {
+    if (i == fmgcDisabled) {
       result &= SimConnect_RequestClientData(hSimConnect, defineId, defineId, defineId, SIMCONNECT_CLIENT_DATA_PERIOD_ON_SET);
     }
   }
@@ -872,7 +873,7 @@ bool SimConnectInterface::prepareClientDataDefinitions() {
     }
 
     // request data to be updated when set
-    if (fcuDisabled) {
+    if (i == fmgcDisabled) {
       result &= SimConnect_RequestClientData(hSimConnect, defineId, defineId, defineId, SIMCONNECT_CLIENT_DATA_PERIOD_ON_SET);
     }
   }
