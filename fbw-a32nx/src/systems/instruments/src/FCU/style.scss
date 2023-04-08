@@ -12,23 +12,15 @@
   font-style: normal;
 }
 
-$display-background: hsl(53, 82%, 2%);
-$display-colour: hsl(30, 100%, 45%);
-$display-colour-inactive: hsl(53, 82%, 1%);
+$display-background: #030200;
+$display-colour: hsl(36, 100%, 45%);
+$display-colour-inactive: hsl(53, 82%, 0%);
 
 .fcu-svg {
   position: absolute;
   width: 1280px;
   height: 256px;
   background: $display-background;
-}
-
-.afs-background {
-  box-shadow: inset 0px 0px 110px -20px rgba(255,98,0,0.5);
-}
-
-.efis-background {
-  box-shadow: inset 0px 0px 110px -40px rgba(255,98,0,0.5);
 }
 
 text.Active {

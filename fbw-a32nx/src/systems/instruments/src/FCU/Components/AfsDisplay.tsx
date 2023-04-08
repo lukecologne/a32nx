@@ -41,7 +41,7 @@ export class AfsDisplay extends DisplayComponent<AfsDisplayProps> {
 
     public render(): VNode {
         return (
-            <g class="afs-background">
+            <g>
                 <SpdDisplay bus={this.props.bus} />
 
                 <HdgDisplay bus={this.props.bus} />

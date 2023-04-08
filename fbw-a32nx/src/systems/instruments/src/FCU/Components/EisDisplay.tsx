@@ -83,7 +83,7 @@ export class EisDisplay extends DisplayComponent<EisDisplayProps> {
 
     public render(): VNode {
         return (
-            <g transform={`translate(${this.props.x} ${this.props.y})`} class="efis-background">
+            <g transform={`translate(${this.props.x} ${this.props.y})`}>
                 <text id="QFE" class={this.qfeLabelSub} x="25.088" y="32.768">QFE</text>
                 <text id="QNH" class={this.qnhLabelSub} x="150.528" y="32.768" text-anchor="end">QNH</text>
                 <text id="Value" class="Value" x="14.336" y="88.064">{this.baroValueSub}</text>
