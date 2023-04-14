@@ -1,4 +1,4 @@
-import { ComponentProps, DisplayComponent, EventBus, FSComponent, Subject, VNode } from 'msfssdk';
+import { ComponentProps, DisplayComponent, EventBus, FSComponent, Subject, VNode } from '@microsoft/msfs-sdk';
 import { FcuSimvars } from '../shared/FcuSimvarPublisher';
 import { HdgDisplay } from './HdgDisplay';
 import { SpdDisplay } from './SpdDisplay';

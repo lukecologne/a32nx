@@ -1,4 +1,4 @@
-import { DisplayComponent, EventBus, FSComponent, Subject, VNode } from 'msfssdk';
+import { DisplayComponent, EventBus, FSComponent, Subject, VNode } from '@microsoft/msfs-sdk';
 import { FcuSimvars } from '../shared/FcuSimvarPublisher';
 
 export class SpdDisplay extends DisplayComponent<{bus: EventBus}> {

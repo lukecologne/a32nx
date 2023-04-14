@@ -1,7 +1,6 @@
-import { ComponentProps, DisplayComponent, EventBus, FSComponent, VNode } from 'msfssdk';
+import { ComponentProps, DisplayComponent, EventBus, FSComponent, VNode } from '@microsoft/msfs-sdk';
 import { EisDisplay } from 'instruments/src/FCU/Components/EisDisplay';
 import { AfsDisplay } from 'instruments/src/FCU/Components/AfsDisplay';
-import { FcuSimvars } from './shared/FcuSimvarPublisher';
 
 import './style.scss';
 
@@ -12,8 +11,6 @@ interface FCUProps extends ComponentProps {
 export class FCUComponent extends DisplayComponent<FCUProps> {
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
-
-        const sub = this.props.bus.getSubscriber<FcuSimvars>();
     }
 
     render(): VNode {

@@ -294,7 +294,7 @@ class FlightDirector extends DisplayComponent<{ bus: ArincEventBus }> {
     onAfterRender(node: VNode): void {
         super.onAfterRender(node);
 
-        const sub = this.props.bus.getSubscriber<Arinc429Values & PFDSimvars>();
+        const sub = this.props.bus.getArincSubscriber<Arinc429Values & PFDSimvars>();
 
         sub.on('fdEngaged').whenChanged().handle((fd) => {
             this.fdEngaged = fd;
