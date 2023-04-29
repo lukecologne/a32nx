@@ -38,7 +38,7 @@ class HeadingBug extends DisplayComponent<{ bus: ArincEventBus, isCaptainSide: b
     private yOffset = 0;
 
     private calculateAndSetOffset() {
-        const fdActive = this.fcuEisDiscreteWord2.getBitValueOr(23, false);
+        const fdActive = !this.fcuEisDiscreteWord2.getBitValueOr(23, false);
         const trkFpaActive = this.fcuDiscreteWord1.getBitValueOr(25, false);
 
         const targetValue = trkFpaActive ? this.fcuSelectedTrack : this.fcuSelectedHeading;

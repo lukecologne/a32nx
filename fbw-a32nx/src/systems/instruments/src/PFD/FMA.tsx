@@ -1479,8 +1479,17 @@ class E1Cell extends ShowForSecondsComponent<CellProps> {
             text = '';
             this.isShown = false;
         }
-        this.displayModeChangedPath();
-        this.textSub.set(text);
+
+        const hasChanged = text.length > 0 && text !== this.textSub.get();
+
+        if (hasChanged || text.length === 0) {
+            this.textSub.set(text);
+        }
+        if (hasChanged) {
+            this.displayModeChangedPath();
+        } else if (!this.isShown) {
+            this.displayModeChangedPath(true);
+        }
     }
 
     onAfterRender(node: VNode): void {
@@ -1561,8 +1570,17 @@ class E2Cell extends ShowForSecondsComponent<CellProps> {
         } else {
             text = '- FD -';
         }
-        this.textSub.set(text);
-        this.displayModeChangedPath();
+
+        const hasChanged = text.length > 0 && text !== this.textSub.get();
+
+        if (hasChanged || text.length === 0) {
+            this.textSub.set(text);
+        }
+        if (hasChanged) {
+            this.displayModeChangedPath();
+        } else if (!this.isShown) {
+            this.displayModeChangedPath(true);
+        }
     }
 
     onAfterRender(node: VNode): void {
