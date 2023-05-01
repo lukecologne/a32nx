@@ -186,44 +186,7 @@ class FlyByWireInterface {
   std::unique_ptr<LocalVariable> idSideStickPositionY;
   std::unique_ptr<LocalVariable> idRudderPedalPosition;
 
-  std::unique_ptr<LocalVariable> idAutopilotNosewheelDemand;
-
-  std::unique_ptr<LocalVariable> idFmaLateralMode;
-  std::unique_ptr<LocalVariable> idFmaLateralArmed;
-  std::unique_ptr<LocalVariable> idFmaVerticalMode;
-  std::unique_ptr<LocalVariable> idFmaVerticalArmed;
-  std::unique_ptr<LocalVariable> idFmaSoftAltModeActive;
-  std::unique_ptr<LocalVariable> idFmaCruiseAltModeActive;
-  std::unique_ptr<LocalVariable> idFmaExpediteModeActive;
-  std::unique_ptr<LocalVariable> idFmaSpeedProtectionActive;
-  std::unique_ptr<LocalVariable> idFmaApproachCapability;
-  std::unique_ptr<LocalVariable> idFmaTripleClick;
-  std::unique_ptr<LocalVariable> idFmaModeReversion;
-
-  std::unique_ptr<LocalVariable> idAutopilotTcasMessageDisarm;
-  std::unique_ptr<LocalVariable> idAutopilotTcasMessageRaInhibited;
-  std::unique_ptr<LocalVariable> idAutopilotTcasMessageTrkFpaDeselection;
-
-  std::unique_ptr<LocalVariable> idFlightDirectorBank;
-  std::unique_ptr<LocalVariable> idFlightDirectorPitch;
-  std::unique_ptr<LocalVariable> idFlightDirectorYaw;
-
-  std::unique_ptr<LocalVariable> idAutopilotAutolandWarning;
-
-  std::unique_ptr<LocalVariable> idAutopilotActiveAny;
-  std::unique_ptr<LocalVariable> idAutopilotActive_1;
-  std::unique_ptr<LocalVariable> idAutopilotActive_2;
-
-  std::unique_ptr<LocalVariable> idAutopilotAutothrustMode;
-
   std::unique_ptr<LocalVariable> idAutopilot_H_dot_radio;
-
-  std::unique_ptr<LocalVariable> idFcuLocModeActive;
-  std::unique_ptr<LocalVariable> idFcuApprModeActive;
-  std::unique_ptr<LocalVariable> idFcuHeadingSync;
-  std::unique_ptr<LocalVariable> idFcuModeReversionActive;
-  std::unique_ptr<LocalVariable> idFcuModeReversionTrkFpaActive;
-  std::unique_ptr<LocalVariable> idFcuModeReversionTargetFpm;
 
   std::unique_ptr<LocalVariable> idFlightGuidanceAvailable;
   std::unique_ptr<LocalVariable> idFlightGuidanceCrossTrackError;

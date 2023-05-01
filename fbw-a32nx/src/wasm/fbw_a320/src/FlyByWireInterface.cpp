@@ -281,42 +281,9 @@ void FlyByWireInterface::setupLocalVariables() {
   idSideStickPositionX = std::make_unique<LocalVariable>("A32NX_SIDESTICK_POSITION_X");
   idSideStickPositionY = std::make_unique<LocalVariable>("A32NX_SIDESTICK_POSITION_Y");
   idRudderPedalPosition = std::make_unique<LocalVariable>("A32NX_RUDDER_PEDAL_POSITION");
-  idAutopilotNosewheelDemand = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_NOSEWHEEL_DEMAND");
-
-  // register L variable for custom fly-by-wire interface
-  idFmaLateralMode = std::make_unique<LocalVariable>("A32NX_FMA_LATERAL_MODE");
-  idFmaLateralArmed = std::make_unique<LocalVariable>("A32NX_FMA_LATERAL_ARMED");
-  idFmaVerticalMode = std::make_unique<LocalVariable>("A32NX_FMA_VERTICAL_MODE");
-  idFmaVerticalArmed = std::make_unique<LocalVariable>("A32NX_FMA_VERTICAL_ARMED");
-  idFmaExpediteModeActive = std::make_unique<LocalVariable>("A32NX_FMA_EXPEDITE_MODE");
-  idFmaSpeedProtectionActive = std::make_unique<LocalVariable>("A32NX_FMA_SPEED_PROTECTION_MODE");
-  idFmaSoftAltModeActive = std::make_unique<LocalVariable>("A32NX_FMA_SOFT_ALT_MODE");
-  idFmaCruiseAltModeActive = std::make_unique<LocalVariable>("A32NX_FMA_CRUISE_ALT_MODE");
-  idFmaApproachCapability = std::make_unique<LocalVariable>("A32NX_ApproachCapability");
-  idFmaTripleClick = std::make_unique<LocalVariable>("A32NX_FMA_TRIPLE_CLICK");
-  idFmaModeReversion = std::make_unique<LocalVariable>("A32NX_FMA_MODE_REVERSION");
-
-  idAutopilotTcasMessageDisarm = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_TCAS_MESSAGE_DISARM");
-  idAutopilotTcasMessageRaInhibited = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_TCAS_MESSAGE_RA_INHIBITED");
-  idAutopilotTcasMessageTrkFpaDeselection = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_TCAS_MESSAGE_TRK_FPA_DESELECTION");
-
-  // register L variable for flight director
-  idFlightDirectorBank = std::make_unique<LocalVariable>("A32NX_FLIGHT_DIRECTOR_BANK");
-  idFlightDirectorPitch = std::make_unique<LocalVariable>("A32NX_FLIGHT_DIRECTOR_PITCH");
-  idFlightDirectorYaw = std::make_unique<LocalVariable>("A32NX_FLIGHT_DIRECTOR_YAW");
-
-  // register L variables for autoland warning
-  idAutopilotAutolandWarning = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_AUTOLAND_WARNING");
 
   // register L variables for relative speed to ground
   idAutopilot_H_dot_radio = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_H_DOT_RADIO");
-
-  // register L variables for autopilot
-  idAutopilotActiveAny = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_ACTIVE");
-  idAutopilotActive_1 = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_1_ACTIVE");
-  idAutopilotActive_2 = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_2_ACTIVE");
-
-  idAutopilotAutothrustMode = std::make_unique<LocalVariable>("A32NX_AUTOPILOT_AUTOTHRUST_MODE");
 
   // register L variables for flight guidance
   idFwcFlightPhase = std::make_unique<LocalVariable>("A32NX_FWC_FLIGHT_PHASE");
@@ -357,13 +324,6 @@ void FlyByWireInterface::setupLocalVariables() {
   idTcasTargetGreenMax = std::make_unique<LocalVariable>("A32NX_TCAS_VSPEED_GREEN:2");
   idTcasTargetRedMin = std::make_unique<LocalVariable>("A32NX_TCAS_VSPEED_RED:1");
   idTcasTargetRedMax = std::make_unique<LocalVariable>("A32NX_TCAS_VSPEED_RED:2");
-
-  idFcuLocModeActive = std::make_unique<LocalVariable>("A32NX_FCU_LOC_MODE_ACTIVE");
-  idFcuApprModeActive = std::make_unique<LocalVariable>("A32NX_FCU_APPR_MODE_ACTIVE");
-  idFcuHeadingSync = std::make_unique<LocalVariable>("A32NX_FCU_HEADING_SYNC");
-  idFcuModeReversionActive = std::make_unique<LocalVariable>("A32NX_FCU_MODE_REVERSION_ACTIVE");
-  idFcuModeReversionTrkFpaActive = std::make_unique<LocalVariable>("A32NX_FCU_MODE_REVERSION_TRK_FPA_ACTIVE");
-  idFcuModeReversionTargetFpm = std::make_unique<LocalVariable>("A32NX_FCU_MODE_REVERSION_TARGET_FPM");
 
   idThrottlePosition3d_1 = std::make_unique<LocalVariable>("A32NX_3D_THROTTLE_LEVER_POSITION_1");
   idThrottlePosition3d_2 = std::make_unique<LocalVariable>("A32NX_3D_THROTTLE_LEVER_POSITION_2");
