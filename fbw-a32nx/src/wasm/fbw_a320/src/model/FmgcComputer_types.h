@@ -15,6 +15,51 @@ enum class SignStatusMatrix
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_fmgc_flight_phase_
+#define DEFINED_TYPEDEF_FOR_fmgc_flight_phase_
+
+enum class fmgc_flight_phase
+  : int32_T {
+  Preflight = 0,
+  Takeoff,
+  Climb,
+  Cruise,
+  Descent,
+  Approach,
+  Goaround,
+  Done
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_fms_inputs_
+#define DEFINED_TYPEDEF_FOR_base_fms_inputs_
+
+struct base_fms_inputs
+{
+  boolean_T fm_valid;
+  fmgc_flight_phase fms_flight_phase;
+  real_T fms_weight_lbs;
+  real_T fms_cg_percent;
+  boolean_T lateral_flight_plan_valid;
+  boolean_T nav_capture_condition;
+  real_T phi_c_deg;
+  real_T xtk_nmi;
+  real_T tke_deg;
+  boolean_T direct_to_nav_engage;
+  boolean_T vertical_flight_plan_valid;
+  real_T next_alt_cstr_ft;
+  int8_T requested_des_submode;
+  real_T alt_profile_tgt_ft;
+  real_T vs_target_ft_min;
+  boolean_T v2_available;
+  real_T v2_kts;
+  boolean_T flex_temp_available;
+  real_T flex_temp_deg_c;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
 #define DEFINED_TYPEDEF_FOR_base_arinc_429_
 
@@ -22,63 +67,6 @@ struct base_arinc_429
 {
   uint32_T SSM;
   real32_T Data;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
-#define DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
-
-struct base_fmgc_a_bus
-{
-  base_arinc_429 pfd_sel_spd_kts;
-  base_arinc_429 runway_hdg_memorized_deg;
-  base_arinc_429 preset_mach_from_mcdu;
-  base_arinc_429 preset_speed_from_mcdu_kts;
-  base_arinc_429 roll_fd_command;
-  base_arinc_429 pitch_fd_command;
-  base_arinc_429 yaw_fd_command;
-  base_arinc_429 discrete_word_5;
-  base_arinc_429 discrete_word_4;
-  base_arinc_429 fm_alt_constraint_ft;
-  base_arinc_429 altitude_ft;
-  base_arinc_429 mach;
-  base_arinc_429 cas_kts;
-  base_arinc_429 flx_to_temp_deg_c;
-  base_arinc_429 ats_discrete_word;
-  base_arinc_429 ats_fma_discrete_word;
-  base_arinc_429 discrete_word_3;
-  base_arinc_429 discrete_word_1;
-  base_arinc_429 discrete_word_2;
-  base_arinc_429 discrete_word_6;
-  base_arinc_429 synchro_spd_mach_value;
-  base_arinc_429 low_target_speed_margin_kts;
-  base_arinc_429 high_target_speed_margin_kts;
-  base_arinc_429 delta_p_ail_voted_cmd_deg;
-  base_arinc_429 delta_p_splr_voted_cmd_deg;
-  base_arinc_429 delta_r_voted_cmd_deg;
-  base_arinc_429 delta_nosewheel_voted_cmd_deg;
-  base_arinc_429 delta_q_voted_cmd_deg;
-  base_arinc_429 track_deg;
-  base_arinc_429 heading_deg;
-  base_arinc_429 fpa_deg;
-  base_arinc_429 n1_command_percent;
-  base_arinc_429 vertical_speed_ft_min;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_discrete_outputs_
-#define DEFINED_TYPEDEF_FOR_base_fmgc_discrete_outputs_
-
-struct base_fmgc_discrete_outputs
-{
-  boolean_T athr_own_engaged;
-  boolean_T fd_own_engaged;
-  boolean_T ap_own_engaged;
-  boolean_T fcu_own_fail;
-  boolean_T fmgc_healthy;
-  boolean_T ils_test_inhibit;
 };
 
 #endif
@@ -148,16 +136,6 @@ struct base_fmgc_discrete_inputs
   boolean_T elac_own_ap_disc;
   boolean_T eng_opp_stop;
   boolean_T eng_own_stop;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_fms_inputs_
-#define DEFINED_TYPEDEF_FOR_base_fms_inputs_
-
-struct base_fms_inputs
-{
-  boolean_T fm_valid;
 };
 
 #endif
@@ -300,6 +278,48 @@ struct base_ra_bus
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
+#define DEFINED_TYPEDEF_FOR_base_fmgc_a_bus_
+
+struct base_fmgc_a_bus
+{
+  base_arinc_429 pfd_sel_spd_kts;
+  base_arinc_429 runway_hdg_memorized_deg;
+  base_arinc_429 preset_mach_from_mcdu;
+  base_arinc_429 preset_speed_from_mcdu_kts;
+  base_arinc_429 roll_fd_command;
+  base_arinc_429 pitch_fd_command;
+  base_arinc_429 yaw_fd_command;
+  base_arinc_429 discrete_word_5;
+  base_arinc_429 discrete_word_4;
+  base_arinc_429 fm_alt_constraint_ft;
+  base_arinc_429 altitude_ft;
+  base_arinc_429 mach;
+  base_arinc_429 cas_kts;
+  base_arinc_429 flx_to_temp_deg_c;
+  base_arinc_429 ats_discrete_word;
+  base_arinc_429 ats_fma_discrete_word;
+  base_arinc_429 discrete_word_3;
+  base_arinc_429 discrete_word_1;
+  base_arinc_429 discrete_word_2;
+  base_arinc_429 discrete_word_6;
+  base_arinc_429 synchro_spd_mach_value;
+  base_arinc_429 low_target_speed_margin_kts;
+  base_arinc_429 high_target_speed_margin_kts;
+  base_arinc_429 delta_p_ail_voted_cmd_deg;
+  base_arinc_429 delta_p_splr_voted_cmd_deg;
+  base_arinc_429 delta_r_voted_cmd_deg;
+  base_arinc_429 delta_nosewheel_voted_cmd_deg;
+  base_arinc_429 delta_q_voted_cmd_deg;
+  base_arinc_429 track_deg;
+  base_arinc_429 heading_deg;
+  base_arinc_429 fpa_deg;
+  base_arinc_429 n1_command_percent;
+  base_arinc_429 vertical_speed_ft_min;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_fcu_bus_
 #define DEFINED_TYPEDEF_FOR_base_fcu_bus_
 
@@ -406,6 +426,7 @@ struct base_fmgc_ir_computation_data
 struct base_fmgc_logic_outputs
 {
   boolean_T on_ground;
+  boolean_T gnd_eng_stop_flt_5s;
   boolean_T ap_fd_athr_common_condition;
   boolean_T ap_fd_common_condition;
   boolean_T fd_own_engaged;
@@ -422,6 +443,10 @@ struct base_fmgc_logic_outputs
   real_T ra_computation_data_ft;
   boolean_T dual_ra_failure;
   boolean_T fac_lg_data_failure;
+  boolean_T fac_flap_slat_data_failure;
+  real_T flap_position;
+  real_T slat_position;
+  int8_T flap_slat_lever_position;
   boolean_T fac_speeds_failure;
   boolean_T fac_weights_failure;
   boolean_T fcu_failure;
@@ -430,10 +455,31 @@ struct base_fmgc_logic_outputs
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_ap_fd_logic_outputs_
-#define DEFINED_TYPEDEF_FOR_base_fmgc_ap_fd_logic_outputs_
+#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_lateral_modes_
+#define DEFINED_TYPEDEF_FOR_base_fmgc_lateral_modes_
 
-struct base_fmgc_ap_fd_logic_outputs
+struct base_fmgc_lateral_modes
+{
+  boolean_T rwy_active;
+  boolean_T nav_active;
+  boolean_T loc_cpt_active;
+  boolean_T loc_trk_active;
+  boolean_T roll_goaround_active;
+  boolean_T hdg_active;
+  boolean_T trk_active;
+  boolean_T rwy_loc_submode_active;
+  boolean_T rwy_trk_submode_active;
+  boolean_T land_active;
+  boolean_T align_submode_active;
+  boolean_T rollout_submode_active;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_longitudinal_modes_
+#define DEFINED_TYPEDEF_FOR_base_fmgc_longitudinal_modes_
+
+struct base_fmgc_longitudinal_modes
 {
   boolean_T clb_active;
   boolean_T des_active;
@@ -450,17 +496,15 @@ struct base_fmgc_ap_fd_logic_outputs
   boolean_T flare_active;
   boolean_T cruise_active;
   boolean_T tcas_active;
-  boolean_T rwy_active;
-  boolean_T nav_active;
-  boolean_T loc_cpt_active;
-  boolean_T loc_trk_active;
-  boolean_T roll_goaround_active;
-  boolean_T hdg_active;
-  boolean_T trk_active;
-  boolean_T rwy_loc_submode_active;
-  boolean_T rwy_trk_submode_active;
-  boolean_T align_submode_active;
-  boolean_T rollout_submode_active;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_armed_modes_
+#define DEFINED_TYPEDEF_FOR_base_fmgc_armed_modes_
+
+struct base_fmgc_armed_modes
+{
   boolean_T alt_acq_armed;
   boolean_T alt_acq_arm_possible;
   boolean_T nav_armed;
@@ -472,7 +516,23 @@ struct base_fmgc_ap_fd_logic_outputs
   boolean_T clb_armed;
   boolean_T des_armed;
   boolean_T tcas_armed;
-  boolean_T land_active;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_ap_fd_logic_outputs_
+#define DEFINED_TYPEDEF_FOR_base_fmgc_ap_fd_logic_outputs_
+
+struct base_fmgc_ap_fd_logic_outputs
+{
+  base_fmgc_lateral_modes lateral_modes;
+  base_fmgc_longitudinal_modes longitudinal_modes;
+  base_fmgc_armed_modes armed_modes;
+  boolean_T auto_spd_control_active;
+  boolean_T manual_spd_control_active;
+  boolean_T fmgc_opp_mode_sync;
+  boolean_T any_lateral_mode_engaged;
+  boolean_T any_longitudinal_mode_engaged;
   boolean_T ap_fd_mode_reversion;
   boolean_T pitch_fd_bars_flashing;
   boolean_T roll_fd_bars_flashing;
@@ -481,6 +541,30 @@ struct base_fmgc_ap_fd_logic_outputs
   boolean_T tcas_ra_inhibited;
   boolean_T trk_fpa_deselected;
   boolean_T longi_large_box_tcas;
+  boolean_T land_2_capability;
+  boolean_T land_3_fail_passive_capability;
+  boolean_T land_3_fail_op_capability;
+  boolean_T land_2_inop;
+  boolean_T land_3_fail_passive_inop;
+  boolean_T land_3_fail_op_inop;
+  boolean_T land_2_capacity;
+  boolean_T land_3_fail_passive_capacity;
+  boolean_T land_3_fail_op_capacity;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_fmgc_discrete_outputs_
+#define DEFINED_TYPEDEF_FOR_base_fmgc_discrete_outputs_
+
+struct base_fmgc_discrete_outputs
+{
+  boolean_T athr_own_engaged;
+  boolean_T fd_own_engaged;
+  boolean_T ap_own_engaged;
+  boolean_T fcu_own_fail;
+  boolean_T fmgc_healthy;
+  boolean_T ils_test_inhibit;
 };
 
 #endif
@@ -531,6 +615,41 @@ struct fmgc_outputs
   base_fmgc_ap_fd_logic_outputs ap_fd_logic;
   base_fmgc_discrete_outputs discrete_outputs;
   base_fmgc_bus_outputs bus_outputs;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_struct_WMm7UfsRAo27Sw9yOtp9SH_
+#define DEFINED_TYPEDEF_FOR_struct_WMm7UfsRAo27Sw9yOtp9SH_
+
+struct struct_WMm7UfsRAo27Sw9yOtp9SH
+{
+  boolean_T on_ground;
+  boolean_T gnd_eng_stop_flt_5s;
+  boolean_T ap_fd_athr_common_condition;
+  boolean_T ap_fd_common_condition;
+  boolean_T fd_own_engaged;
+  boolean_T ap_own_engaged;
+  boolean_T athr_own_engaged;
+  boolean_T athr_active;
+  boolean_T ap_inop;
+  boolean_T athr_inop;
+  boolean_T fmgc_opp_priority;
+  boolean_T double_adr_failure;
+  boolean_T double_ir_failure;
+  base_fmgc_adr_computation_data adr_computation_data;
+  base_fmgc_ir_computation_data ir_computation_data;
+  real_T ra_computation_data_ft;
+  boolean_T dual_ra_failure;
+  boolean_T fac_lg_data_failure;
+  boolean_T fac_flap_slat_data_failure;
+  boolean_T flap_position;
+  boolean_T slat_position;
+  boolean_T flap_slat_lever_position;
+  boolean_T fac_speeds_failure;
+  boolean_T fac_weights_failure;
+  boolean_T fcu_failure;
+  boolean_T ils_failure;
 };
 
 #endif

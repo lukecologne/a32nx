@@ -83,17 +83,6 @@ struct base_fcu_knob_inputs
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
-#define DEFINED_TYPEDEF_FOR_base_arinc_429_
-
-struct base_arinc_429
-{
-  uint32_T SSM;
-  real32_T Data;
-};
-
-#endif
-
 #ifndef DEFINED_TYPEDEF_FOR_base_time_
 #define DEFINED_TYPEDEF_FOR_base_time_
 
@@ -177,6 +166,17 @@ struct base_fcu_discrete_inputs
   base_fcu_efis_panel_inputs capt_efis_inputs;
   base_fcu_efis_panel_inputs fo_efis_inputs;
   base_fcu_afs_panel_inputs afs_inputs;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
+#define DEFINED_TYPEDEF_FOR_base_arinc_429_
+
+struct base_arinc_429
+{
+  uint32_T SSM;
+  real32_T Data;
 };
 
 #endif
@@ -281,6 +281,7 @@ struct base_afs_logic_outputs
   boolean_T hdg_trk_selected;
   real32_T hdg_trk_display_value;
   boolean_T hdg_trk_dashes;
+  boolean_T hdg_trk_preset_available;
   real32_T alt_display_value;
   boolean_T lvl_ch_managed;
   boolean_T lvl_ch_vs_fpa;
@@ -460,10 +461,10 @@ struct struct_XAtn0711Lcc2c5LVlUmASD
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_7tyiLuCbimoqlq76NRRbYH_
-#define DEFINED_TYPEDEF_FOR_struct_7tyiLuCbimoqlq76NRRbYH_
+#ifndef DEFINED_TYPEDEF_FOR_struct_kHpufb0Eq5LsLRleg2ZGnB_
+#define DEFINED_TYPEDEF_FOR_struct_kHpufb0Eq5LsLRleg2ZGnB_
 
-struct struct_7tyiLuCbimoqlq76NRRbYH
+struct struct_kHpufb0Eq5LsLRleg2ZGnB
 {
   boolean_T fmgc_1_has_priority;
   struct_nm25uKBLHRjCcZyzI1BLUB chosen_fmgc_data;
@@ -478,6 +479,7 @@ struct struct_7tyiLuCbimoqlq76NRRbYH
   boolean_T hdg_trk_selected;
   real_T hdg_trk_display_value;
   boolean_T hdg_trk_dashes;
+  boolean_T hdg_trk_preset_available;
   real_T alt_display_value;
   boolean_T lvl_ch_managed;
   boolean_T lvl_ch_vs_fpa;
@@ -515,12 +517,12 @@ struct struct_bqjSWtmatK4obwyFIPQOyC
 
 #endif
 
-#ifndef DEFINED_TYPEDEF_FOR_struct_gt6vuhUJ7zjruxMgjjHheG_
-#define DEFINED_TYPEDEF_FOR_struct_gt6vuhUJ7zjruxMgjjHheG_
+#ifndef DEFINED_TYPEDEF_FOR_struct_EYDOSrX7HHb9A75ofopmDG_
+#define DEFINED_TYPEDEF_FOR_struct_EYDOSrX7HHb9A75ofopmDG_
 
-struct struct_gt6vuhUJ7zjruxMgjjHheG
+struct struct_EYDOSrX7HHb9A75ofopmDG
 {
-  struct_7tyiLuCbimoqlq76NRRbYH afs;
+  struct_kHpufb0Eq5LsLRleg2ZGnB afs;
   struct_bqjSWtmatK4obwyFIPQOyC capt_efis;
   struct_bqjSWtmatK4obwyFIPQOyC fo_efis;
 };
