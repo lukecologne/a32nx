@@ -1023,7 +1023,7 @@ class C1Cell extends ShowForSecondsComponent<CellProps> {
         }
         if (hasChanged) {
             this.displayModeChangedPath();
-        } else {
+        } else if (!this.isShown) {
             this.displayModeChangedPath(true);
         }
     }
@@ -1124,14 +1124,19 @@ class BC1Cell extends ShowForSecondsComponent<CellProps> {
             text = 'FINAL APP';
         } else {
             text = '';
-        }
-        if (text !== '') {
-            this.displayModeChangedPath();
-        } else {
             this.isShown = false;
+        }
+
+        const hasChanged = text.length > 0 && text !== this.textSub.get();
+
+        if (hasChanged || text.length === 0) {
+            this.textSub.set(text);
+        }
+        if (hasChanged) {
+            this.displayModeChangedPath();
+        } else if (!this.isShown) {
             this.displayModeChangedPath(true);
         }
-        this.textSub.set(text);
     }
 
     onAfterRender(node: VNode): void {
