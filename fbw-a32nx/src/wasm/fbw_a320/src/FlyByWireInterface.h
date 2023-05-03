@@ -124,6 +124,10 @@ class FlyByWireInterface {
 
   base_sfcc_bus sfccBusOutputs[2] = {};
 
+  base_ecu_bus fadecBusOutputs[2] = {};
+
+  base_ils_bus ilsBusOutputs[2] = {};
+
   base_adr_bus adrBusOutputs[3] = {};
   base_ir_bus irBusOutputs[3] = {};
 
@@ -622,6 +626,10 @@ class FlyByWireInterface {
   bool updateLgciu(int lgciuIndex);
 
   bool updateSfcc(int sfccIndex);
+
+  bool updateFadec(int fadecIndex);
+
+  bool updateIls(int ilsIndex);
 
   bool updateAdirs(int adirsIndex);
 

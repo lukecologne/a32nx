@@ -94,6 +94,14 @@ bool FlyByWireInterface::update(double sampleTime) {
     result &= updateSfcc(i);
   }
 
+  for (int i = 0; i < 2; i++) {
+    result &= updateFadec(i);
+  }
+
+  for (int i = 0; i < 2; i++) {
+    result &= updateIls(i);
+  }
+
   for (int i = 0; i < 3; i++) {
     result &= updateAdirs(i);
   }
@@ -1093,6 +1101,55 @@ bool FlyByWireInterface::updateSfcc(int sfccIndex) {
 
   if (clientDataEnabled) {
     simConnectInterface.setClientDataSfcc(sfccBusOutputs[sfccIndex], sfccIndex);
+  }
+
+  return true;
+}
+
+bool FlyByWireInterface::updateFadec(int fadecIndex) {
+  fadecBusOutputs[fadecIndex].selected_tla_deg.SSM = Arinc429SignStatus::NormalOperation;
+  fadecBusOutputs[fadecIndex].selected_tla_deg.Data = fadecIndex == 0 ? thrustLeverAngle_1->get() : thrustLeverAngle_2->get();
+
+  if (clientDataEnabled) {
+    simConnectInterface.setClientDataFadec(fadecBusOutputs[fadecIndex], fadecIndex);
+  }
+
+  return true;
+}
+
+bool FlyByWireInterface::updateIls(int ilsIndex) {
+  SimData simData = simConnectInterface.getSimData();
+
+  bool nav_loc_valid;
+  double nav_loc_error_deg;
+  bool nav_gs_valid;
+  double nav_gs_error_deg;
+
+  if (idRadioReceiverUsageEnabled->get()) {
+    nav_loc_valid = idRadioReceiverLocalizerValid->get() != 0;
+    nav_loc_error_deg = idRadioReceiverLocalizerDeviation->get();
+    nav_gs_valid = idRadioReceiverGlideSlopeValid->get() != 0;
+    nav_gs_error_deg = idRadioReceiverGlideSlopeDeviation->get();
+  } else {
+    nav_loc_valid = (simData.nav_loc_valid != 0);
+    nav_loc_error_deg = simData.nav_loc_error_deg;
+    nav_gs_valid = (simData.nav_gs_valid != 0);
+    nav_gs_error_deg = simData.nav_gs_error_deg;
+  }
+
+  ilsBusOutputs[ilsIndex].runway_heading_deg.SSM = nav_loc_valid ? Arinc429SignStatus::NormalOperation : Arinc429SignStatus::NoComputedData;
+  ilsBusOutputs[ilsIndex].runway_heading_deg.Data = simData.nav_loc_deg;
+  ilsBusOutputs[ilsIndex].ils_frequency_mhz.SSM = Arinc429SignStatus::NormalOperation;
+  ilsBusOutputs[ilsIndex].ils_frequency_mhz.Data = 0;
+  ilsBusOutputs[ilsIndex].localizer_deviation_deg.SSM =
+      nav_loc_valid ? Arinc429SignStatus::NormalOperation : Arinc429SignStatus::NoComputedData;
+  ilsBusOutputs[ilsIndex].localizer_deviation_deg.Data = nav_loc_error_deg;
+  ilsBusOutputs[ilsIndex].glideslope_deviation_deg.SSM =
+      nav_gs_valid ? Arinc429SignStatus::NormalOperation : Arinc429SignStatus::NoComputedData;
+  ilsBusOutputs[ilsIndex].glideslope_deviation_deg.Data = nav_gs_error_deg;
+
+  if (clientDataEnabled) {
+    simConnectInterface.setClientDataIls(ilsBusOutputs[ilsIndex], ilsIndex);
   }
 
   return true;

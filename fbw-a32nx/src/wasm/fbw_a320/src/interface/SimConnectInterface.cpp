@@ -627,6 +627,37 @@ bool SimConnectInterface::prepareClientDataDefinitions() {
 
   // ------------------------------------------------------------------------------------------------------------------
 
+  for (int i = 0; i < 2; i++) {
+    auto defineId = ClientData::ILS_1_BUS + i;
+    // map client id
+    result &= SimConnect_MapClientDataNameToID(hSimConnect, ("A32NX_CLIENT_DATA_ILS_" + std::to_string(i + 1) + "_BUS").c_str(), defineId);
+    // create client data
+    result &= SimConnect_CreateClientData(hSimConnect, defineId, sizeof(base_ils_bus), SIMCONNECT_CREATE_CLIENT_DATA_FLAG_DEFAULT);
+    // add data definitions
+    for (int i = 0; i < 4; i++) {
+      result &=
+          SimConnect_AddToClientDataDefinition(hSimConnect, defineId, SIMCONNECT_CLIENTDATAOFFSET_AUTO, SIMCONNECT_CLIENTDATATYPE_FLOAT64);
+    }
+  }
+
+  // ------------------------------------------------------------------------------------------------------------------
+
+  for (int i = 0; i < 2; i++) {
+    auto defineId = ClientData::FADEC_1_BUS + i;
+    // map client id
+    result &=
+        SimConnect_MapClientDataNameToID(hSimConnect, ("A32NX_CLIENT_DATA_FADEC_" + std::to_string(i + 1) + "_BUS").c_str(), defineId);
+    // create client data
+    result &= SimConnect_CreateClientData(hSimConnect, defineId, sizeof(base_ecu_bus), SIMCONNECT_CREATE_CLIENT_DATA_FLAG_DEFAULT);
+    // add data definitions
+    for (int i = 0; i < 1; i++) {
+      result &=
+          SimConnect_AddToClientDataDefinition(hSimConnect, defineId, SIMCONNECT_CLIENTDATAOFFSET_AUTO, SIMCONNECT_CLIENTDATATYPE_FLOAT64);
+    }
+  }
+
+  // ------------------------------------------------------------------------------------------------------------------
+
   // map client id
   result &= SimConnect_MapClientDataNameToID(hSimConnect, "A32NX_CLIENT_DATA_SEC_DISCRETE_INPUT", ClientData::SEC_DISCRETE_INPUTS);
   // create client data
@@ -1212,6 +1243,14 @@ bool SimConnectInterface::setClientDataLgciu(base_lgciu_bus output, int lgciuInd
 
 bool SimConnectInterface::setClientDataSfcc(base_sfcc_bus output, int sfccIndex) {
   return sendClientData(ClientData::SFCC_1_BUS + sfccIndex, sizeof(output), &output);
+}
+
+bool SimConnectInterface::setClientDataIls(base_ils_bus output, int ilsIndex) {
+  return sendClientData(ClientData::ILS_1_BUS + ilsIndex, sizeof(output), &output);
+}
+
+bool SimConnectInterface::setClientDataFadec(base_ecu_bus output, int fadecIndex) {
+  return sendClientData(ClientData::FADEC_1_BUS + fadecIndex, sizeof(output), &output);
 }
 
 void SimConnectInterface::setLoggingFlightControlsEnabled(bool enabled) {

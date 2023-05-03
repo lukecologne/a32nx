@@ -39,6 +39,7 @@ class FmgcComputer final
     rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_h0;
     rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_jl;
     rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_m1;
+    rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_h4;
     rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_di2;
     rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_gk;
     rtDW_MATLABFunction_FmgcComputer_T sf_MATLABFunction_hz;
@@ -94,7 +95,10 @@ class FmgcComputer final
     real_T BitfromLabel_bit_l2;
     real_T BitfromLabel1_bit_pu;
     real_T BitfromLabel2_bit_l;
+    real_T CompareToConstant1_const;
+    real_T CompareToConstant2_const;
     real_T CompareToConstant_const;
+    real_T CompareToConstant_const_c;
     real_T ConfirmNode1_timeDelay;
     real_T ConfirmNode_timeDelay;
     real_T ConfirmNode_timeDelay_i;
@@ -127,9 +131,10 @@ class FmgcComputer final
     boolean_T ConfirmNode_isRisingEdge_m;
     boolean_T PulseNode_isRisingEdge_c;
     boolean_T PulseNode_isRisingEdge_i;
+    boolean_T PulseNode1_isRisingEdge;
     boolean_T PulseNode_isRisingEdge_j;
     boolean_T PulseNode2_isRisingEdge;
-    boolean_T PulseNode1_isRisingEdge;
+    boolean_T PulseNode1_isRisingEdge_k;
     int8_T CompareToConstant_const_b;
     int8_T CompareToConstant_const_j;
     fmgc_outputs out_Y0;

@@ -15,6 +15,40 @@ enum class SignStatusMatrix
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
+#define DEFINED_TYPEDEF_FOR_base_arinc_429_
+
+struct base_arinc_429
+{
+  uint32_T SSM;
+  real32_T Data;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_ecu_bus_
+#define DEFINED_TYPEDEF_FOR_base_ecu_bus_
+
+struct base_ecu_bus
+{
+  base_arinc_429 selected_tla_deg;
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_base_ils_bus_
+#define DEFINED_TYPEDEF_FOR_base_ils_bus_
+
+struct base_ils_bus
+{
+  base_arinc_429 runway_heading_deg;
+  base_arinc_429 ils_frequency_mhz;
+  base_arinc_429 localizer_deviation_deg;
+  base_arinc_429 glideslope_deviation_deg;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_fmgc_flight_phase_
 #define DEFINED_TYPEDEF_FOR_fmgc_flight_phase_
 
@@ -32,6 +66,31 @@ enum class fmgc_flight_phase
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_fmgc_approach_type_
+#define DEFINED_TYPEDEF_FOR_fmgc_approach_type_
+
+enum class fmgc_approach_type
+  : int32_T {
+  None = 0
+};
+
+#endif
+
+#ifndef DEFINED_TYPEDEF_FOR_fmgc_des_submode_
+#define DEFINED_TYPEDEF_FOR_fmgc_des_submode_
+
+enum class fmgc_des_submode
+  : int32_T {
+  None = 0,
+  SPEED_THRUST,
+  VPATH_THRUST,
+  VPATH_SPEED,
+  FPA_SPEED,
+  VS_SPEED
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_fms_inputs_
 #define DEFINED_TYPEDEF_FOR_base_fms_inputs_
 
@@ -39,6 +98,8 @@ struct base_fms_inputs
 {
   boolean_T fm_valid;
   fmgc_flight_phase fms_flight_phase;
+  fmgc_approach_type selected_approach_type;
+  real_T fms_loc_distance;
   real_T fms_weight_lbs;
   real_T fms_cg_percent;
   boolean_T lateral_flight_plan_valid;
@@ -46,27 +107,22 @@ struct base_fms_inputs
   real_T phi_c_deg;
   real_T xtk_nmi;
   real_T tke_deg;
+  real_T phi_limit_deg;
   boolean_T direct_to_nav_engage;
   boolean_T vertical_flight_plan_valid;
+  boolean_T final_app_can_engage;
   real_T next_alt_cstr_ft;
-  int8_T requested_des_submode;
+  fmgc_des_submode requested_des_submode;
   real_T alt_profile_tgt_ft;
   real_T vs_target_ft_min;
-  boolean_T v2_available;
-  real_T v2_kts;
-  boolean_T flex_temp_available;
+  real_T v_2_kts;
+  real_T v_app_kts;
+  real_T v_managed_kts;
   real_T flex_temp_deg_c;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
-#define DEFINED_TYPEDEF_FOR_base_arinc_429_
-
-struct base_arinc_429
-{
-  uint32_T SSM;
-  real32_T Data;
+  real_T acceleration_alt_ft;
+  real_T acceleration_alt_eo_ft;
+  real_T thrust_reduction_alt_ft;
+  real_T cruise_alt_ft;
 };
 
 #endif
@@ -363,10 +419,14 @@ struct base_fmgc_bus_inputs
   base_ir_bus ir_opp_bus;
   base_adr_bus adr_own_bus;
   base_ir_bus ir_own_bus;
+  base_ecu_bus fadec_opp_bus;
+  base_ecu_bus fadec_own_bus;
   base_fcdc_bus fcdc_opp_bus;
   base_fcdc_bus fcdc_own_bus;
   base_ra_bus ra_opp_bus;
   base_ra_bus ra_own_bus;
+  base_ils_bus ils_opp_bus;
+  base_ils_bus ils_own_bus;
   base_fmgc_a_bus fmgc_opp_bus;
   base_fcu_bus fcu_bus;
 };
@@ -531,8 +591,10 @@ struct base_fmgc_ap_fd_logic_outputs
   boolean_T auto_spd_control_active;
   boolean_T manual_spd_control_active;
   boolean_T fmgc_opp_mode_sync;
+  boolean_T any_ap_fd_engaged;
   boolean_T any_lateral_mode_engaged;
   boolean_T any_longitudinal_mode_engaged;
+  boolean_T hdg_trk_preset_available;
   boolean_T ap_fd_mode_reversion;
   boolean_T pitch_fd_bars_flashing;
   boolean_T roll_fd_bars_flashing;

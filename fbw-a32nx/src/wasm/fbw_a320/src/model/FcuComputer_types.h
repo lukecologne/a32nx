@@ -83,6 +83,17 @@ struct base_fcu_knob_inputs
 
 #endif
 
+#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
+#define DEFINED_TYPEDEF_FOR_base_arinc_429_
+
+struct base_arinc_429
+{
+  uint32_T SSM;
+  real32_T Data;
+};
+
+#endif
+
 #ifndef DEFINED_TYPEDEF_FOR_base_time_
 #define DEFINED_TYPEDEF_FOR_base_time_
 
@@ -166,17 +177,6 @@ struct base_fcu_discrete_inputs
   base_fcu_efis_panel_inputs capt_efis_inputs;
   base_fcu_efis_panel_inputs fo_efis_inputs;
   base_fcu_afs_panel_inputs afs_inputs;
-};
-
-#endif
-
-#ifndef DEFINED_TYPEDEF_FOR_base_arinc_429_
-#define DEFINED_TYPEDEF_FOR_base_arinc_429_
-
-struct base_arinc_429
-{
-  uint32_T SSM;
-  real32_T Data;
 };
 
 #endif

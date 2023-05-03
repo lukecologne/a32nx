@@ -86,8 +86,6 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
 
   1.0,
 
-  1.0,
-
   0.0,
 
   0.0,
@@ -122,8 +120,6 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
 
   1.0,
 
-  1.0,
-
   0.1,
 
   0.1,
@@ -139,8 +135,6 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
   0.1,
 
   0.1,
-
-  45.0,
 
   45.0,
 
@@ -300,7 +294,7 @@ FcuComputer::Parameters_FcuComputer_T FcuComputer::FcuComputer_P{
 
   true,
 
-  0,
+  true,
 
   0,
 

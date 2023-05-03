@@ -119,6 +119,8 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
     false,
     false,
     false,
+    false,
+    false,
     false
   },
 
@@ -196,6 +198,12 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
 
   17.0,
 
+  0.0,
+
+  0.0,
+
+  30.0,
+
   30.0,
 
   5.0,
@@ -249,6 +257,8 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
   true,
 
   false,
+
+  true,
 
   true,
 
@@ -329,22 +339,30 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
       {
         false,
         fmgc_flight_phase::Preflight,
-        0.0,
-        0.0,
-        false,
-        false,
+        fmgc_approach_type::None,
         0.0,
         0.0,
         0.0,
         false,
         false,
         0.0,
-        0,
         0.0,
         0.0,
-        false,
         0.0,
         false,
+        false,
+        false,
+        0.0,
+        fmgc_des_submode::None,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
         0.0
       },
 
@@ -1234,6 +1252,20 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
           {
             0U,
             0.0F
+          }
+        },
+
+        {
+          {
+            0U,
+            0.0F
+          }
+        },
+
+        {
+          {
+            0U,
+            0.0F
           },
 
           {
@@ -1492,6 +1524,50 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
         },
 
         {
+          {
+            0U,
+            0.0F
+          }
+        },
+
+        {
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          }
+        },
+
+        {
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
+          {
+            0U,
+            0.0F
+          },
+
           {
             0U,
             0.0F
@@ -1890,6 +1966,8 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
       false,
       false,
       false,
+      false,
+      false,
       false
     },
 
@@ -2454,6 +2532,8 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
       false,
       false
     },
+    false,
+    false,
     false,
     false,
     false,
