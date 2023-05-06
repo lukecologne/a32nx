@@ -1606,7 +1606,33 @@ bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
   fmgcs[fmgcIndex].modelInputs.in.discrete_inputs.eng_own_stop = false;
 
   fmgcs[fmgcIndex].modelInputs.in.fms_inputs.fm_valid = true;
-  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.lateral_flight_plan_valid = true;
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.fms_flight_phase = static_cast<fmgc_flight_phase>(idFmgcFlightPhase->get());
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.selected_approach_type = fmgc_approach_type::None;
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.fms_loc_distance = 0;
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.fms_weight_lbs = 0;
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.fms_cg_percent = 0;
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.lateral_flight_plan_valid = idFlightGuidanceAvailable->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.nav_capture_condition = idFlightGuidanceCrossTrackError->get() < 1;
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.phi_c_deg = idFlightGuidancePhiCommand->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.xtk_nmi = idFlightGuidanceCrossTrackError->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.tke_deg = idFlightGuidanceTrackAngleError->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.phi_limit_deg = idFlightGuidancePhiLimit->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.direct_to_nav_engage = false;
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.vertical_flight_plan_valid = false;
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.final_app_can_engage = idFmFinalCanEngage->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.next_alt_cstr_ft = idFmgcAltitudeConstraint->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.requested_des_submode =
+      static_cast<fmgc_des_submode>(idFlightGuidanceRequestedVerticalMode->get());
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.alt_profile_tgt_ft = idFlightGuidanceTargetAltitude->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.vs_target_ft_min = idFlightGuidanceTargetVerticalSpeed->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.v_2_kts = idFmgcV2->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.v_app_kts = idFmgcV2->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.v_managed_kts = idFmgcV2->get();
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.flex_temp_deg_c = 0;
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.acceleration_alt_ft = fmAccelerationAltitude->valueOr(0);
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.acceleration_alt_eo_ft = fmAccelerationAltitudeEngineOut->valueOr(0);
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.thrust_reduction_alt_ft = fmThrustReductionAltitude->valueOr(0);
+  fmgcs[fmgcIndex].modelInputs.in.fms_inputs.cruise_alt_ft = idFmgcCruiseAltitude->get();
 
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fac_opp_bus = facsBusOutputs[oppFmgcIndex];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fac_own_bus = facsBusOutputs[fmgcIndex];
@@ -1616,15 +1642,20 @@ bool FlyByWireInterface::updateFmgc(double sampleTime, int fmgcIndex) {
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.ir_opp_bus = fmgcIndex == 0 ? irBusOutputs[1] : irBusOutputs[0];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.adr_own_bus = fmgcIndex == 0 ? adrBusOutputs[0] : adrBusOutputs[1];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.ir_own_bus = fmgcIndex == 0 ? irBusOutputs[0] : irBusOutputs[1];
+  fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fadec_opp_bus = fadecBusOutputs[oppFmgcIndex];
+  fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fadec_own_bus = fadecBusOutputs[fmgcIndex];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fcdc_opp_bus = fcdcsBusOutputs[oppFmgcIndex];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fcdc_own_bus = fcdcsBusOutputs[fmgcIndex];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.ra_opp_bus = raBusOutputs[oppFmgcIndex];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.ra_own_bus = raBusOutputs[fmgcIndex];
+  fmgcs[fmgcIndex].modelInputs.in.bus_inputs.ils_opp_bus = ilsBusOutputs[oppFmgcIndex];
+  fmgcs[fmgcIndex].modelInputs.in.bus_inputs.ils_own_bus = ilsBusOutputs[fmgcIndex];
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fmgc_opp_bus = fmgcsBusOutputs[oppFmgcIndex].fmgc_a_bus;
   fmgcs[fmgcIndex].modelInputs.in.bus_inputs.fcu_bus = fcuBusOutputs;
 
   if (fmgcIndex == fmgcDisabled) {
     simConnectInterface.setClientDataFmgcDiscretes(fmgcs[fmgcIndex].modelInputs.in.discrete_inputs);
+    simConnectInterface.setClientDataFmgcFmsData(fmgcs[fmgcIndex].modelInputs.in.fms_inputs);
 
     fmgcsDiscreteOutputs[fmgcIndex] = simConnectInterface.getClientDataFmgcDiscretesOutput();
     fmgcsBusOutputs[fmgcIndex].fmgc_a_bus = simConnectInterface.getClientDataFmgcABusOutput();
@@ -1758,25 +1789,29 @@ bool FlyByWireInterface::updateFcu(double sampleTime) {
     idFcuEisDisplayBaroValue[i]->set(efisPanelOutputs.baro_value);
     idFcuEisDisplayBaroMode[i]->set(efisPanelOutputs.baro_mode);
   }
-  idFcuAfsPanelAp1LightOn->set(discreteOutputs.afs_outputs.ap_1_light_on);
-  idFcuAfsPanelAp2LightOn->set(discreteOutputs.afs_outputs.ap_2_light_on);
-  idFcuAfsPanelAthrLightOn->set(discreteOutputs.afs_outputs.athr_light_on);
-  idFcuAfsPanelLocLightOn->set(discreteOutputs.afs_outputs.loc_light_on);
-  idFcuAfsPanelExpedLightOn->set(discreteOutputs.afs_outputs.exped_light_on);
-  idFcuAfsPanelApprLightOn->set(discreteOutputs.afs_outputs.appr_light_on);
 
-  idFcuAfsDisplayTrkFpaMode->set(discreteOutputs.afs_outputs.trk_fpa_mode);
-  idFcuAfsDisplayMachMode->set(discreteOutputs.afs_outputs.mach_mode);
-  idFcuAfsDisplaySpdMachValue->set(discreteOutputs.afs_outputs.spd_mach_value);
-  idFcuAfsDisplaySpdMachDashes->set(discreteOutputs.afs_outputs.spd_mach_dashes);
-  idFcuAfsDisplaySpdMachManaged->set(discreteOutputs.afs_outputs.spd_mach_managed);
-  idFcuAfsDisplayHdgTrkValue->set(discreteOutputs.afs_outputs.hdg_trk_value);
-  idFcuAfsDisplayHdgTrkDashes->set(discreteOutputs.afs_outputs.hdg_trk_dashes);
-  idFcuAfsDisplayHdgTrkManaged->set(discreteOutputs.afs_outputs.hdg_trk_managed);
-  idFcuAfsDisplayAltValue->set(discreteOutputs.afs_outputs.alt_value);
-  idFcuAfsDisplayLvlChManaged->set(discreteOutputs.afs_outputs.lvl_ch_managed);
-  idFcuAfsDisplayVsFpaValue->set(discreteOutputs.afs_outputs.vs_fpa_value);
-  idFcuAfsDisplayVsFpaDashes->set(discreteOutputs.afs_outputs.vs_fpa_dashes);
+  // If the FCU is running in Simulink, these Lvars will be directly set from Simulink via SimConnect
+  if (!fcuDisabled) {
+    idFcuAfsPanelAp1LightOn->set(discreteOutputs.afs_outputs.ap_1_light_on);
+    idFcuAfsPanelAp2LightOn->set(discreteOutputs.afs_outputs.ap_2_light_on);
+    idFcuAfsPanelAthrLightOn->set(discreteOutputs.afs_outputs.athr_light_on);
+    idFcuAfsPanelLocLightOn->set(discreteOutputs.afs_outputs.loc_light_on);
+    idFcuAfsPanelExpedLightOn->set(discreteOutputs.afs_outputs.exped_light_on);
+    idFcuAfsPanelApprLightOn->set(discreteOutputs.afs_outputs.appr_light_on);
+
+    idFcuAfsDisplayTrkFpaMode->set(discreteOutputs.afs_outputs.trk_fpa_mode);
+    idFcuAfsDisplayMachMode->set(discreteOutputs.afs_outputs.mach_mode);
+    idFcuAfsDisplaySpdMachValue->set(discreteOutputs.afs_outputs.spd_mach_value);
+    idFcuAfsDisplaySpdMachDashes->set(discreteOutputs.afs_outputs.spd_mach_dashes);
+    idFcuAfsDisplaySpdMachManaged->set(discreteOutputs.afs_outputs.spd_mach_managed);
+    idFcuAfsDisplayHdgTrkValue->set(discreteOutputs.afs_outputs.hdg_trk_value);
+    idFcuAfsDisplayHdgTrkDashes->set(discreteOutputs.afs_outputs.hdg_trk_dashes);
+    idFcuAfsDisplayHdgTrkManaged->set(discreteOutputs.afs_outputs.hdg_trk_managed);
+    idFcuAfsDisplayAltValue->set(discreteOutputs.afs_outputs.alt_value);
+    idFcuAfsDisplayLvlChManaged->set(discreteOutputs.afs_outputs.lvl_ch_managed);
+    idFcuAfsDisplayVsFpaValue->set(discreteOutputs.afs_outputs.vs_fpa_value);
+    idFcuAfsDisplayVsFpaDashes->set(discreteOutputs.afs_outputs.vs_fpa_dashes);
+  }
 
   return true;
 }

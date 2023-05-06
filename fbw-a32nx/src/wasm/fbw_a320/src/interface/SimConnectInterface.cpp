@@ -853,6 +853,22 @@ bool SimConnectInterface::prepareClientDataDefinitions() {
   // ------------------------------------------------------------------------------------------------------------------
 
   // map client id
+  result &= SimConnect_MapClientDataNameToID(hSimConnect, "A32NX_CLIENT_DATA_FMS_INPUT", ClientData::FMGC_FMS_INPUTS);
+  // create client data
+  result &= SimConnect_CreateClientData(hSimConnect, ClientData::FMGC_FMS_INPUTS, sizeof(base_fms_inputs),
+                                        SIMCONNECT_CREATE_CLIENT_DATA_FLAG_DEFAULT);
+  // add data definitions
+
+  // Struct size is 184 bytes due to struct padding. Thus, we cannot just give the correct datatypes, but instead just
+  // pass 23 8byte f64's.
+  for (int i = 0; i < 23; i++) {
+    result &= SimConnect_AddToClientDataDefinition(hSimConnect, ClientData::FMGC_FMS_INPUTS, SIMCONNECT_CLIENTDATAOFFSET_AUTO,
+                                                   SIMCONNECT_CLIENTDATATYPE_FLOAT64);
+  }
+
+  // ------------------------------------------------------------------------------------------------------------------
+
+  // map client id
   result &= SimConnect_MapClientDataNameToID(hSimConnect, "A32NX_CLIENT_DATA_FMGC_DISCRETES_OUTPUT", ClientData::FMGC_DISCRETE_OUTPUTS);
   // create client data
   result &= SimConnect_CreateClientData(hSimConnect, ClientData::FMGC_DISCRETE_OUTPUTS, sizeof(base_fmgc_discrete_outputs),
@@ -1163,6 +1179,10 @@ bool SimConnectInterface::setClientDataFcuBus(base_fcu_bus output) {
 
 bool SimConnectInterface::setClientDataFmgcDiscretes(base_fmgc_discrete_inputs output) {
   return sendClientData(ClientData::FMGC_DISCRETE_INPUTS, sizeof(output), &output);
+}
+
+bool SimConnectInterface::setClientDataFmgcFmsData(base_fms_inputs output) {
+  return sendClientData(ClientData::FMGC_FMS_INPUTS, sizeof(output), &output);
 }
 
 bool SimConnectInterface::setClientDataFmgcABus(base_fmgc_a_bus output, int fmgcIndex) {

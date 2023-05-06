@@ -41,6 +41,7 @@ class FcuComputer final
     real32_T pValue;
     real32_T pValue_e;
     real32_T pValue_a;
+    boolean_T Delay_DSTATE;
     boolean_T pValue_not_empty;
     boolean_T prevTrkFpaActive;
     boolean_T prevTrkFpaActive_not_empty;
@@ -270,6 +271,7 @@ class FcuComputer final
     base_fcu_discrete_outputs Constant3_Value;
     real32_T Constant2_Value_l;
     real32_T Constant4_Value;
+    boolean_T Delay_InitialCondition;
     boolean_T Constant15_Value;
     boolean_T Constant1_Value_i;
     boolean_T Constant10_Value;

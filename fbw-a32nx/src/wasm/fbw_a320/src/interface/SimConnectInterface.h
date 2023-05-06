@@ -288,6 +288,7 @@ class SimConnectInterface {
   base_fcu_bus getClientDataFcuBusOutput();
 
   bool setClientDataFmgcDiscretes(base_fmgc_discrete_inputs output);
+  bool setClientDataFmgcFmsData(base_fms_inputs output);
   bool setClientDataFmgcABus(base_fmgc_a_bus output, int fmgcIndex);
   bool setClientDataFmgcBBus(base_fmgc_b_bus output, int fmgcIndex);
 
@@ -336,6 +337,7 @@ class SimConnectInterface {
     FAC_2_BUS_OUTPUT,
     FCU_BUS_OUTPUT,
     FMGC_DISCRETE_INPUTS,
+    FMGC_FMS_INPUTS,
     FMGC_DISCRETE_OUTPUTS,
     FMGC_1_BUS_A_OUTPUT,
     FMGC_2_BUS_A_OUTPUT,

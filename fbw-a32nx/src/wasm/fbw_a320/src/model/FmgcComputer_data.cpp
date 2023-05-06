@@ -278,6 +278,8 @@ FmgcComputer::Parameters_FmgcComputer_T FmgcComputer::FmgcComputer_P{
 
   true,
 
+  true,
+
   1,
 
   1,

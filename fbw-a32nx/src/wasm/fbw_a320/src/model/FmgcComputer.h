@@ -36,6 +36,7 @@ class FmgcComputer final
     boolean_T Memory_PreviousInput_a;
     boolean_T Memory_PreviousInput_cv;
     boolean_T Runtime_MODE;
+    rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_hu;
     rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_h0;
     rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_jl;
     rtDW_MATLABFunction_FmgcComputer_e_T sf_MATLABFunction_m1;
@@ -133,6 +134,7 @@ class FmgcComputer final
     boolean_T PulseNode_isRisingEdge_i;
     boolean_T PulseNode1_isRisingEdge;
     boolean_T PulseNode_isRisingEdge_j;
+    boolean_T PulseNode3_isRisingEdge;
     boolean_T PulseNode2_isRisingEdge;
     boolean_T PulseNode1_isRisingEdge_k;
     int8_T CompareToConstant_const_b;
