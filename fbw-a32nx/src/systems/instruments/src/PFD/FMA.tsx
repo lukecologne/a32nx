@@ -1268,7 +1268,7 @@ class BC3Cell extends DisplayComponent<{ isAttExcessive: Subscribable<boolean>, 
 
     private fillBC3Cell() {
         const [text, className] = getBC3Message(
-            this.isAttExcessive, this.tcasArmed, this.setHoldSpeed, this.trkFpaDeselected, this.tcasRaInhibited, this.fcdcDiscreteWord1, this.fwcFlightPhase, this.tdReached
+            this.isAttExcessive, this.tcasArmed, this.setHoldSpeed, this.trkFpaDeselected, this.tcasRaInhibited, this.fcdcDiscreteWord1, this.fwcFlightPhase, this.tdReached,
         );
         this.classNameSub.set(`FontMedium MiddleAlign ${className}`);
         if (text !== null) {
