@@ -915,10 +915,12 @@ class B2Cell extends DisplayComponent<CellProps> {
 
         sub.on('fmgcDiscreteWord3').whenChanged().handle((word) => {
             this.fmgcDiscreteWord3 = word;
+            this.handleMessage();
         });
 
         sub.on('fmgcFmAltitudeConstraint').whenChanged().handle((word) => {
             this.altConstraint = word;
+            this.handleMessage();
         });
     }
 
