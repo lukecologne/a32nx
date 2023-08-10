@@ -1,6 +1,6 @@
 import { DisplayComponent, FSComponent, HEvent, Subject, Subscribable, VNode } from '@microsoft/msfs-sdk';
+import { Arinc429Word } from '@flybywiresim/fbw-sdk';
 import { DmcLogicEvents } from '../MsfsAvionicsCommon/providers/DmcPublisher';
-import { Arinc429Word } from '@shared/arinc429';
 import { HorizontalTape } from './HorizontalTape';
 import { getSmallestAngle } from './PFDUtils';
 import { PFDSimvars } from './shared/PFDSimvarPublisher';
