@@ -954,9 +954,11 @@ void FacComputer::step()
       FacComputer_P.BitfromLabel1_bit_e, &rtb_y_bm);
     if (rtb_OR1) {
       if ((rtb_y_c != 0U) && FacComputer_U.in.discrete_inputs.elac_1_healthy) {
-        rtb_Y_i = FacComputer_U.in.bus_inputs.elac_1_bus.yaw_damper_command_deg.Data;
+        rtb_Y_i = FacComputer_U.in.bus_inputs.elac_1_bus.right_aileron_position_deg.Data -
+          FacComputer_U.in.bus_inputs.elac_1_bus.left_aileron_position_deg.Data;
       } else if ((rtb_y_bm != 0U) && FacComputer_U.in.discrete_inputs.elac_2_healthy) {
-        rtb_Y_i = FacComputer_U.in.bus_inputs.elac_1_bus.yaw_damper_command_deg.Data;
+        rtb_Y_i = FacComputer_U.in.bus_inputs.elac_1_bus.right_aileron_position_deg.Data -
+          FacComputer_U.in.bus_inputs.elac_1_bus.left_aileron_position_deg.Data;
       } else {
         rtb_Y_i = FacComputer_P.Constant1_Value_m;
       }
