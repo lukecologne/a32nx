@@ -1,6 +1,6 @@
-#include "FacComputer.h"
+#include "A380FacComputer.h"
 
-FacComputer::Parameters_FacComputer_T FacComputer::FacComputer_P{
+A380FacComputer::Parameters_A380FacComputer_T A380FacComputer::A380FacComputer_P{
   {
     0.0,
     0.0,
