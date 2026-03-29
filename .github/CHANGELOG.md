@@ -98,6 +98,7 @@
 1. [A380X/RMP] Fix light bleed on RMP audio knobs - @heclak (Heclak)
 1. [A32NX/EFB] Added Departure Change Checklist to EFB - @FlyByTim (FlyByTim)
 1. [A380X/MFD] Fix CPNY F-PLN REQUEST button disabled when airport ICAO not found in failed Simbrief import - @heclak (Heclak)
+1. [A380X/RMP] Fix FO RMP integrated lights not working - @heclak (Heclak)
 
 ## 0.14.0
 
