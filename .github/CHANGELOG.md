@@ -111,6 +111,7 @@
 1. [A32NX/FMS] Improve accuracy of WIND/TEMP page layout - @BlueberryKing (BlueberryKing)
 1. [A32NX/FMS] Fully incorporate WIND page entries into performance predictions - @BlueberryKing (BlueberryKing)
 1. [A32NX/FMS] Implement `ONLY SPD ENTRY ALLOWED` message - @BlueberryKing (BlueberryKing)
+1. [A380X/MFD] Added support for the US Units option - MikioDK (Mikio), @tracernz (Mike)
 
 ## 0.14.0
 
