@@ -6783,7 +6783,7 @@ export class PseudoFWC {
       codesToReturn: ['340001001', '340001002', '340001003'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400020: {
@@ -6799,7 +6799,7 @@ export class PseudoFWC {
       codesToReturn: ['340002001', '340002002', '340002003', '340002004'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400025: {
@@ -6815,7 +6815,7 @@ export class PseudoFWC {
       codesToReturn: ['340002501', '340002502', '340002503', '340002504'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400030: {
@@ -6832,7 +6832,7 @@ export class PseudoFWC {
       codesToReturn: ['340003001', '340003002', '340003003', '340003004', '340003005'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400035: {
@@ -6849,7 +6849,7 @@ export class PseudoFWC {
       codesToReturn: ['340003501', '340003502', '340003503', '340003504', '340003505'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400040: {
@@ -6864,7 +6864,7 @@ export class PseudoFWC {
       codesToReturn: ['340004001', '340004002', '340004003'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400045: {
@@ -6905,7 +6905,7 @@ export class PseudoFWC {
       ],
       memoInhibit: () => false,
       failure: 3,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400050: {
@@ -6916,7 +6916,7 @@ export class PseudoFWC {
       codesToReturn: ['340005001', '340005002', '340005003'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400060: {
@@ -6927,7 +6927,7 @@ export class PseudoFWC {
       codesToReturn: ['340006001', '340006002', '340006003'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400065: {
@@ -6938,7 +6938,7 @@ export class PseudoFWC {
       codesToReturn: ['340006501', '340006502'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400070: {
@@ -6949,7 +6949,7 @@ export class PseudoFWC {
       codesToReturn: ['340007001', '340007002'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400075: {
@@ -6960,7 +6960,7 @@ export class PseudoFWC {
       codesToReturn: ['340007501', '340007502'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400080: {
@@ -6971,7 +6971,7 @@ export class PseudoFWC {
       codesToReturn: ['340008001'],
       memoInhibit: () => false,
       failure: 2,
-      sysPage: -1,
+      sysPage: EcamSysPage.NONE,
       side: 'LEFT',
     },
     3400140: {
