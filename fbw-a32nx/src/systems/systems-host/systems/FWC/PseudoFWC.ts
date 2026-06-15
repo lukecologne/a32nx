@@ -6858,8 +6858,8 @@ export class PseudoFWC {
       simVarIsActive: this.adr3FaultActive,
       whichCodeToReturn: () => [
         0,
-        !this.adr3DiscreteWord1.get().isInvalid() ? 1 : null,
-        this.adr3Used.get() ? 2 : null,
+        this.adr3Used.get() ? 1 : null,
+        !this.adr3DiscreteWord1.get().isInvalid() ? 2 : null,
       ],
       codesToReturn: ['340004001', '340004002', '340004003'],
       memoInhibit: () => false,
