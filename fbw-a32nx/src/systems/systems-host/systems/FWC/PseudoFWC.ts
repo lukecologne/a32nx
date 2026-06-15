@@ -4402,7 +4402,7 @@ export class PseudoFWC {
     );
 
     this.adr1and2FaultActive.set(
-      !(this.flightPhase110.get() || this.sdac00210Word.bitValue(20) || this.sdac00200Word.bitValue(18)) &&
+      !(this.flightPhase110.get() || (this.sdac00210Word.bitValue(20) && this.sdac00200Word.bitValue(18))) &&
         adr1Faulty &&
         adr2Faulty &&
         !this.adr1and2and3FaultActive.get(),
@@ -6778,7 +6778,7 @@ export class PseudoFWC {
       whichCodeToReturn: () => [
         0,
         !this.adr3Used.get() ? 1 : null,
-        this.adr1DiscreteWord1.get().isNormalOperation() ? 2 : null,
+        !this.adr1DiscreteWord1.get().isInvalid() ? 2 : null,
       ],
       codesToReturn: ['340001001', '340001002', '340001003'],
       memoInhibit: () => false,
@@ -6793,7 +6793,7 @@ export class PseudoFWC {
       whichCodeToReturn: () => [
         0,
         !this.adr3Used.get() ? 1 : null,
-        this.adr2DiscreteWord1.get().isNormalOperation() ? 2 : null,
+        !this.adr2DiscreteWord1.get().isInvalid() ? 2 : null,
         3,
       ],
       codesToReturn: ['340002001', '340002002', '340002003', '340002004'],
@@ -6809,8 +6809,8 @@ export class PseudoFWC {
       whichCodeToReturn: () => [
         0,
         !this.adr3UsedLeft.get() ? 1 : null,
-        this.adr1DiscreteWord1.get().isNormalOperation() ? 2 : null,
-        this.adr2DiscreteWord1.get().isNormalOperation() ? 3 : null,
+        !this.adr1DiscreteWord1.get().isInvalid() ? 2 : null,
+        !this.adr2DiscreteWord1.get().isInvalid() ? 3 : null,
       ],
       codesToReturn: ['340002501', '340002502', '340002503', '340002504'],
       memoInhibit: () => false,
@@ -6826,8 +6826,8 @@ export class PseudoFWC {
         0,
         this.adr3Used.get() ? 1 : null,
         null,
-        this.adr1DiscreteWord1.get().isNormalOperation() ? 3 : null,
-        this.adr3DiscreteWord1.get().isNormalOperation() ? 4 : null,
+        !this.adr1DiscreteWord1.get().isInvalid() ? 3 : null,
+        !this.adr3DiscreteWord1.get().isInvalid() ? 4 : null,
       ],
       codesToReturn: ['340003001', '340003002', '340003003', '340003004', '340003005'],
       memoInhibit: () => false,
@@ -6843,8 +6843,8 @@ export class PseudoFWC {
         0,
         this.adr3Used.get() ? 1 : null,
         null,
-        this.adr2DiscreteWord1.get().isNormalOperation() ? 3 : null,
-        this.adr3DiscreteWord1.get().isNormalOperation() ? 4 : null,
+        !this.adr2DiscreteWord1.get().isInvalid() ? 3 : null,
+        !this.adr3DiscreteWord1.get().isInvalid() ? 4 : null,
       ],
       codesToReturn: ['340003501', '340003502', '340003503', '340003504', '340003505'],
       memoInhibit: () => false,
@@ -6858,7 +6858,7 @@ export class PseudoFWC {
       simVarIsActive: this.adr3FaultActive,
       whichCodeToReturn: () => [
         0,
-        this.adr3DiscreteWord1.get().isNormalOperation() ? 1 : null,
+        !this.adr3DiscreteWord1.get().isInvalid() ? 1 : null,
         this.adr3Used.get() ? 2 : null,
       ],
       codesToReturn: ['340004001', '340004002', '340004003'],
@@ -6878,9 +6878,9 @@ export class PseudoFWC {
         3,
         null,
         null,
-        this.adr1DiscreteWord1.get().isNormalOperation() ||
-        this.adr2DiscreteWord1.get().isNormalOperation() ||
-        this.adr3DiscreteWord1.get().isNormalOperation()
+        !this.adr1DiscreteWord1.get().isInvalid() ||
+        !this.adr2DiscreteWord1.get().isInvalid() ||
+        !this.adr3DiscreteWord1.get().isInvalid()
           ? 6
           : null,
         7,
