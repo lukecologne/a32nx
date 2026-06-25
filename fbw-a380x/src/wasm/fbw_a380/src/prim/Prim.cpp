@@ -51,7 +51,6 @@ void Prim::update(double deltaTime,
     simConnectInterface.setClientDataPrimDiscretes(primGeneralLogic.A380PrimComputerGeneralLogic_U.in.discrete_inputs);
     simConnectInterface.setClientDataPrimAnalog(primGeneralLogic.A380PrimComputerGeneralLogic_U.in.analog_inputs);
     simConnectInterface.setClientDataPrimTemporaryAp(primGeneralLogic.A380PrimComputerGeneralLogic_U.in.temporary_ap_input);
-    std::cout << "hyd_press: " << primGeneralLogic.A380PrimComputerGeneralLogic_U.in.analog_inputs.green_hyd_pressure_psi << std::endl;
   }
 
   primGeneralLogic.A380PrimComputerGeneralLogic_U.in.sim_data.computer_running = monitoringHealthy;
