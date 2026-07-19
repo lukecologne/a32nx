@@ -10,7 +10,7 @@ import { FwcPublisher, RopRowOansPublisher } from '@flybywiresim/msfs-avionics-c
 import { FmsDataPublisher } from '../MsfsAvionicsCommon/providers/FmsDataPublisher';
 import { DmcPublisher } from '../MsfsAvionicsCommon/providers/DmcPublisher';
 import { ExtendedClockEventProvider } from '../MsfsAvionicsCommon/providers/ExtendedClockProvider';
-import { FcuBusProvider } from './shared/FcuBusProvider';
+import { FcuBusChoiceProvider } from './shared/FcuBusChoiceProvider';
 import { FgBusProvider } from './shared/FgBusProvider';
 import { getDisplayIndex, PFDComponent } from './PFD';
 import { AdirsValueProvider } from '../MsfsAvionicsCommon/AdirsValueProvider';
@@ -39,7 +39,7 @@ class A32NX_PFD extends BaseInstrument {
 
   private readonly fgBusProvider = new FgBusProvider(this.bus);
 
-  private readonly fcuBusProvider = new FcuBusProvider(this.bus);
+  private readonly fcuBusChoiceProvider = new FcuBusChoiceProvider(this.bus);
 
   private readonly clock = new Clock(this.bus);
 
@@ -80,7 +80,7 @@ class A32NX_PFD extends BaseInstrument {
     this.backplane.addPublisher('hEvent', this.hEventPublisher);
     this.backplane.addInstrument('arincProvider', this.arincProvider);
     this.backplane.addInstrument('fgBusProvider', this.fgBusProvider);
-    this.backplane.addInstrument('fcuBusProvider', this.fcuBusProvider);
+    this.backplane.addInstrument('fcuBusChoiceProvider', this.fcuBusChoiceProvider);
     this.backplane.addInstrument('Clock', this.clock);
     this.backplane.addPublisher('Dmc', this.dmcPublisher);
     this.backplane.addPublisher('RopRowOans', this.ropRowOansPublisher);

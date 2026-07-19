@@ -159,24 +159,6 @@ export type PFDSimvars = AdirsSimVars &
     fmgc2SpeedMarginHighRaw: number;
     fmgc1SpeedMarginLowRaw: number;
     fmgc2SpeedMarginLowRaw: number;
-    fcuSelectedHeadingRaw: number;
-    fcuSelectedAltitudeRaw: number;
-    fcuSelectedAirspeedRaw: number;
-    fcuSelectedVerticalSpeedRaw: number;
-    fcuSelectedTrackRaw: number;
-    fcuSelectedFpaRaw: number;
-    fcuAtsDiscreteWordRaw: number;
-    fcuAtsFmaDiscreteWordRaw: number;
-    fcuEisLeftDiscreteWord1Raw: number;
-    fcuEisLeftDiscreteWord2Raw: number;
-    fcuEisLeftBaroRaw: number;
-    fcuEisLeftBaroHpaRaw: number;
-    fcuEisRightDiscreteWord1Raw: number;
-    fcuEisRightDiscreteWord2Raw: number;
-    fcuEisRightBaroRaw: number;
-    fcuEisRightBaroHpaRaw: number;
-    fcuDiscreteWord1Raw: number;
-    fcuDiscreteWord2Raw: number;
     ecu1MaintenanceWord6Raw: number;
     ecu2MaintenanceWord6Raw: number;
   };
@@ -329,24 +311,6 @@ export enum PFDVars {
   fmgc2SpeedMarginHighRaw = 'L:A32NX_FMGC_2_SPEED_MARGIN_HIGH',
   fmgc1SpeedMarginLowRaw = 'L:A32NX_FMGC_1_SPEED_MARGIN_LOW',
   fmgc2SpeedMarginLowRaw = 'L:A32NX_FMGC_2_SPEED_MARGIN_LOW',
-  fcuSelectedHeadingRaw = 'L:A32NX_FCU_SELECTED_HEADING',
-  fcuSelectedAltitudeRaw = 'L:A32NX_FCU_SELECTED_ALTITUDE',
-  fcuSelectedAirspeedRaw = 'L:A32NX_FCU_SELECTED_AIRSPEED',
-  fcuSelectedVerticalSpeedRaw = 'L:A32NX_FCU_SELECTED_VERTICAL_SPEED',
-  fcuSelectedTrackRaw = 'L:A32NX_FCU_SELECTED_TRACK',
-  fcuSelectedFpaRaw = 'L:A32NX_FCU_SELECTED_FPA',
-  fcuAtsDiscreteWordRaw = 'L:A32NX_FCU_ATS_DISCRETE_WORD',
-  fcuAtsFmaDiscreteWordRaw = 'L:A32NX_FCU_ATS_FMA_DISCRETE_WORD',
-  fcuEisLeftDiscreteWord1Raw = 'L:A32NX_FCU_LEFT_EIS_DISCRETE_WORD_1',
-  fcuEisLeftDiscreteWord2Raw = 'L:A32NX_FCU_LEFT_EIS_DISCRETE_WORD_2',
-  fcuEisLeftBaroRaw = 'L:A32NX_FCU_LEFT_EIS_BARO',
-  fcuEisLeftBaroHpaRaw = 'L:A32NX_FCU_LEFT_EIS_BARO_HPA',
-  fcuEisRightDiscreteWord1Raw = 'L:A32NX_FCU_RIGHT_EIS_DISCRETE_WORD_1',
-  fcuEisRightDiscreteWord2Raw = 'L:A32NX_FCU_RIGHT_EIS_DISCRETE_WORD_2',
-  fcuEisRightBaroRaw = 'L:A32NX_FCU_RIGHT_EIS_BARO',
-  fcuEisRightBaroHpaRaw = 'L:A32NX_FCU_RIGHT_EIS_BARO_HPA',
-  fcuDiscreteWord1Raw = 'L:A32NX_FCU_DISCRETE_WORD_1',
-  fcuDiscreteWord2Raw = 'L:A32NX_FCU_DISCRETE_WORD_2',
   ecu1MaintenanceWord6Raw = 'L:A32NX_ECU_1_MAINTENANCE_WORD_6',
   ecu2MaintenanceWord6Raw = 'L:A32NX_ECU_2_MAINTENANCE_WORD_6',
 }
@@ -500,24 +464,6 @@ export class PFDSimvarPublisher extends UpdatableSimVarPublisher<PFDSimvars> {
     ['fmgc2SpeedMarginHighRaw', { name: PFDVars.fmgc2SpeedMarginHighRaw, type: SimVarValueType.Number }],
     ['fmgc1SpeedMarginLowRaw', { name: PFDVars.fmgc1SpeedMarginLowRaw, type: SimVarValueType.Number }],
     ['fmgc2SpeedMarginLowRaw', { name: PFDVars.fmgc2SpeedMarginLowRaw, type: SimVarValueType.Number }],
-    ['fcuSelectedHeadingRaw', { name: PFDVars.fcuSelectedHeadingRaw, type: SimVarValueType.Number }],
-    ['fcuSelectedAltitudeRaw', { name: PFDVars.fcuSelectedAltitudeRaw, type: SimVarValueType.Number }],
-    ['fcuSelectedAirspeedRaw', { name: PFDVars.fcuSelectedAirspeedRaw, type: SimVarValueType.Number }],
-    ['fcuSelectedVerticalSpeedRaw', { name: PFDVars.fcuSelectedVerticalSpeedRaw, type: SimVarValueType.Number }],
-    ['fcuSelectedTrackRaw', { name: PFDVars.fcuSelectedTrackRaw, type: SimVarValueType.Number }],
-    ['fcuSelectedFpaRaw', { name: PFDVars.fcuSelectedFpaRaw, type: SimVarValueType.Number }],
-    ['fcuAtsDiscreteWordRaw', { name: PFDVars.fcuAtsDiscreteWordRaw, type: SimVarValueType.Number }],
-    ['fcuAtsFmaDiscreteWordRaw', { name: PFDVars.fcuAtsFmaDiscreteWordRaw, type: SimVarValueType.Number }],
-    ['fcuEisLeftDiscreteWord1Raw', { name: PFDVars.fcuEisLeftDiscreteWord1Raw, type: SimVarValueType.Number }],
-    ['fcuEisLeftDiscreteWord2Raw', { name: PFDVars.fcuEisLeftDiscreteWord2Raw, type: SimVarValueType.Number }],
-    ['fcuEisLeftBaroRaw', { name: PFDVars.fcuEisLeftBaroRaw, type: SimVarValueType.Number }],
-    ['fcuEisLeftBaroHpaRaw', { name: PFDVars.fcuEisLeftBaroHpaRaw, type: SimVarValueType.Number }],
-    ['fcuEisRightDiscreteWord1Raw', { name: PFDVars.fcuEisRightDiscreteWord1Raw, type: SimVarValueType.Number }],
-    ['fcuEisRightDiscreteWord2Raw', { name: PFDVars.fcuEisRightDiscreteWord2Raw, type: SimVarValueType.Number }],
-    ['fcuEisRightBaroRaw', { name: PFDVars.fcuEisRightBaroRaw, type: SimVarValueType.Number }],
-    ['fcuEisRightBaroHpaRaw', { name: PFDVars.fcuEisRightBaroHpaRaw, type: SimVarValueType.Number }],
-    ['fcuDiscreteWord1Raw', { name: PFDVars.fcuDiscreteWord1Raw, type: SimVarValueType.Number }],
-    ['fcuDiscreteWord2Raw', { name: PFDVars.fcuDiscreteWord2Raw, type: SimVarValueType.Number }],
     ['ecu1MaintenanceWord6Raw', { name: PFDVars.ecu1MaintenanceWord6Raw, type: SimVarValueType.Number }],
     ['ecu2MaintenanceWord6Raw', { name: PFDVars.ecu2MaintenanceWord6Raw, type: SimVarValueType.Number }],
   ]);
