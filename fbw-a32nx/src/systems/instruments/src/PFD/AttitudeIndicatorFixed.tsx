@@ -10,7 +10,7 @@ import { FlightPathVector } from './FlightPathVector';
 import { Arinc429Values } from './shared/ArincValueProvider';
 import { PFDSimvars } from './shared/PFDSimvarPublisher';
 import { FlashOneHertz } from '../MsfsAvionicsCommon/FlashingElementUtils';
-import { FgBus } from './shared/FgBusProvider';
+import { FgBus } from './shared/FgBusChoiceProvider';
 import { FcuBus } from './shared/FcuBusProvider';
 
 interface AttitudeIndicatorFixedUpperProps {

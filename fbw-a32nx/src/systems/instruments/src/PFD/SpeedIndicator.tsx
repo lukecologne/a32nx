@@ -21,7 +21,7 @@ import {
   Arinc429LocalVarConsumerSubject,
 } from '@flybywiresim/fbw-sdk';
 
-import { FgBus } from './shared/FgBusProvider';
+import { FgBus } from './shared/FgBusChoiceProvider';
 import { FcuBus } from './shared/FcuBusProvider';
 import { PFDSimvars } from './shared/PFDSimvarPublisher';
 import { VerticalTape } from './VerticalTape';

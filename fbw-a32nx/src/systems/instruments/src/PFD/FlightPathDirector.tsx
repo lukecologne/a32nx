@@ -6,7 +6,7 @@
 import { ClockEvents, DisplayComponent, FSComponent, Subject, Subscribable, VNode } from '@microsoft/msfs-sdk';
 import { ArincEventBus, Arinc429Word, Arinc429WordData } from '@flybywiresim/fbw-sdk';
 import { FcuBus } from './shared/FcuBusProvider';
-import { FgBus } from './shared/FgBusProvider';
+import { FgBus } from './shared/FgBusChoiceProvider';
 
 import { calculateHorizonOffsetFromPitch } from './PFDUtils';
 import { Arinc429Values } from './shared/ArincValueProvider';

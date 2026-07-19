@@ -4,7 +4,6 @@
 // SPDX-License-Identifier: GPL-3.0
 
 import {
-  Arinc429ConsumerSubject,
   Arinc429LocalVarConsumerSubject,
   Arinc429Register,
   Arinc429RegisterSubject,
@@ -15,7 +14,7 @@ import {
 import { ClockEvents, ConsumerSubject, Instrument, MathUtils, Publisher, Subscription } from '@microsoft/msfs-sdk';
 
 import { PFDSimvars } from './PFDSimvarPublisher';
-import { FcuBus } from './FcuBusProvider';
+import { FcuBusChoiceEvents } from './FcuBusChoiceProvider';
 import { LagFilter } from '../PFDUtils';
 import { getDisplayIndex } from '../PFD';
 
@@ -72,7 +71,7 @@ export interface Arinc429Values {
   ecu2MaintenanceWord6: Arinc429Word;
 }
 export class ArincValueProvider implements Instrument {
-  private readonly sub = this.bus.getSubscriber<ClockEvents & FcuBus & PFDSimvars>();
+  private readonly sub = this.bus.getSubscriber<ClockEvents & FcuBusChoiceEvents & PFDSimvars>();
 
   private roll = new Arinc429Word(0);
 
@@ -96,7 +95,7 @@ export class ArincValueProvider implements Instrument {
   private readonly altitudeFilter = new LagFilter(1 / 0.3);
   private lastAltitudeFilterTime = -1;
 
-  private readonly fcuDiscrete2 = Arinc429ConsumerSubject.create(this.sub.on('fcuEisDiscreteWord2'));
+  private readonly fcuDiscrete2 = Arinc429LocalVarConsumerSubject.create(this.sub.on('a32nx_fcu_eis_discrete_word_2'));
 
   private mach = new Arinc429Word(0);
 
@@ -157,7 +156,7 @@ export class ArincValueProvider implements Instrument {
   /** @inheritdoc */
   public init() {
     const publisher = this.bus.getPublisher<Arinc429Values>();
-    const subscriber = this.bus.getSubscriber<FcuBus & PFDSimvars>();
+    const subscriber = this.bus.getSubscriber<PFDSimvars>();
 
     subscriber.on('pitch').handle((p) => {
       this.pitch.set(p);

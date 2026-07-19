@@ -21,8 +21,6 @@ import {
   Arinc429LocalVarConsumerSubject,
   Arinc429ConsumerSubject,
 } from '@flybywiresim/fbw-sdk';
-import { FcuBus } from './shared/FcuBusProvider';
-import { FgBus } from './shared/FgBusProvider';
 
 import { PFDSimvars } from './shared/PFDSimvarPublisher';
 import { DigitalAltitudeReadout } from './DigitalAltitudeReadout';
@@ -30,6 +28,9 @@ import { VerticalTape } from './VerticalTape';
 import { Arinc429Values } from './shared/ArincValueProvider';
 import { A32NXFwcBusEvents } from '@shared/publishers/A32NXFwcBusPublisher';
 import { FlashOneHertz } from '../MsfsAvionicsCommon/FlashingElementUtils';
+import { FcuBusChoiceEvents } from './shared/FcuBusChoiceProvider';
+import { A32NXFcuBusEvents } from '@shared/publishers/A32NXFcuBusPublisher';
+import { A32NXFgBusBaseEvents } from '@shared/publishers/A32NXFgBusPublisher';
 
 const DisplayRange = 570;
 const ValueSpacing = 100;
@@ -138,6 +139,8 @@ class RadioAltIndicator extends DisplayComponent<{ bus: ArincEventBus; filteredR
 }
 
 class MinimumDescentAltitudeIndicator extends DisplayComponent<{ bus: ArincEventBus }> {
+  private readonly sub = this.props.bus.getSubscriber<FcuBusChoiceEvents>();
+
   private readonly altitude = Arinc429ConsumerSubject.create(
     this.props.bus.getArincSubscriber<Arinc429Values>().on('altitudeAr'),
   );
@@ -154,7 +157,7 @@ class MinimumDescentAltitudeIndicator extends DisplayComponent<{ bus: ArincEvent
 
   private inLandingPhases = false;
 
-  private fcuEisDiscreteWord2 = new Arinc429Word(0);
+  private fcuEisDiscreteWord2 = Arinc429LocalVarConsumerSubject.create(this.sub.on('a32nx_fcu_eis_discrete_word_2'));
 
   private readonly mda = Arinc429RegisterSubject.createEmpty();
 
@@ -165,9 +168,9 @@ class MinimumDescentAltitudeIndicator extends DisplayComponent<{ bus: ArincEvent
       !this.landingElevation.isFailureWarning() &&
       !this.landingElevation.isNoComputedData() &&
       this.inLandingPhases &&
-      this.fcuEisDiscreteWord2.bitValueOr(29, false);
+      this.fcuEisDiscreteWord2.get().bitValueOr(29, false);
 
-    this.qfeLandingAltValid = this.inLandingPhases && !this.fcuEisDiscreteWord2.bitValueOr(29, true);
+    this.qfeLandingAltValid = this.inLandingPhases && !this.fcuEisDiscreteWord2.get().bitValueOr(29, true);
 
     const altDelta = this.mda.get().value - this.altitude.get().value;
 
@@ -190,7 +193,7 @@ class MinimumDescentAltitudeIndicator extends DisplayComponent<{ bus: ArincEvent
   onAfterRender(node: VNode): void {
     super.onAfterRender(node);
 
-    const sub = this.props.bus.getArincSubscriber<PFDSimvars & Arinc429Values & FcuBus>();
+    const sub = this.props.bus.getArincSubscriber<PFDSimvars & Arinc429Values & FcuBusChoiceEvents>();
 
     sub
       .on('chosenRa')
@@ -208,13 +211,9 @@ class MinimumDescentAltitudeIndicator extends DisplayComponent<{ bus: ArincEvent
         this.updateIndication();
       });
 
-    sub
-      .on('fcuEisDiscreteWord2')
-      .whenChanged()
-      .handle((m) => {
-        this.fcuEisDiscreteWord2 = m;
-        this.updateIndication();
-      });
+    this.fcuEisDiscreteWord2.sub(() => {
+      this.updateIndication();
+    }, true);
 
     this.altitude.sub(this.updateIndication.bind(this), true);
 
@@ -288,7 +287,7 @@ enum TargetAltitudeColor {
 }
 
 export class AltitudeIndicatorOfftape extends DisplayComponent<AltitudeIndicatorOfftapeProps> {
-  private readonly sub = this.props.bus.getSubscriber<A32NXFwcBusEvents>();
+  private readonly sub = this.props.bus.getSubscriber<A32NXFwcBusEvents & A32NXFcuBusEvents & A32NXFgBusBaseEvents>();
 
   private readonly fwc1DiscreteWord = Arinc429LocalVarConsumerSubject.create(
     this.sub.on('a32nx_fwc_discrete_word_124_1'),
@@ -310,54 +309,30 @@ export class AltitudeIndicatorOfftape extends DisplayComponent<AltitudeIndicator
 
   private readonly altFlagVisible = this.altitude.map((v) => !v.isNormalOperation() && !v.isFunctionalTest());
 
-  private fcuSelectedAlt = new Arinc429Word(0);
+  private readonly altConstraint = Arinc429LocalVarConsumerSubject.create(this.sub.on('a32nx_fg_altitude_constraint'));
 
-  private altConstraint = new Arinc429Word(0);
+  private readonly fmgcDiscreteWord1 = Arinc429LocalVarConsumerSubject.create(this.sub.on('a32nx_fg_discrete_word_1'));
 
-  private fmgcDiscreteWord1 = new Arinc429Word(0);
+  private readonly fmgcDiscreteWord4 = Arinc429LocalVarConsumerSubject.create(this.sub.on('a32nx_fg_discrete_word_4'));
 
-  private fmgcDiscreteWord4 = new Arinc429Word(0);
-
-  private shownTargetAltitude = Subject.create<Arinc429Word>(new Arinc429Word(0));
+  private shownTargetAltitude = Arinc429LocalVarConsumerSubject.create(null);
 
   private targetAltitudeColor = Subject.create<TargetAltitudeColor>(TargetAltitudeColor.Cyan);
 
   onAfterRender(node: VNode): void {
     super.onAfterRender(node);
 
-    const sub = this.props.bus.getSubscriber<PFDSimvars & FgBus & FcuBus>();
+    this.fmgcDiscreteWord1.sub(() => {
+      this.handleAltManagedChange();
+    }, true);
 
-    sub
-      .on('fmgcDiscreteWord1')
-      .whenChanged()
-      .handle((v) => {
-        this.fmgcDiscreteWord1 = v;
-        this.handleAltManagedChange();
-      });
+    this.fmgcDiscreteWord1.sub(() => {
+      this.handleAltManagedChange();
+    }, true);
 
-    sub
-      .on('fmgcDiscreteWord4')
-      .whenChanged()
-      .handle((v) => {
-        this.fmgcDiscreteWord4 = v;
-        this.handleAltManagedChange();
-      });
-
-    sub
-      .on('fcuSelectedAltitude')
-      .whenChanged()
-      .handle((alt) => {
-        this.fcuSelectedAlt = alt;
-        this.handleAltManagedChange();
-      });
-
-    sub
-      .on('fmgcFmAltitudeConstraint')
-      .whenChanged()
-      .handle((cstr) => {
-        this.altConstraint = cstr;
-        this.handleAltManagedChange();
-      });
+    this.altConstraint.sub(() => {
+      this.handleAltManagedChange();
+    }, true);
   }
 
   render(): VNode {
@@ -437,16 +412,18 @@ export class AltitudeIndicatorOfftape extends DisplayComponent<AltitudeIndicator
   }
 
   private handleAltManagedChange() {
-    const landTrackActive = this.fmgcDiscreteWord4.bitValueOr(14, false);
-    const gsActive = this.fmgcDiscreteWord1.bitValueOr(22, false);
-    const finalDesActive = this.fmgcDiscreteWord1.bitValueOr(23, false);
+    const landTrackActive = this.fmgcDiscreteWord4.get().bitValueOr(14, false);
+    const gsActive = this.fmgcDiscreteWord1.get().bitValueOr(22, false);
+    const finalDesActive = this.fmgcDiscreteWord1.get().bitValueOr(23, false);
 
     const selectedAltIgnored = landTrackActive || gsActive || finalDesActive;
 
     const targetAltIsSelected =
-      selectedAltIgnored || this.altConstraint.isFailureWarning() || this.altConstraint.isNoComputedData();
+      selectedAltIgnored || this.altConstraint.get().isFailureWarning() || this.altConstraint.get().isNoComputedData();
 
-    this.shownTargetAltitude.set(targetAltIsSelected ? this.fcuSelectedAlt : this.altConstraint);
+    this.shownTargetAltitude.setConsumer(
+      this.sub.on(targetAltIsSelected ? 'a32nx_fcu_selected_altitude' : 'a32nx_fg_altitude_constraint'),
+    );
 
     if (selectedAltIgnored) {
       this.targetAltitudeColor.set(TargetAltitudeColor.White);
@@ -460,7 +437,7 @@ export class AltitudeIndicatorOfftape extends DisplayComponent<AltitudeIndicator
 
 interface SelectedAltIndicatorProps {
   bus: ArincEventBus;
-  selectedAltitude: Subscribable<Arinc429Word>;
+  selectedAltitude: Arinc429LocalVarConsumerSubject;
   altitudeColor: Subscribable<TargetAltitudeColor>;
 }
 
@@ -493,7 +470,7 @@ class SelectedAltIndicator extends DisplayComponent<SelectedAltIndicatorProps> {
 
   private altTapeTargetText = FSComponent.createRef<SVGTextElement>();
 
-  private shownTargetAltitude = new Arinc429Word(0);
+  private shownTargetAltitude: Arinc429WordData;
 
   private textSub = Subject.create('');
 
@@ -882,7 +859,7 @@ interface MetricAltIndicatorState {
 
 interface MetricAltIndicatorProps {
   bus: ArincEventBus;
-  targetAlt: Subscribable<Arinc429Word>;
+  targetAlt: Arinc429LocalVarConsumerSubject;
   altitudeColor: Subscribable<TargetAltitudeColor>;
 }
 

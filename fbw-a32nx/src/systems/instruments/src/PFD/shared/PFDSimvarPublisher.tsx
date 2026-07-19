@@ -127,38 +127,6 @@ export type PFDSimvars = AdirsSimVars &
     fm2TransLvlRaw: number;
     fm1Backbeam: boolean;
     fm2Backbeam: boolean;
-    fmgc1PfdSelectedSpeedRaw: number;
-    fmgc2PfdSelectedSpeedRaw: number;
-    fmgc1PreselMachRaw: number;
-    fmgc2PreselMachRaw: number;
-    fmgc1PreselSpeedRaw: number;
-    fmgc2PreselSpeedRaw: number;
-    fmgc1RollFdCommandRaw: number;
-    fmgc2RollFdCommandRaw: number;
-    fmgc1PitchFdCommandRaw: number;
-    fmgc2PitchFdCommandRaw: number;
-    fmgc1YawFdCommandRaw: number;
-    fmgc2YawFdCommandRaw: number;
-    fmgc1DiscreteWord5Raw: number;
-    fmgc2DiscreteWord5Raw: number;
-    fmgc1DiscreteWord4Raw: number;
-    fmgc2DiscreteWord4Raw: number;
-    fmgc1FmAltitudeConstraintRaw: number;
-    fmgc2FmAltitudeConstraintRaw: number;
-    fmgc1AtsDiscreteWordRaw: number;
-    fmgc2AtsDiscreteWordRaw: number;
-    fmgc1DiscreteWord3Raw: number;
-    fmgc2DiscreteWord3Raw: number;
-    fmgc1DiscreteWord1Raw: number;
-    fmgc2DiscreteWord1Raw: number;
-    fmgc1DiscreteWord2Raw: number;
-    fmgc2DiscreteWord2Raw: number;
-    fmgc1DiscreteWord7Raw: number;
-    fmgc2DiscreteWord7Raw: number;
-    fmgc1SpeedMarginHighRaw: number;
-    fmgc2SpeedMarginHighRaw: number;
-    fmgc1SpeedMarginLowRaw: number;
-    fmgc2SpeedMarginLowRaw: number;
     ecu1MaintenanceWord6Raw: number;
     ecu2MaintenanceWord6Raw: number;
   };
@@ -279,38 +247,6 @@ export enum PFDVars {
   fm2TransLvlRaw = 'L:A32NX_FM2_TRANS_LVL',
   fm1Backbeam = 'L:A32NX_FM1_BACKBEAM_SELECTED',
   fm2Backbeam = 'L:A32NX_FM2_BACKBEAM_SELECTED',
-  fmgc1PfdSelectedSpeedRaw = 'L:A32NX_FMGC_1_PFD_SELECTED_SPEED',
-  fmgc2PfdSelectedSpeedRaw = 'L:A32NX_FMGC_2_PFD_SELECTED_SPEED',
-  fmgc1PreselMachRaw = 'L:A32NX_FMGC_1_PRESEL_MACH',
-  fmgc2PreselMachRaw = 'L:A32NX_FMGC_2_PRESEL_MACH',
-  fmgc1PreselSpeedRaw = 'L:A32NX_FMGC_1_PRESEL_SPEED',
-  fmgc2PreselSpeedRaw = 'L:A32NX_FMGC_2_PRESEL_SPEED',
-  fmgc1RollFdCommandRaw = 'L:A32NX_FMGC_1_ROLL_FD_COMMAND',
-  fmgc2RollFdCommandRaw = 'L:A32NX_FMGC_2_ROLL_FD_COMMAND',
-  fmgc1PitchFdCommandRaw = 'L:A32NX_FMGC_1_PITCH_FD_COMMAND',
-  fmgc2PitchFdCommandRaw = 'L:A32NX_FMGC_2_PITCH_FD_COMMAND',
-  fmgc1YawFdCommandRaw = 'L:A32NX_FMGC_1_YAW_FD_COMMAND',
-  fmgc2YawFdCommandRaw = 'L:A32NX_FMGC_2_YAW_FD_COMMAND',
-  fmgc1DiscreteWord5Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_5',
-  fmgc2DiscreteWord5Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_5',
-  fmgc1DiscreteWord4Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_4',
-  fmgc2DiscreteWord4Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_4',
-  fmgc1FmAltitudeConstraintRaw = 'L:A32NX_FMGC_1_FM_ALTITUDE_CONSTRAINT',
-  fmgc2FmAltitudeConstraintRaw = 'L:A32NX_FMGC_2_FM_ALTITUDE_CONSTRAINT',
-  fmgc1AtsDiscreteWordRaw = 'L:A32NX_FMGC_1_ATS_DISCRETE_WORD',
-  fmgc2AtsDiscreteWordRaw = 'L:A32NX_FMGC_2_ATS_DISCRETE_WORD',
-  fmgc1DiscreteWord3Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_3',
-  fmgc2DiscreteWord3Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_3',
-  fmgc1DiscreteWord1Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_1',
-  fmgc2DiscreteWord1Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_1',
-  fmgc1DiscreteWord2Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_2',
-  fmgc2DiscreteWord2Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_2',
-  fmgc1DiscreteWord7Raw = 'L:A32NX_FMGC_1_DISCRETE_WORD_7',
-  fmgc2DiscreteWord7Raw = 'L:A32NX_FMGC_2_DISCRETE_WORD_7',
-  fmgc1SpeedMarginHighRaw = 'L:A32NX_FMGC_1_SPEED_MARGIN_HIGH',
-  fmgc2SpeedMarginHighRaw = 'L:A32NX_FMGC_2_SPEED_MARGIN_HIGH',
-  fmgc1SpeedMarginLowRaw = 'L:A32NX_FMGC_1_SPEED_MARGIN_LOW',
-  fmgc2SpeedMarginLowRaw = 'L:A32NX_FMGC_2_SPEED_MARGIN_LOW',
   ecu1MaintenanceWord6Raw = 'L:A32NX_ECU_1_MAINTENANCE_WORD_6',
   ecu2MaintenanceWord6Raw = 'L:A32NX_ECU_2_MAINTENANCE_WORD_6',
 }
@@ -432,38 +368,6 @@ export class PFDSimvarPublisher extends UpdatableSimVarPublisher<PFDSimvars> {
     ['fm2TransLvlRaw', { name: PFDVars.fm2TransLvlRaw, type: SimVarValueType.Number }],
     ['fm1Backbeam', { name: PFDVars.fm1Backbeam, type: SimVarValueType.Bool }],
     ['fm2Backbeam', { name: PFDVars.fm2Backbeam, type: SimVarValueType.Bool }],
-    ['fmgc1PfdSelectedSpeedRaw', { name: PFDVars.fmgc1PfdSelectedSpeedRaw, type: SimVarValueType.Number }],
-    ['fmgc2PfdSelectedSpeedRaw', { name: PFDVars.fmgc2PfdSelectedSpeedRaw, type: SimVarValueType.Number }],
-    ['fmgc1PreselMachRaw', { name: PFDVars.fmgc1PreselMachRaw, type: SimVarValueType.Number }],
-    ['fmgc2PreselMachRaw', { name: PFDVars.fmgc2PreselMachRaw, type: SimVarValueType.Number }],
-    ['fmgc1PreselSpeedRaw', { name: PFDVars.fmgc1PreselSpeedRaw, type: SimVarValueType.Number }],
-    ['fmgc2PreselSpeedRaw', { name: PFDVars.fmgc2PreselSpeedRaw, type: SimVarValueType.Number }],
-    ['fmgc1RollFdCommandRaw', { name: PFDVars.fmgc1RollFdCommandRaw, type: SimVarValueType.Number }],
-    ['fmgc2RollFdCommandRaw', { name: PFDVars.fmgc2RollFdCommandRaw, type: SimVarValueType.Number }],
-    ['fmgc1PitchFdCommandRaw', { name: PFDVars.fmgc1PitchFdCommandRaw, type: SimVarValueType.Number }],
-    ['fmgc2PitchFdCommandRaw', { name: PFDVars.fmgc2PitchFdCommandRaw, type: SimVarValueType.Number }],
-    ['fmgc1YawFdCommandRaw', { name: PFDVars.fmgc1YawFdCommandRaw, type: SimVarValueType.Number }],
-    ['fmgc2YawFdCommandRaw', { name: PFDVars.fmgc2YawFdCommandRaw, type: SimVarValueType.Number }],
-    ['fmgc1DiscreteWord5Raw', { name: PFDVars.fmgc1DiscreteWord5Raw, type: SimVarValueType.Number }],
-    ['fmgc2DiscreteWord5Raw', { name: PFDVars.fmgc2DiscreteWord5Raw, type: SimVarValueType.Number }],
-    ['fmgc1DiscreteWord4Raw', { name: PFDVars.fmgc1DiscreteWord4Raw, type: SimVarValueType.Number }],
-    ['fmgc2DiscreteWord4Raw', { name: PFDVars.fmgc2DiscreteWord4Raw, type: SimVarValueType.Number }],
-    ['fmgc1FmAltitudeConstraintRaw', { name: PFDVars.fmgc1FmAltitudeConstraintRaw, type: SimVarValueType.Number }],
-    ['fmgc2FmAltitudeConstraintRaw', { name: PFDVars.fmgc2FmAltitudeConstraintRaw, type: SimVarValueType.Number }],
-    ['fmgc1AtsDiscreteWordRaw', { name: PFDVars.fmgc1AtsDiscreteWordRaw, type: SimVarValueType.Number }],
-    ['fmgc2AtsDiscreteWordRaw', { name: PFDVars.fmgc2AtsDiscreteWordRaw, type: SimVarValueType.Number }],
-    ['fmgc1DiscreteWord3Raw', { name: PFDVars.fmgc1DiscreteWord3Raw, type: SimVarValueType.Number }],
-    ['fmgc2DiscreteWord3Raw', { name: PFDVars.fmgc2DiscreteWord3Raw, type: SimVarValueType.Number }],
-    ['fmgc1DiscreteWord1Raw', { name: PFDVars.fmgc1DiscreteWord1Raw, type: SimVarValueType.Number }],
-    ['fmgc2DiscreteWord1Raw', { name: PFDVars.fmgc2DiscreteWord1Raw, type: SimVarValueType.Number }],
-    ['fmgc1DiscreteWord2Raw', { name: PFDVars.fmgc1DiscreteWord2Raw, type: SimVarValueType.Number }],
-    ['fmgc2DiscreteWord2Raw', { name: PFDVars.fmgc2DiscreteWord2Raw, type: SimVarValueType.Number }],
-    ['fmgc1DiscreteWord7Raw', { name: PFDVars.fmgc1DiscreteWord7Raw, type: SimVarValueType.Number }],
-    ['fmgc2DiscreteWord7Raw', { name: PFDVars.fmgc2DiscreteWord7Raw, type: SimVarValueType.Number }],
-    ['fmgc1SpeedMarginHighRaw', { name: PFDVars.fmgc1SpeedMarginHighRaw, type: SimVarValueType.Number }],
-    ['fmgc2SpeedMarginHighRaw', { name: PFDVars.fmgc2SpeedMarginHighRaw, type: SimVarValueType.Number }],
-    ['fmgc1SpeedMarginLowRaw', { name: PFDVars.fmgc1SpeedMarginLowRaw, type: SimVarValueType.Number }],
-    ['fmgc2SpeedMarginLowRaw', { name: PFDVars.fmgc2SpeedMarginLowRaw, type: SimVarValueType.Number }],
     ['ecu1MaintenanceWord6Raw', { name: PFDVars.ecu1MaintenanceWord6Raw, type: SimVarValueType.Number }],
     ['ecu2MaintenanceWord6Raw', { name: PFDVars.ecu2MaintenanceWord6Raw, type: SimVarValueType.Number }],
   ]);

@@ -11,12 +11,13 @@ import { FmsDataPublisher } from '../MsfsAvionicsCommon/providers/FmsDataPublish
 import { DmcPublisher } from '../MsfsAvionicsCommon/providers/DmcPublisher';
 import { ExtendedClockEventProvider } from '../MsfsAvionicsCommon/providers/ExtendedClockProvider';
 import { FcuBusChoiceProvider } from './shared/FcuBusChoiceProvider';
-import { FgBusProvider } from './shared/FgBusProvider';
+import { FgBusProvider } from './shared/FgBusChoiceProvider';
 import { getDisplayIndex, PFDComponent } from './PFD';
 import { AdirsValueProvider } from '../MsfsAvionicsCommon/AdirsValueProvider';
 import { ArincValueProvider } from './shared/ArincValueProvider';
 import { PFDSimvarPublisher, PFDSimvars } from './shared/PFDSimvarPublisher';
 import { A32NXFcuBusPublisher } from '@shared/publishers/A32NXFcuBusPublisher';
+import { A32NXFgBusPublisher } from '@shared/publishers/A32NXFgBusPublisher';
 import { A32NXElectricalSystemPublisher } from '@shared/publishers/A32NXElectricalSystemPublisher';
 import { A32NXFwcBusPublisher } from '@shared/publishers/A32NXFwcBusPublisher';
 import { A32NXTcasBusPublisher } from '@shared/publishers/A32NXTcasBusPublisher';
@@ -55,6 +56,7 @@ class A32NX_PFD extends BaseInstrument {
 
   private readonly fwcPublisher = new FwcPublisher(this.bus);
 
+  private readonly fgBusPublisher = new A32NXFgBusPublisher(this.bus);
   private readonly fcuBusPublisher = new A32NXFcuBusPublisher(this.bus);
   private readonly fwcBusPublisher = new A32NXFwcBusPublisher(this.bus);
   private readonly elecSystemPublisher = new A32NXElectricalSystemPublisher(this.bus);
@@ -86,6 +88,7 @@ class A32NX_PFD extends BaseInstrument {
     this.backplane.addPublisher('RopRowOans', this.ropRowOansPublisher);
     this.backplane.addPublisher('Fwc', this.fwcPublisher);
     this.backplane.addPublisher('FcuBus', this.fcuBusPublisher);
+    this.backplane.addPublisher('FgBus', this.fgBusPublisher);
     this.backplane.addPublisher('ElectricalSystem', this.elecSystemPublisher);
     this.backplane.addPublisher('FwcBus', this.fwcBusPublisher);
     this.backplane.addPublisher('IrBus', this.irBusPublisher);
