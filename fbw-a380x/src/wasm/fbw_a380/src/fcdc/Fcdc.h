@@ -4,6 +4,8 @@
 #include "../utils/TriggeredMonostableNode.h"
 #include "FcdcIO.h"
 
+#include <tuple>
+
 enum class LateralLaw {
   NormalLaw,
   DirectLaw,
@@ -32,8 +34,6 @@ class Fcdc {
 
   FcdcDiscreteInputs discreteInputs;
 
-  FcdcAnalogInputs analogInputs;
-
   FcdcBusInputs busInputs;
 
  private:
@@ -52,6 +52,16 @@ class Fcdc {
   PitchLaw getPitchLawStatusFromBits(bool bit1, bool bit2, bool bit3);
 
   LateralLaw getLateralLawStatusFromBits(bool bit1, bool bit2);
+
+  std::tuple<bool, bool, bool, bool> computeAileronStatusFromComputer(base_arinc_429& word, int offset, bool defaultValue);
+
+  std::tuple<bool, bool, bool, bool> computeElevatorStatusFromComputer(base_arinc_429& word, int offset, bool defaultValue);
+
+  std::tuple<bool, bool, bool, bool> computeRudderStatusFromComputer(base_arinc_429& word, int offset, bool defaultValue);
+
+  std::tuple<bool, bool, bool, bool> computeSpoilerStatusFromPrim(base_arinc_429& word, int offset, bool defaultValue);
+
+  std::tuple<bool, bool, bool, bool> computeSpoilerStatusFromSec(base_arinc_429& word, int offset, bool defaultValue);
 
   // Computer monitoring and self-test vars
 
