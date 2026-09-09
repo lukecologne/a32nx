@@ -10,10 +10,8 @@ struct base_pitch_data_computed
   real_T eta_trim_deg_limit_up;
   real_T delta_eta_deg;
   real_T in_flight;
-  real_T in_rotation;
   real_T in_flare;
   real_T in_flight_gain;
-  real_T in_rotation_gain;
   real_T in_flare_gain;
   real_T nz_limit_up_g;
   real_T nz_limit_lo_g;
@@ -86,7 +84,6 @@ struct pitch_normal_input
 
 struct base_pitch_rotation
 {
-  real_T qk_c_deg_s;
   real_T eta_deg;
 };
 

@@ -3271,7 +3271,6 @@ void A380PrimComputerFctl::step()
                     &A380PrimComputerFctl_B.BusAssignment_nw.general_logic.ra_computation_data_ft, &rtb_handleIndex, (
       const_cast<real_T*>(&A380PrimComputerFctl_RGND)), (const_cast<real_T*>(&A380PrimComputerFctl_RGND)),
                     &A380PrimComputerFctl_B.BusAssignment_nw.fctl_logic.ground_spoiler_command_deg,
-                    &A380PrimComputerFctl_P.Constant_Value_g, &A380PrimComputerFctl_P.Constant_Value_g,
                     &A380PrimComputerFctl_B.BusAssignment_nw.data.sim_data.tailstrike_protection_on, (const_cast<real_T*>
       (&A380PrimComputerFctl_RGND)), &A380PrimComputerFctl_B.BusAssignment_nw.fctl_logic.total_sidestick_pitch_command,
                     &A380PrimComputerFctl_B.BusAssignment_nw.general_logic.on_ground, &rtb_OR_jr,

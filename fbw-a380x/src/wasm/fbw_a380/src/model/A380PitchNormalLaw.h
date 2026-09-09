@@ -72,15 +72,10 @@ class A380PitchNormalLaw final
     real_T Delay_DSTATE_ds;
     real_T Delay_DSTATE_jt;
     real_T Delay_DSTATE_o;
-    real_T Delay_DSTATE_ej;
-    real_T Delay_DSTATE_e4;
-    real_T Delay_DSTATE_cl;
     real_T pY;
     real_T pU;
     real_T on_ground_time;
     real_T in_flight_time;
-    uint8_T is_active_c6_A380PitchNormalLaw;
-    uint8_T is_c6_A380PitchNormalLaw;
     uint8_T is_active_c7_A380PitchNormalLaw;
     uint8_T is_c7_A380PitchNormalLaw;
     uint8_T is_active_c8_A380PitchNormalLaw;
@@ -92,12 +87,9 @@ class A380PitchNormalLaw final
     uint8_T is_active_c2_A380PitchNormalLaw;
     uint8_T is_c2_A380PitchNormalLaw;
     boolean_T icLoad;
-    boolean_T icLoad_p;
     boolean_T pY_not_empty;
     boolean_T pU_not_empty;
     rtDW_RateLimiter_A380PitchNormalLaw_T sf_RateLimiter_b;
-    rtDW_RateLimiter_A380PitchNormalLaw_k_T sf_RateLimiter_ct;
-    rtDW_LagFilter_A380PitchNormalLaw_T sf_LagFilter_f;
     rtDW_WashoutFilter_A380PitchNormalLaw_T sf_WashoutFilter_h;
     rtDW_RateLimiter_A380PitchNormalLaw_k_T sf_RateLimiter_nx;
     rtDW_RateLimiter_A380PitchNormalLaw_k_T sf_RateLimiter_d;
@@ -119,7 +111,6 @@ class A380PitchNormalLaw final
     rtDW_RateLimiter_A380PitchNormalLaw_T sf_RateLimiter_l;
     rtDW_RateLimiter_A380PitchNormalLaw_T sf_RateLimiter_n;
     rtDW_RateLimiter_A380PitchNormalLaw_T sf_RateLimiter_c;
-    rtDW_RateLimiter_A380PitchNormalLaw_T sf_RateLimiter_p;
     rtDW_RateLimiter_A380PitchNormalLaw_T sf_RateLimiter;
   };
 
@@ -132,7 +123,6 @@ class A380PitchNormalLaw final
     real_T ScheduledGain_BreakpointsForDimension1_b[4];
     real_T ScheduledGain1_BreakpointsForDimension1[5];
     real_T ScheduledGain_BreakpointsForDimension1_d[6];
-    real_T ScheduledGain1_BreakpointsForDimension1_h[5];
     real_T LagFilter_C1;
     real_T WashoutFilter_C1;
     real_T LagFilter_C1_p;
@@ -149,7 +139,6 @@ class A380PitchNormalLaw final
     real_T WashoutFilter_C1_h;
     real_T LagFilter_C1_f;
     real_T WashoutFilter_C1_j;
-    real_T LagFilter_C1_k;
     real_T DiscreteDerivativeVariableTs1_Gain;
     real_T DiscreteDerivativeVariableTs_Gain;
     real_T DiscreteDerivativeVariableTs2_Gain;
@@ -170,11 +159,7 @@ class A380PitchNormalLaw final
     real_T DiscreteDerivativeVariableTs_Gain_c;
     real_T DiscreteDerivativeVariableTs2_Gain_p;
     real_T DiscreteTimeIntegratorVariableTs_Gain;
-    real_T DiscreteDerivativeVariableTs_Gain_j3;
-    real_T DiscreteDerivativeVariableTs_Gain_g;
-    real_T DiscreteTimeIntegratorVariableTs_Gain_j;
     real_T RateLimiterVariableTs_InitialCondition;
-    real_T RateLimiterVariableTs1_InitialCondition;
     real_T RateLimiterVariableTs2_InitialCondition;
     real_T RateLimiterVariableTs3_InitialCondition;
     real_T RateLimiterVariableTs4_InitialCondition;
@@ -190,7 +175,7 @@ class A380PitchNormalLaw final
     real_T DiscreteDerivativeVariableTs2_InitialCondition_m;
     real_T RateLimiterVariableTs5_InitialCondition;
     real_T DiscreteDerivativeVariableTs1_InitialCondition_j;
-    real_T RateLimiterVariableTs1_InitialCondition_l;
+    real_T RateLimiterVariableTs1_InitialCondition;
     real_T RateLimiterVariableTs_InitialCondition_o;
     real_T RateLimiterVariableTs3_InitialCondition_e;
     real_T DiscreteDerivativeVariableTs2_InitialCondition_f;
@@ -204,13 +189,9 @@ class A380PitchNormalLaw final
     real_T DiscreteDerivativeVariableTs1_InitialCondition_g;
     real_T DiscreteDerivativeVariableTs_InitialCondition_h;
     real_T DiscreteDerivativeVariableTs2_InitialCondition_a;
-    real_T RateLimiterVariableTs_InitialCondition_m;
-    real_T DiscreteDerivativeVariableTs_InitialCondition_b;
-    real_T DiscreteDerivativeVariableTs_InitialCondition_p;
     real_T RateLimiterVariableTs_InitialCondition_c;
     real_T RateLimitereta_InitialCondition;
     real_T DiscreteTimeIntegratorVariableTs_LowerLimit;
-    real_T DiscreteTimeIntegratorVariableTs_LowerLimit_h;
     real_T ScheduledGain_Table[4];
     real_T ScheduledGain_Table_b[4];
     real_T ScheduledGain_Table_j[7];
@@ -219,38 +200,32 @@ class A380PitchNormalLaw final
     real_T ScheduledGain_Table_e[4];
     real_T ScheduledGain1_Table[5];
     real_T ScheduledGain_Table_hh[6];
-    real_T ScheduledGain1_Table_c[5];
     real_T DiscreteTimeIntegratorVariableTs_UpperLimit;
-    real_T DiscreteTimeIntegratorVariableTs_UpperLimit_p;
     real_T CompareToConstant_const;
     real_T RateLimiterVariableTs_lo;
-    real_T RateLimiterVariableTs1_lo;
     real_T RateLimiterVariableTs2_lo;
     real_T RateLimiterVariableTs3_lo;
     real_T RateLimiterVariableTs4_lo;
     real_T RateLimiterVariableTs6_lo;
     real_T RateLimiterVariableTs2_lo_k;
     real_T RateLimiterVariableTs5_lo;
-    real_T RateLimiterVariableTs1_lo_g;
+    real_T RateLimiterVariableTs1_lo;
     real_T RateLimiterVariableTs_lo_c;
     real_T RateLimiterVariableTs3_lo_b;
     real_T RateLimiterVariableTs4_lo_o;
-    real_T RateLimiterVariableTs_lo_i;
     real_T RateLimiterVariableTs_lo_f;
     real_T RateLimitereta_lo;
     real_T RateLimiterVariableTs_up;
-    real_T RateLimiterVariableTs1_up;
     real_T RateLimiterVariableTs2_up;
     real_T RateLimiterVariableTs3_up;
     real_T RateLimiterVariableTs4_up;
     real_T RateLimiterVariableTs6_up;
     real_T RateLimiterVariableTs2_up_m;
     real_T RateLimiterVariableTs5_up;
-    real_T RateLimiterVariableTs1_up_d;
+    real_T RateLimiterVariableTs1_up;
     real_T RateLimiterVariableTs_up_n;
     real_T RateLimiterVariableTs3_up_i;
     real_T RateLimiterVariableTs4_up_b;
-    real_T RateLimiterVariableTs_up_na;
     real_T RateLimiterVariableTs_up_i;
     real_T RateLimitereta_up;
     boolean_T CompareToConstant_const_d;
@@ -276,15 +251,9 @@ class A380PitchNormalLaw final
     real_T Saturation_UpperSat;
     real_T Saturation_LowerSat;
     real_T Switch2_Threshold;
-    real_T Saturation_UpperSat_f;
-    real_T Saturation_LowerSat_p;
-    real_T Constant1_Value_h;
-    real_T Constant_Value_o;
     real_T Gain_Gain;
     real_T Saturation_UpperSat_c;
     real_T Saturation_LowerSat_n;
-    real_T Saturation1_UpperSat;
-    real_T Saturation1_LowerSat;
     real_T Constant_Value_j;
     real_T Constant_Value_c;
     real_T Constant_Value_e;
@@ -293,8 +262,8 @@ class A380PitchNormalLaw final
     real_T Constant_Value_mo;
     real_T Gain2_Gain;
     real_T Gain1_Gain;
-    real_T Saturation1_UpperSat_i;
-    real_T Saturation1_LowerSat_h;
+    real_T Saturation1_UpperSat;
+    real_T Saturation1_LowerSat;
     real_T Loaddemand1_tableData[3];
     real_T Loaddemand1_bp01Data[3];
     real_T Gain1_Gain_c;
@@ -373,7 +342,7 @@ class A380PitchNormalLaw final
     real_T Delay_InitialCondition_h;
     real_T Constant_Value_jj;
     real_T Delay1_InitialCondition_e;
-    real_T Saturation_UpperSat_f1;
+    real_T Saturation_UpperSat_f;
     real_T Saturation_LowerSat_o1;
     real_T Gain1_Gain_lm;
     real_T PLUT_tableData_k[2];
@@ -386,7 +355,7 @@ class A380PitchNormalLaw final
     real_T SaturationSpoilers_UpperSat_o;
     real_T SaturationSpoilers_LowerSat_jl;
     real_T Saturation_UpperSat_k;
-    real_T Saturation_LowerSat_p1;
+    real_T Saturation_LowerSat_p;
     real_T Gain3_Gain_b;
     real_T Gain1_Gain_b;
     real_T Vm_currentms_Value_p;
@@ -438,26 +407,13 @@ class A380PitchNormalLaw final
     real_T Gain_Gain_cy;
     real_T Saturation_UpperSat_l;
     real_T Saturation_LowerSat_kp;
-    real_T Constant_Value_o1;
-    real_T Constant2_Value_k;
-    real_T uDLookupTable_tableData_e5[25];
-    real_T uDLookupTable_bp01Data_l[5];
-    real_T uDLookupTable_bp02Data[5];
-    real_T Saturation3_UpperSat_l;
-    real_T Saturation3_LowerSat_h;
-    real_T PitchRateDemand_tableData[3];
-    real_T PitchRateDemand_bp01Data[3];
-    real_T Gain3_Gain_e;
-    real_T Gain_Gain_pt;
-    real_T Gain1_Gain_d;
-    real_T Gain1_Gain_a;
-    real_T Gain5_Gain_h;
-    real_T Gain4_Gain;
-    real_T Gain6_Gain_g;
-    real_T Constant_Value_jk;
-    real_T Saturation_UpperSat_m;
-    real_T Saturation_LowerSat_b;
-    real_T Constant_Value_h;
+    real_T Gain1_Gain_b5;
+    real_T uDLookupTable_tableData_pq[5];
+    real_T uDLookupTable_bp01Data_me[5];
+    real_T Gain2_Gain_g;
+    real_T Saturation_UpperSat_g;
+    real_T Saturation_LowerSat_nc;
+    real_T Constant_Value_o;
     real_T Saturation_UpperSat_p;
     real_T Saturation_LowerSat_hs;
     real_T Constant_Value_fw;
@@ -468,11 +424,10 @@ class A380PitchNormalLaw final
     real_T Gain1_Gain_h;
     real_T Bias_Bias_d;
     real_T Gain2_Gain_n;
-    real_T Saturation_UpperSat_g;
+    real_T Saturation_UpperSat_ga;
     real_T Saturation_LowerSat_kf;
     real_T Saturation_UpperSat_kp;
     real_T Saturation_LowerSat_a4;
-    uint32_T uDLookupTable_maxIndex[2];
     uint8_T ManualSwitch_CurrentSetting;
   };
 
@@ -486,8 +441,7 @@ class A380PitchNormalLaw final
             *rtu_In_qk_dot_deg_s2, const real_T *rtu_In_eta_deg, const real_T *rtu_In_eta_trim_deg, const real_T
             *rtu_In_alpha_deg, const real_T *rtu_In_V_ias_kn, const real_T *rtu_In_V_tas_kn, const real_T
             *rtu_In_H_radio_ft, const real_T *rtu_In_flaps_handle_index, const real_T *rtu_In_spoilers_left_pos, const
-            real_T *rtu_In_spoilers_right_pos, const real_T *rtu_In_gnd_splr_cmd_deg, const real_T
-            *rtu_In_thrust_lever_1_pos, const real_T *rtu_In_thrust_lever_2_pos, const boolean_T
+            real_T *rtu_In_spoilers_right_pos, const real_T *rtu_In_gnd_splr_cmd_deg, const boolean_T
             *rtu_In_tailstrike_protection_on, const real_T *rtu_In_VLS_kn, const real_T *rtu_In_delta_eta_pos, const
             boolean_T *rtu_In_on_ground, const boolean_T *rtu_In_tracking_mode_on, const boolean_T
             *rtu_In_high_aoa_prot_active, const boolean_T *rtu_In_high_speed_prot_active, const real_T
